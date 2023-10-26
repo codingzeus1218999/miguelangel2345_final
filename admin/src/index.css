@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-pt-black-200;
+  }
+  div#root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .container {
+    @apply px-4;
+  }
+  ::-webkit-scrollbar {
+    @apply w-[12px] h-[12px];
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-500 rounded-md;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-pt-black-100 rounded-md border-2 border-solid border-pt-black-100;
+  }
+}
+
+@layer components {
+  .hover-white-bottom-border {
+    @apply inline-block relative;
+  }
+  .hover-white-bottom-border::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 3px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    background: #ffffff;
+    border-radius: 10px;
+  }
+  .hover-white-bottom-border:hover::after {
+    @apply w-full;
+  }
+  .page-title {
+    @apply text-white font-bold text-xl;
+  }
+  .active-nav {
+    background: radial-gradient(
+      50% 50% at 50% 50%,
+      rgba(255, 0, 253, 0.4) 0%,
+      rgba(255, 0, 253, 0) 100%
+    );
+  }
+  .active-mobilenav {
+    @apply bg-pt-black-300;
+  }
+  .active-nav::before,
+  .active-mobilenav::before {
+    border-width: 1px;
+    --tw-border-opacity: 1;
+    border-color: rgb(221 146 222 / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+    --tw-shadow: 0 0 8px 2px #ff00fd;
+    --tw-shadow-colored: 0 0 8px 2px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+      var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    --tw-content: "";
+    position: absolute;
+    inset: 0;
+    top: auto;
+    height: 3px;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    content: var(--tw-content);
+  }
+  .switch-type {
+    @apply px-4 font-bold cursor-pointer py-1;
+  }
+  .switch-type.active {
+    @apply rounded-md bg-pt-pink-200;
+  }
+  .disabled-button {
+    background-color: rgba(255, 215, 55, 0.4) !important;
+    cursor: not-allowed;
+  }
+  .input-container {
+    @apply bg-pt-black-300 rounded-md p-2 border-pt-black-500 text-white border transition-colors;
+  }
+  .input-container.has-error {
+    @apply !border-red-400;
+  }
+  .input-container:hover {
+    @apply bg-pt-black-100;
+  }
+  .input-container:has(input:focus),
+  .input-container:has(select:focus),
+  .input-container:has(textarea:focus) {
+    @apply border-yellow-400;
+  }
+  .input-container > p {
+    @apply uppercase font-bold text-sm;
+  }
+  .input-container input,
+  .input-container select,
+  .input-container textarea {
+    @apply mt-2 p-1 bg-pt-black-300 w-full rounded-md;
+  }
+  .input-container input:focus-visible,
+  .input-container select:focus-visible,
+  .input-container textarea:focus-visible {
+    @apply outline-none resize-none;
+  }
+  .pt-box {
+    box-shadow: inset 0 0 0 1px #dd92de, inset 0 0 8px 4px #ff00fd,
+      inset 0 0 16px 2px rgba(0, 0, 0, 0.8), 0 0 8px 2px #ff00fd;
+  }
+  input.pt-search-input {
+    @apply p-2 rounded-md focus-visible:outline-none max-w-full w-64 block;
+  }
+  .danger-title {
+    @apply bg-amber-600 p-2 rounded-md font-bold text-red-600;
+  }
+
+  .notice-panel {
+    @apply bg-pt-black-600 rounded-md p-2 h-fit;
+  }
+  .notice-panel .notice-panel-title {
+    @apply text-white font-bold text-center mb-4;
+  }
+  .notice-panel .notice-panel-div {
+    @apply h-fit max-h-[70vh] overflow-y-auto;
+  }
+  .ws-msg-user {
+    @apply bg-red-400 rounded-md px-2 cursor-pointer transition-all;
+  }
+  .ws-msg-user:hover {
+    @apply shadow-lg;
+  }
+  .ws-msg-user.registered {
+    @apply bg-green-400;
+  }
+  .ws-msg-user.subscriber {
+    @apply text-blue-700 font-bold;
+  }
+  .ws-msg-user.moderator {
+    @apply italic;
+  }
+  .ws-event-event {
+    @apply px-2 rounded-md cursor-pointer transition-all;
+  }
+  .ws-event-event:hover {
+    @apply shadow-lg;
+  }
+  .ws-event-event.point {
+    @apply bg-green-400;
+  }
+  .ws-event-event.raffle {
+    @apply bg-yellow-400;
+  }
+  .raffle-state {
+    @apply px-2 rounded-md cursor-pointer transition-all uppercase;
+  }
+  .raffle-state.done {
+    @apply bg-green-400;
+  }
+  .raffle-state.pending {
+    @apply bg-yellow-400;
+  }
+}
