@@ -29,7 +29,9 @@ export default function RegisterForm() {
           className="cursor-pointer"
         />
       </div>
-      <h1 className="font-semibold text-2xl mt-4">Welcome to CalssyBeef</h1>
+      <h1 className="font-semibold text-2xl mt-4">
+        Welcome to Miguelangel2345
+      </h1>
       <div className="mt-4 flex gap-1">
         <div
           className={`switch-type ${modal === "login" ? "active" : ""}`}
@@ -49,7 +51,7 @@ export default function RegisterForm() {
           initialValues={{
             email: "",
             password: "",
-            name: "",
+            // name: "",
             agreement: false,
           }}
           validationSchema={Yup.object().shape({
@@ -65,7 +67,7 @@ export default function RegisterForm() {
                 "Password must contain at least one special character"
               )
               .min(8, "Password must be at least 8 characters"),
-            name: Yup.string().required("This field is required"),
+            // name: Yup.string().required("This field is required"),
             agreement: Yup.boolean().oneOf(
               [true],
               "You must agree to the terms and conditions"
@@ -102,12 +104,12 @@ export default function RegisterForm() {
                 className="mt-2"
                 checkDisplay={true}
               ></Field>
-              <Field
+              {/* <Field
                 name="name"
                 component={TextInput}
                 placeholder="kick username"
                 className="mt-2"
-              ></Field>
+              ></Field> */}
               <Field
                 name="agreement"
                 component={CheckBox}

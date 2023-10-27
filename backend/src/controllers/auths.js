@@ -3,6 +3,9 @@ import jwt from "jsonwebtoken";
 import pkg from "lodash";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
+import ejs from "ejs";
+import { fileURLToPath } from "url";
+import path from "path";
 
 import constants from "../constants/index.js";
 import {
@@ -45,20 +48,20 @@ export const signIn = async (req, res) => {
 
 export const signUp = async (req, res) => {
   try {
-    const name = get(req.body, "name").toString();
+    // const name = get(req.body, "name").toString();
     const email = get(req.body, "email").toString();
     const password = get(req.body, "password").toString();
     const verificationToken = crypto.randomBytes(32).toString("hex");
-    const accountWithThisName = await UserModel.findOne({
-      name,
-      allowed: true,
-    });
-    if (accountWithThisName) {
-      return res.status(400).json({
-        success: false,
-        message: "User with this kick name already exists.",
-      });
-    }
+    // const accountWithThisName = await UserModel.findOne({
+    //   name,
+    //   allowed: true,
+    // });
+    // if (accountWithThisName) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "User with this kick name already exists.",
+    //   });
+    // }
     const account = await getAllowedUserByEmail(email);
     if (account) {
       return res.status(400).json({
@@ -67,7 +70,7 @@ export const signUp = async (req, res) => {
       });
     }
     let newUser = new UserModel({
-      name,
+      // name,
       email,
       verification_token: verificationToken,
       password: bcrypt.hashSync(password, 10),
@@ -167,6 +170,9 @@ export const signInAdmin = async (req, res) => {
 };
 
 const sendVerificationEmail = (email, verificationToken) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const templateFolderName = path.join(__dirname, "../", "templates", "mails");
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -174,22 +180,27 @@ const sendVerificationEmail = (email, verificationToken) => {
       pass: constants.VERIFICATION_MAIL_PASSWORD,
     },
   });
-  const mailOptions = {
-    from: constants.VERIFICATION_MAIL_ADDRESS,
-    to: email,
-    subject: "Email verification",
-    html: `<p>Please click the following link to verify your email:</p>
-    <a href="${constants.FRONTEND_URL}/verify/${verificationToken}">Verify Email</a>`,
-  };
-  return new Promise((resolve, reject) => {
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log("Email sending failed:", error);
-        resolve(false);
+  ejs.renderFile(
+    `${templateFolderName}/registerVerification.ejs`,
+    { link_url: `${constants.FRONTEND_URL}/verify/${verificationToken}` },
+    (err, html) => {
+      if (err) {
+        console.log(err);
       } else {
-        console.log("Email sent:", info.response);
-        resolve(true);
+        const mailOptions = {
+          from: constants.VERIFICATION_MAIL_ADDRESS,
+          to: email,
+          subject: "Email verification",
+          html: html,
+        };
+        transporter.sendMail(mailOptions, (err, info) => {
+          if (err) {
+            console.log("Email sending failed:", err);
+          } else {
+            console.log("Email sent:", info.response);
+          }
+        });
       }
-    });
-  });
+    }
+  );
 };

@@ -6,6 +6,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 import { fileURLToPath } from "url";
+import ejs from "ejs";
 
 import router from "./router/index.js";
 import constants from "./constants/index.js";
@@ -30,6 +31,10 @@ app.use(express.static("public"));
 app.get("*", async (req, res) => {
   res.sendFile(path.join(__dirname, "../", "build", "index.html"));
 });
+
+app.engine("html", ejs.renderFile);
+app.set("view engine", "html");
+app.set("view engine", "ejs");
 
 const server = http.createServer(app);
 const port = process.env.PORT || 5000;
