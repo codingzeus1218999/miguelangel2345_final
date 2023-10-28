@@ -7,6 +7,7 @@ import formidable from "formidable";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import ejs from "ejs";
 
 import constants from "../constants/index.js";
 import {
@@ -250,6 +251,9 @@ export const changePassword = async (req, res) => {
 };
 
 const sendForgotPasswordEmail = (email, verificationToken) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const templateFolderName = path.join(__dirname, "../", "templates", "mails");
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -257,24 +261,31 @@ const sendForgotPasswordEmail = (email, verificationToken) => {
       pass: constants.VERIFICATION_MAIL_PASSWORD,
     },
   });
-  const mailOptions = {
-    from: constants.VERIFICATION_MAIL_ADDRESS,
-    to: email,
-    subject: "Did you forget your password?",
-    html: `<p>Please click the following link to to reset your password:</p>
-    <a href="${constants.FRONTEND_URL}/forgot-password/${verificationToken}">Reset Password</a>`,
-  };
-  return new Promise((resolve, reject) => {
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log("Email sending failed:", error);
-        resolve(false);
+  ejs.renderFile(
+    `${templateFolderName}/resetPassword.ejs`,
+    {
+      link_url: `${constants.FRONTEND_URL}/forgot-password/${verificationToken}`,
+    },
+    (err, html) => {
+      if (err) {
+        console.log(err);
       } else {
-        console.log("Email sent:", info.response);
-        resolve(true);
+        const mailOptions = {
+          from: constants.VERIFICATION_MAIL_ADDRESS,
+          to: email,
+          subject: "Did you forget your password?",
+          html: html,
+        };
+        transporter.sendMail(mailOptions, (err, info) => {
+          if (err) {
+            console.log("Email sending failed:", err);
+          } else {
+            console.log("Email sent:", info.response);
+          }
+        });
       }
-    });
-  });
+    }
+  );
 };
 
 export const getUserList = async (req, res) => {
