@@ -154,7 +154,7 @@ export default function Raffle() {
                       >
                         {isSubmitting ? (
                           <div className="mx-auto w-fit">
-                            <MetroSpinner color="#000000" size="25" />
+                            <MetroSpinner color="#000000" size={25} />
                           </div>
                         ) : (
                           "Create"

@@ -15,6 +15,9 @@ import NotFound from "./pages/NotFound";
 
 import { NavProvider } from "./context/NavContext";
 import { UserProvider } from "./context/UserContext";
+import Items from "./pages/Items";
+import AddItem from "./pages/Items/AddItem";
+import EditItem from "./pages/Items/EditItem";
 
 function App() {
   return (
@@ -28,6 +31,9 @@ function App() {
             <Route exact path="/prizes" element={<Prizes />} />
             <Route exact path="/prizes/:id" element={<EditPrize />} />
             <Route exact path="/prizes/add" element={<AddPrize />} />
+            <Route exact path="/items" element={<Items />} />
+            <Route exact path="/items/:id" element={<EditItem />} />
+            <Route exact path="/items/add" element={<AddItem />} />
             <Route
               exact
               path="/chatbot-settings"

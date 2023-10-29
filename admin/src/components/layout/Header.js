@@ -14,6 +14,28 @@ import { UserContext } from "../../context/UserContext";
 import { getUserInfoFromEmail } from "../../apis";
 import constants from "../../constants";
 
+const menu = [
+  { link: "users", name: "users", title: "Users" },
+  { link: "prizes", name: "prizes", title: "Prizes" },
+  { link: "items", name: "items", title: "Items" },
+  {
+    link: "chatbot-settings",
+    name: "chatbot-settings",
+    title: "Chatbot Settings",
+  },
+  {
+    link: "chatbot-history",
+    name: "chatbot-history",
+    title: "Chatbot History",
+  },
+  {
+    link: "chatbot-realtime",
+    name: "chatbot-realtime",
+    title: "Chatbot Realtime",
+  },
+  { link: "raffle", name: "raffle", title: "Raffle" },
+];
+
 export default function Header() {
   const navigate = useNavigate();
   const { isAuthenticated, account, setIsAuthenticated, setAccount } =
@@ -72,33 +94,11 @@ export default function Header() {
       <div className="container mx-auto flex flex-row justify-between items-center">
         <div className="flex flex-row items-center">
           <div className="sm:flex flex-row gap-1 hidden items-center">
-            <Nav onClick={() => onClickNav("users")} name="users">
-              Users
-            </Nav>
-            <Nav onClick={() => onClickNav("prizes")} name="prizes">
-              Prizes
-            </Nav>
-            <Nav
-              onClick={() => onClickNav("chatbot-settings")}
-              name="chatbot-settings"
-            >
-              Chatbot Settings
-            </Nav>
-            <Nav
-              onClick={() => onClickNav("chatbot-history")}
-              name="chatbot-history"
-            >
-              Chatbot History
-            </Nav>
-            <Nav
-              onClick={() => onClickNav("chatbot-realtime")}
-              name="chatbot-realtime"
-            >
-              Chatbot Realtime
-            </Nav>
-            <Nav onClick={() => onClickNav("raffle")} name="raffle">
-              Raffle
-            </Nav>
+            {menu.map((m, idx) => (
+              <Nav key={idx} onClick={() => onClickNav(m.link)} name={m.name}>
+                {m.title}
+              </Nav>
+            ))}
           </div>
         </div>
         {isAuthenticated && (
@@ -131,15 +131,11 @@ export default function Header() {
       <div
         className={`sm:hidden flex-col ${isShowMobileMenu ? "flex" : "hidden"}`}
       >
-        <MobileNav onClick={() => onClickNav("users")} name="users">
-          Users
-        </MobileNav>
-        <MobileNav onClick={() => onClickNav("prizes")} name="prizes">
-          Prizes
-        </MobileNav>
-        <MobileNav onClick={() => onClickNav("commands")} name="commands">
-          Commands
-        </MobileNav>
+        {menu.map((m, idx) => (
+          <MobileNav key={idx} onClick={() => onClickNav(m.link)} name={m.name}>
+            {m.title}
+          </MobileNav>
+        ))}
       </div>
     </header>
   );

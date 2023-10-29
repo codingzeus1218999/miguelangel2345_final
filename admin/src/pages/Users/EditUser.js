@@ -175,7 +175,7 @@ export default function EditUser() {
                     >
                       {isSubmitting ? (
                         <div className="mx-auto w-fit">
-                          <MetroSpinner color="#000000" size="25" />
+                          <MetroSpinner color="#000000" size={25} />
                         </div>
                       ) : (
                         "Save"
@@ -235,7 +235,7 @@ export default function EditUser() {
                     >
                       {isSubmitting ? (
                         <div className="mx-auto w-fit">
-                          <MetroSpinner color="#000000" size="25" />
+                          <MetroSpinner color="#000000" size={25} />
                         </div>
                       ) : (
                         "Save"

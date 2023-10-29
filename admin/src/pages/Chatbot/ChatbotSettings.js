@@ -217,7 +217,7 @@ export default function ChatbotSettings() {
                     >
                       {isSubmitting ? (
                         <div className="mx-auto w-fit">
-                          <MetroSpinner color="#000000" size="25" />
+                          <MetroSpinner color="#000000" size={25} />
                         </div>
                       ) : generalSettings ? (
                         "Update"
@@ -429,7 +429,7 @@ export default function ChatbotSettings() {
                     >
                       {isSubmitting ? (
                         <div className="mx-auto w-fit">
-                          <MetroSpinner color="#000000" size="25" />
+                          <MetroSpinner color="#000000" size={25} />
                         </div>
                       ) : commandSettings ? (
                         "Update"
