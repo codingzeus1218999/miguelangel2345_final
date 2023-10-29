@@ -11,7 +11,7 @@ import PasswordInput from "../../components/ui/PasswordInput";
 import CheckBox from "../../components/ui/CheckBox";
 import Button from "../../components/ui/Button";
 
-import { loginApi } from "../../utils/api";
+import { loginApi } from "../../apis";
 
 import LogoImage from "../../assets/images/logo.svg";
 

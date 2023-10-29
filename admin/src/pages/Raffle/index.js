@@ -13,7 +13,7 @@ import PageSpinner from "../../components/form/PageSpinner";
 
 import { NavContext } from "../../context/NavContext";
 
-import { getRaffleList } from "../../utils/api";
+import { getRaffleList } from "../../apis";
 import constants from "../../constants";
 
 export default function Raffle() {

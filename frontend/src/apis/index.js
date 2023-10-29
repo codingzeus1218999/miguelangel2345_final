@@ -1,20 +1,26 @@
 import axios from "axios";
 import constants from "../constants";
 
-export const registerApi = (data, callback1, callback2) => {
-  axios
-    .post(`${constants.API_URL}/auth/register`, data)
-    .then((res) => callback1(res))
-    .catch((err) => callback2(err));
+export const registerApi = async (data) => {
+  try {
+    const res = await axios.post(`${constants.API_URL}/auth/register`, data);
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
 };
 
-export const verifyEmailApi = (token, callback1, callback2) => {
-  axios
-    .get(`${constants.API_URL}/auth/verify`, {
+export const verifyEmailApi = async (token) => {
+  try {
+    const res = await axios.get(`${constants.API_URL}/auth/verify`, {
       params: { token },
-    })
-    .then((res) => callback1(res))
-    .catch((err) => callback2(err));
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
 };
 
 export const loginApi = (data, callback1, callback2) => {

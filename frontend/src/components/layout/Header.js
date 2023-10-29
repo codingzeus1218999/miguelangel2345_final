@@ -17,7 +17,7 @@ import DefaultAvatarImage from "../../assets/images/avatar.jpg";
 
 import { ModalContext } from "../../context/ModalContext";
 import { UserContext } from "../../context/UserContext";
-import { getUserInfoFromEmail } from "../../utils/api";
+import { getUserInfoFromEmail } from "../../apis";
 import constants from "../../constants";
 
 export default function Header() {

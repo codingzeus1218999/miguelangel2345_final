@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import Point from "../ui/Point";
-import { commafy } from "../../utils/numberUtils";
+import { commafy } from "../../utils";
 import Tick from "../../assets/images/tick.svg";
 
 export default function PrizeCard({

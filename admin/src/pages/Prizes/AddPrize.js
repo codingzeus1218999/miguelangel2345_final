@@ -16,7 +16,7 @@ import { NavContext } from "../../context/NavContext";
 
 import DefaultItemImage from "../../assets/images/money.jfif";
 import { NotificationManager } from "react-notifications";
-import { addPrize } from "../../utils/api";
+import { addPrize } from "../../apis";
 
 export default function AddPrize() {
   const { setNav } = useContext(NavContext);

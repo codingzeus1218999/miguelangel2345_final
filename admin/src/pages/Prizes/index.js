@@ -15,8 +15,8 @@ import { NavContext } from "../../context/NavContext";
 
 import DefaultItemImage from "../../assets/images/money.jfif";
 
-import { commafy } from "../../utils/numberUtils";
-import { getPrizeList, deletePrizeApi } from "../../utils/api";
+import { commafy } from "../../utils";
+import { getPrizeList, deletePrizeApi } from "../../apis";
 import constants from "../../constants";
 
 const customStyles = {

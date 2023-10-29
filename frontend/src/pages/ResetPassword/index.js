@@ -7,7 +7,7 @@ import { MetroSpinner } from "react-spinners-kit";
 import PasswordInput from "../../components/ui/PasswordInput";
 import Button from "../../components/ui/Button";
 
-import { verifyPwdTokenApi, resetPasswordApi } from "../../utils/api";
+import { verifyPwdTokenApi, resetPasswordApi } from "../../apis";
 import { NotificationManager } from "react-notifications";
 
 export default function ResetPassword() {

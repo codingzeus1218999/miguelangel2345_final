@@ -14,8 +14,8 @@ import DefaultAvatarImage from "../../assets/images/avatar.jpg";
 
 import { NavContext } from "../../context/NavContext";
 
-import { commafy } from "../../utils/numberUtils";
-import { getUserList } from "../../utils/api";
+import { commafy } from "../../utils";
+import { getUserList } from "../../apis";
 import constants from "../../constants";
 
 const columns = [

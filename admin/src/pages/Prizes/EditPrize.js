@@ -15,7 +15,7 @@ import SelectField from "../../components/ui/SelectField";
 
 import { NavContext } from "../../context/NavContext";
 
-import { editPrize, getPrizeInfoById } from "../../utils/api";
+import { editPrize, getPrizeInfoById } from "../../apis";
 
 import DefaultItemImage from "../../assets/images/money.jfif";
 import constants from "../../constants";

@@ -7,7 +7,7 @@ import DefaultAvatarImage from "../../assets/images/avatar.jpg";
 
 import { UserContext } from "../../context/UserContext";
 import { NotificationManager } from "react-notifications";
-import { removeAvatar, uploadAvatar } from "../../utils/api";
+import { removeAvatar, uploadAvatar } from "../../apis";
 import constants from "../../constants";
 
 export default function AvatarUpload() {

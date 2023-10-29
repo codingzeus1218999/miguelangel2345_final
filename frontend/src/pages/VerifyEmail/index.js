@@ -1,57 +1,82 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ImpulseSpinner } from "react-spinners-kit";
+import { useParams } from "react-router-dom";
+import * as Yup from "yup";
 
 import Button from "../../components/ui/Button";
 
-import { verifyEmailApi } from "../../utils/api";
+import { verifyEmailApi } from "../../apis";
+import { NotificationManager } from "react-notifications";
+import { Field, Form, Formik } from "formik";
+import TextInput from "../../components/ui/TextInput";
+import { MetroSpinner } from "react-spinners-kit";
 
 export default function VerifyEmail() {
-  const navigator = useNavigate();
-
   const { token } = useParams();
-  const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(null);
-  useEffect(() => {
-    verifyEmailApi(
-      token,
-      (res) => {
-        localStorage.setItem("token", res.data.token);
-        setSuccess(true);
-      },
-      (err) => {
-        setSuccess(false);
-        err.response.data.success === false
-          ? setErrMsg(err.response.data.message)
-          : setErrMsg("Something is wrong.");
+  const [email, setEmail] = useState("");
+  const verifyToken = async () => {
+    try {
+      const res = await verifyEmailApi(token);
+      if (res.success) {
+        setEmail(res.data.email);
+      } else {
+        NotificationManager.error(res.message);
       }
-    );
-  }, [token]);
-  useEffect(() => {
-    if (success) {
-      setTimeout(() => {
-        navigator("/");
-      }, 2000);
+    } catch (err) {
+      console.log(err);
+      NotificationManager.error("Something went wrong in verifying token");
     }
-  }, [success, navigator]);
+  };
+  useEffect(() => {
+    verifyToken();
+  }, [token]);
   return (
-    <div className="flex flex-row justify-center items-center mt-32">
-      <div className="text-center pt-box p-12 rounded-md">
-        <h1 className="text-white font-extrabold text-4xl text-center">
-          {success ? `Welcome to miguelangel2345` : `I'm so sorry`}
-        </h1>
-        {success && (
-          <div className="mt-6 text-center mx-auto w-fit">
-            <ImpulseSpinner />
+    <div className="flex flex-col justify-center items-center mt-32 gap-10">
+      {email ? (
+        <>
+          <h1 className="text-5xl text-red-400 font-bold text-center">
+            Hi, input your username of kick
+          </h1>
+          <div className="rounded-md bg-pt-black-100 p-4 w-[406px] max-w-full">
+            <Formik
+              initialValues={{ name: "" }}
+              validationSchema={Yup.object().shape({
+                name: Yup.string().required("This field is required"),
+              })}
+              onSubmit={async (values, actions) => {
+                console.log(values);
+              }}
+            >
+              {({ isSubmitting, isValid }) => (
+                <Form className="text-black">
+                  <Field
+                    name="name"
+                    component={TextInput}
+                    placeholder="kick name"
+                  />
+                  <Button
+                    type="submit"
+                    className="w-full text-black mt-2"
+                    disabled={isSubmitting || !isValid}
+                  >
+                    {isSubmitting ? (
+                      <div className="mx-auto w-fit">
+                        <MetroSpinner color="#000000" size={25} />
+                      </div>
+                    ) : (
+                      "continue verification"
+                    )}
+                  </Button>
+                </Form>
+              )}
+            </Formik>
           </div>
-        )}
-        <h1 className="text-white text-center mt-6">
-          {success ? "Redirecting to homepage..." : errMsg}
-        </h1>
-        <Button className="mt-6" onClick={() => navigator("/")}>
-          Return to homepage
-        </Button>
-      </div>
+        </>
+      ) : (
+        <div className="text-5xl text-red-400 font-bold text-center">
+          <h1>Email verification failed</h1>
+          <h1 className="mt-10">Please retry. :(</h1>
+        </div>
+      )}
     </div>
   );
 }

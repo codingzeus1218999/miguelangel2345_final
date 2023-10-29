@@ -11,7 +11,7 @@ import HamburgerImage from "../../assets/images/hamburger.svg";
 import CloseImage from "../../assets/images/close.svg";
 import DefaultAvatarImage from "../../assets/images/avatar.jpg";
 import { UserContext } from "../../context/UserContext";
-import { getUserInfoFromEmail } from "../../utils/api";
+import { getUserInfoFromEmail } from "../../apis";
 import constants from "../../constants";
 
 export default function Header() {

@@ -6,7 +6,7 @@ import Button from "../ui/Button";
 
 import DefaultAvatarImage from "../../assets/images/avatar.jpg";
 
-import { removeUserAvatar, uploadUserAvatar } from "../../utils/api";
+import { removeUserAvatar, uploadUserAvatar } from "../../apis";
 import constants from "../../constants";
 
 export default function AvatarUpload({ email, avatar }) {

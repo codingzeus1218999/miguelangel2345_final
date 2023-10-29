@@ -8,7 +8,7 @@ import Button from "../ui/Button";
 import TextInput from "../ui/TextInput";
 
 import { ModalContext } from "../../context/ModalContext";
-import { forgotPasswordApi } from "../../utils/api";
+import { forgotPasswordApi } from "../../apis";
 import { NotificationManager } from "react-notifications";
 
 export default function ForgotForm() {

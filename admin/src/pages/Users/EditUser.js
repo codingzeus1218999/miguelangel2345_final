@@ -22,8 +22,8 @@ import {
   changeUserModerator,
   changeUserState,
   changeUserRole,
-} from "../../utils/api";
-import { commafy } from "../../utils/numberUtils";
+} from "../../apis";
+import { commafy } from "../../utils";
 
 export default function EditUser() {
   const { setNav } = useContext(NavContext);

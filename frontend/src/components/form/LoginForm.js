@@ -15,7 +15,7 @@ import CheckBox from "../ui/CheckBox";
 import { UserContext } from "../../context/UserContext";
 import { ModalContext } from "../../context/ModalContext";
 
-import { loginApi } from "../../utils/api";
+import { loginApi } from "../../apis";
 
 export default function LoginForm() {
   const { modal, setModal } = useContext(ModalContext);

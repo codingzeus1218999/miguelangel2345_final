@@ -251,41 +251,54 @@ export const changePassword = async (req, res) => {
 };
 
 const sendForgotPasswordEmail = (email, verificationToken) => {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-  const templateFolderName = path.join(__dirname, "../", "templates", "mails");
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: constants.VERIFICATION_MAIL_ADDRESS,
-      pass: constants.VERIFICATION_MAIL_PASSWORD,
-    },
-  });
-  ejs.renderFile(
-    `${templateFolderName}/resetPassword.ejs`,
-    {
-      link_url: `${constants.FRONTEND_URL}/forgot-password/${verificationToken}`,
-    },
-    (err, html) => {
-      if (err) {
-        console.log(err);
-      } else {
-        const mailOptions = {
-          from: constants.VERIFICATION_MAIL_ADDRESS,
-          to: email,
-          subject: "Did you forget your password?",
-          html: html,
-        };
-        transporter.sendMail(mailOptions, (err, info) => {
-          if (err) {
-            console.log("Email sending failed:", err);
-          } else {
-            console.log("Email sent:", info.response);
-          }
-        });
+  return new Promise((resolve, reject) => {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const templateFolderName = path.join(
+      __dirname,
+      "../",
+      "templates",
+      "mails"
+    );
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: constants.VERIFICATION_MAIL_ADDRESS,
+        pass: constants.VERIFICATION_MAIL_PASSWORD,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+    ejs.renderFile(
+      `${templateFolderName}/resetPassword.ejs`,
+      {
+        link_url: `${constants.FRONTEND_URL}/forgot-password/${verificationToken}`,
+      },
+      (err, html) => {
+        if (err) {
+          console.log(err);
+          resolve(false);
+        } else {
+          const mailOptions = {
+            from: constants.VERIFICATION_MAIL_ADDRESS,
+            to: email,
+            subject: "Did you forget your password?",
+            html: html,
+          };
+          transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+              console.log("Email sending failed:", err);
+              resolve(false);
+            } else {
+              console.log("Email sent:", info.response);
+              resolve(true);
+            }
+          });
+        }
       }
-    }
-  );
+    );
+  });
 };
 
 export const getUserList = async (req, res) => {

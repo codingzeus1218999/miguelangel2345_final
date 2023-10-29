@@ -13,7 +13,7 @@ import Button from "../ui/Button";
 import TextInput from "../ui/TextInput";
 import PasswordInput from "../ui/PasswordInput";
 import CheckBox from "../ui/CheckBox";
-import { registerApi } from "../../utils/api";
+import { registerApi } from "../../apis";
 
 export default function RegisterForm() {
   const { modal, setModal } = useContext(ModalContext);
@@ -51,7 +51,6 @@ export default function RegisterForm() {
           initialValues={{
             email: "",
             password: "",
-            // name: "",
             agreement: false,
           }}
           validationSchema={Yup.object().shape({
@@ -67,31 +66,28 @@ export default function RegisterForm() {
                 "Password must contain at least one special character"
               )
               .min(8, "Password must be at least 8 characters"),
-            // name: Yup.string().required("This field is required"),
             agreement: Yup.boolean().oneOf(
               [true],
               "You must agree to the terms and conditions"
             ),
           })}
-          onSubmit={(values, actions) => {
-            registerApi(
-              values,
-              (res) => {
-                actions.setSubmitting(false);
+          onSubmit={async (values, actions) => {
+            try {
+              const res = await registerApi(values);
+              if (res.success) {
                 setModal("");
-                NotificationManager.info(
-                  "Email sent. Please check your mailbox."
-                );
-              },
-              (err) => {
-                actions.setSubmitting(false);
-                err.response.data.success === false
-                  ? NotificationManager.error(err.response.data.message)
-                  : NotificationManager.error(
-                      "Something is wrong, please try again."
-                    );
+                NotificationManager.info(res.message);
+              } else {
+                NotificationManager.error(res.message);
               }
-            );
+            } catch (err) {
+              console.log(err);
+              NotificationManager.error(
+                "Something went wrong in sending verification email"
+              );
+            } finally {
+              actions.setSubmitting(false);
+            }
           }}
         >
           {({ isSubmitting, isValid }) => (
@@ -104,12 +100,6 @@ export default function RegisterForm() {
                 className="mt-2"
                 checkDisplay={true}
               ></Field>
-              {/* <Field
-                name="name"
-                component={TextInput}
-                placeholder="kick username"
-                className="mt-2"
-              ></Field> */}
               <Field
                 name="agreement"
                 component={CheckBox}
@@ -123,7 +113,7 @@ export default function RegisterForm() {
               >
                 {isSubmitting ? (
                   <div className="mx-auto w-fit">
-                    <MetroSpinner color="#000000" size="25" />
+                    <MetroSpinner color="#000000" size={25} />
                   </div>
                 ) : (
                   "Create Account"

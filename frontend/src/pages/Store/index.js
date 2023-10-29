@@ -13,7 +13,7 @@ import ImageMerch from "../../assets/images/merch.webp";
 
 import { NavContext } from "../../context/NavContext";
 import { ModalContext } from "../../context/ModalContext";
-import { getPrizes } from "../../utils/api";
+import { getPrizes } from "../../apis";
 import constants from "../../constants";
 
 export default function Store() {

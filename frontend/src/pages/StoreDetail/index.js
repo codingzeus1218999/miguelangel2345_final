@@ -15,8 +15,8 @@ import BackImage from "../../assets/images/back.svg";
 import { NavContext } from "../../context/NavContext";
 import { UserContext } from "../../context/UserContext";
 import { ModalContext } from "../../context/ModalContext";
-import { getLatestPrizes, getPrizeInfoById } from "../../utils/api";
-import { commafy } from "../../utils/numberUtils";
+import { getLatestPrizes, getPrizeInfoById } from "../../apis";
+import { commafy } from "../../utils";
 import constants from "../../constants";
 
 export default function News() {

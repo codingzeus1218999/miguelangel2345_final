@@ -11,8 +11,8 @@ import PasswordInput from "../../components/ui/PasswordInput";
 
 import { NavContext } from "../../context/NavContext";
 import { UserContext } from "../../context/UserContext";
-import { commafy } from "../../utils/numberUtils";
-import { changePassword, updateInfo } from "../../utils/api";
+import { commafy } from "../../utils";
+import { changePassword, updateInfo } from "../../apis";
 import { NotificationManager } from "react-notifications";
 
 export default function Profile() {

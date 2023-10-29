@@ -1,5 +1,5 @@
 const MONGODB_URL = "mongodb://127.0.0.1:27017/miguelangel2345";
-const FRONTEND_URL = "http://localhost:3000";
+const FRONTEND_URL = "http://localhost:3010";
 const SECRET = "miguelangel2345";
 const EXPIRESTIME = "2h";
 const EXPIRESFOREVERTIME = "365d";

@@ -19,7 +19,7 @@ import {
   getChatbotSettingsCommand,
   createChatbotSettingsCommand,
   updateChatbotSettingsCommand,
-} from "../../utils/api";
+} from "../../apis";
 import PageSpinner from "../../components/form/PageSpinner";
 
 export default function ChatbotSettings() {

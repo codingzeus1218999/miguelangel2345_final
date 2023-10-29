@@ -5,7 +5,7 @@ import moment from "moment";
 import Layout from "../../components/layout";
 import Button from "../../components/ui/Button";
 import { NavContext } from "../../context/NavContext";
-import { getChatbotEvents, getChatbotMessages } from "../../utils/api";
+import { getChatbotEvents, getChatbotMessages } from "../../apis";
 import PageSpinner from "../../components/form/PageSpinner";
 
 export default function ChatbotHistory() {
