@@ -210,3 +210,42 @@ const sendVerificationEmail = (email, verificationToken) => {
     );
   });
 };
+
+export const verifiedTwoStep = async (req, res) => {
+  const name = get(req.body, "name");
+  const token = get(req.body, "token");
+
+  const user = await UserModel.findOne({ verification_token: token });
+  if (user) {
+    user.name = name;
+    user.allowed = true;
+    user
+      .save()
+      .then((account) => {
+        printMessage(`${name} has been verified two steps`, "success");
+        return res.status(200).json({
+          success: true,
+          message: "Successfully verified your email and kick name",
+          data: {
+            token: jwt.sign({ email: account.email }, constants.SECRET, {
+              expiresIn: constants.EXPIRESTIME,
+            }),
+          },
+        });
+      })
+      .catch((err) => {
+        printMessage(err, "error");
+        return res.status(400).json({
+          success: false,
+          message: "Failed saving the username",
+          data: {},
+        });
+      });
+  } else {
+    return res.status(400).json({
+      success: false,
+      message: "There is no user with this token",
+      data: {},
+    });
+  }
+};

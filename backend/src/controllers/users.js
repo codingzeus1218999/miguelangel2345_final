@@ -17,6 +17,7 @@ import {
   getUserByForgotPasswordToken,
   getUsersByQuery,
 } from "../db/users.js";
+import { printMessage } from "../utils/index.js";
 
 const { get } = pkg;
 

@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 
 import Button from "../../components/ui/Button";
 
-import { verifyEmailApi } from "../../apis";
+import { getKickInfoByName, verifiedTwoStep, verifyEmailApi } from "../../apis";
 import { NotificationManager } from "react-notifications";
 import { Field, Form, Formik } from "formik";
 import TextInput from "../../components/ui/TextInput";
 import { MetroSpinner } from "react-spinners-kit";
+import { generateVerificationRandomCode } from "../../utils";
 
 export default function VerifyEmail() {
+  const navigate = useNavigate();
   const { token } = useParams();
   const [email, setEmail] = useState("");
+  const [verificationRandomCode, setVerificationRandomCode] = useState("");
   const verifyToken = async () => {
     try {
       const res = await verifyEmailApi(token);
@@ -28,14 +31,23 @@ export default function VerifyEmail() {
   };
   useEffect(() => {
     verifyToken();
+    setVerificationRandomCode(generateVerificationRandomCode());
   }, [token]);
   return (
     <div className="flex flex-col justify-center items-center mt-32 gap-10">
       {email ? (
         <>
-          <h1 className="text-5xl text-red-400 font-bold text-center">
-            Hi, input your username of kick
-          </h1>
+          <div className="text-xl text-gray-400 text-center">
+            <p>
+              Paste the folowwing code somewhere in bio field of kick site and
+              save.
+            </p>
+            <br />
+            <p className="underline">{verificationRandomCode}</p>
+            <br />
+            <p>Input your username of kick site and click the below button.</p>
+            <p>Please remove this code from your bio later. :)</p>
+          </div>
           <div className="rounded-md bg-pt-black-100 p-4 w-[406px] max-w-full">
             <Formik
               initialValues={{ name: "" }}
@@ -43,7 +55,44 @@ export default function VerifyEmail() {
                 name: Yup.string().required("This field is required"),
               })}
               onSubmit={async (values, actions) => {
-                console.log(values);
+                try {
+                  const kickUser = await getKickInfoByName(values.name);
+                  if (kickUser?.user?.username === values.name) {
+                    if (kickUser?.user?.bio.includes(verificationRandomCode)) {
+                      try {
+                        const res = await verifiedTwoStep({
+                          name: values.name,
+                          token,
+                        });
+                        if (res.success) {
+                          localStorage.setItem("token", res.data.token);
+                          NotificationManager.success(res.message);
+                          navigate("/");
+                        } else {
+                          NotificationManager.error(res.message);
+                        }
+                      } catch (err) {
+                        console.log(err);
+                        NotificationManager.error(
+                          "Two step verification failed"
+                        );
+                      }
+                    } else {
+                      NotificationManager.error(
+                        "Verification of your kick name is failed"
+                      );
+                    }
+                  } else {
+                    NotificationManager.error(
+                      "There is no user with this kick name"
+                    );
+                  }
+                } catch (err) {
+                  console.log(err);
+                  NotificationManager.error(
+                    "Something went wrong in connecting with kick.com"
+                  );
+                }
               }}
             >
               {({ isSubmitting, isValid }) => (

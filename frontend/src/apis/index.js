@@ -141,3 +141,26 @@ export const getLatestPrizes = async () => {
     console.log(err);
   }
 };
+
+export const getKickInfoByName = async (id) => {
+  try {
+    const res = await axios.get(`${constants.KICK_API_URL}/${id}`);
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const verifiedTwoStep = async (data) => {
+  try {
+    const res = await axios.put(
+      `${constants.API_URL}/auth/verified-two-step`,
+      data
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
