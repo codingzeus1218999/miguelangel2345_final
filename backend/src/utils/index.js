@@ -12,7 +12,7 @@ export const printMessage = (msg, state) => {
       console.log(msg.bgWhite.yellow);
       break;
     case "error":
-      console.log(msg.bgYellow.red);
+      console.log(`${msg}`.bgYellow.red);
       break;
     default:
       console.log(msg);

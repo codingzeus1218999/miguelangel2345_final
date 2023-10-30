@@ -7,8 +7,17 @@ import { NotificationManager } from "react-notifications";
 
 import Layout from "../../components/layout";
 import { NavContext } from "../../context/NavContext";
-import { TextInput, TypeRadio, Button } from "../../components/ui";
+import {
+  TextInput,
+  TypeRadio,
+  Button,
+  TextArea,
+  NumberInput,
+  Check,
+  AddMultiValues,
+} from "../../components/ui";
 import { ProductDefault } from "../../assets/images";
+import { addItem } from "../../apis";
 
 export default function AddItem() {
   const { setNav } = useContext(NavContext);
@@ -71,29 +80,45 @@ export default function AddItem() {
             type: Yup.string()
               .oneOf(["redeem", "key", "raffle"])
               .required("This field is required"),
-            // name: Yup.string().required("This field is required"),
-            // cost: Yup.number()
-            //   .min(0, "Minimum cost is 0")
-            //   .required("This field is required"),
-            // quantity: Yup.number()
-            //   .min(-1, "Minimum quantity is -1")
-            //   .required("This field is required"),
-            // coolDownGlobal: Yup.number()
-            //   .min(0, "Minimum cooldown is 0")
-            //   .required("This field is required"),
-            // coolDownUser: Yup.number()
-            //   .min(0, "Minimum cooldown is 0")
-            //   .required("This field is required"),
-            // isNoticeInChat: Yup.boolean(),
-            // shouldBeSubscriber: Yup.boolean(),
-            // shouldDiscard: Yup.boolean(),
-            // selectRandom: Yup.boolean(),
+            name: Yup.string().required("This field is required"),
+            cost: Yup.number()
+              .min(0, "Minimum cost is 0")
+              .required("This field is required"),
+            quantity: Yup.number()
+              .min(-1, "Minimum quantity is -1")
+              .required("This field is required"),
+            coolDownGlobal: Yup.number()
+              .min(0, "Minimum cooldown is 0")
+              .required("This field is required"),
+            coolDownUser: Yup.number()
+              .min(0, "Minimum cooldown is 0")
+              .required("This field is required"),
+            isNoticeInChat: Yup.boolean(),
+            shouldBeSubscriber: Yup.boolean(),
+            shouldDiscard: Yup.boolean(),
+            selectRandom: Yup.boolean(),
           })}
           onSubmit={async (values, actions) => {
             const formData = new FormData();
             formData.append("image", selectedImage);
             formData.append("info", JSON.stringify(values));
-            console.log(values);
+            try {
+              const res = await addItem(formData);
+              if (res.success) {
+                NotificationManager.success(res.message);
+                setDisplayImage(ProductDefault);
+                setComponentState("");
+                setSelectedImage(null);
+                setItemType("redeem");
+                actions.resetForm();
+              } else {
+                NotificationManager.error(res.message);
+              }
+            } catch (err) {
+              NotificationManager.error("Something is wrong, please try again");
+            } finally {
+              actions.setSubmitting(false);
+            }
           }}
         >
           {({ isValid, isSubmitting }) => (
@@ -115,9 +140,9 @@ export default function AddItem() {
                 }}
               />
               <div className="grid md:grid-cols-3 gap-10 mt-6">
-                <div>
+                <div className="flex flex-col gap-6">
                   <div>
-                    <div className="flex flex-col justify-center gap-6 items-center w-full">
+                    <div className="flex flex-col justify-center gap-3 items-center w-full">
                       <img
                         alt="item"
                         src={displayImage}
@@ -141,8 +166,79 @@ export default function AddItem() {
                   </div>
                   <Field name="name" component={TextInput} placeholder="name" />
                 </div>
-                <div></div>
-                <div></div>
+                <div className="flex flex-col gap-6">
+                  <Field
+                    name="cost"
+                    component={NumberInput}
+                    placeholder="cost"
+                  />
+                  {(itemType === "redeem" || itemType === "raffle") && (
+                    <Field
+                      name="quantity"
+                      component={NumberInput}
+                      placeholder="quantity"
+                      min={-1}
+                    />
+                  )}
+                  <Field
+                    name="coolDownGlobal"
+                    component={NumberInput}
+                    placeholder="global cooldown second"
+                  />
+                  <Field
+                    name="coolDownUser"
+                    component={NumberInput}
+                    placeholder="user cooldown seconds"
+                  />
+                  {itemType === "key" && (
+                    <Field
+                      name="codes"
+                      component={AddMultiValues}
+                      placeholder="List of access codes"
+                      title="Add code"
+                    />
+                  )}
+                </div>
+                <div className="flex flex-col gap-6">
+                  <Field
+                    name="description"
+                    component={TextArea}
+                    rows={6}
+                    placeholder="description"
+                  />
+                  {itemType === "redeem" && (
+                    <Field
+                      name="requirements"
+                      component={AddMultiValues}
+                      placeholder="Additional Requirements"
+                      title="Add requirement"
+                    />
+                  )}
+                  <Field
+                    name="isNoticeInChat"
+                    component={Check}
+                    title="Send confirmation when redeeming via chat"
+                  />
+                  <Field
+                    name="shouldBeSubscriber"
+                    component={Check}
+                    title="Subscriber only"
+                  />
+                  {itemType === "key" && (
+                    <Field
+                      name="shouldDiscard"
+                      component={Check}
+                      title="Once a key has been given out, do not give it out again"
+                    />
+                  )}
+                  {itemType === "key" && (
+                    <Field
+                      name="selectRandom"
+                      component={Check}
+                      title="Dispense keys randomly"
+                    />
+                  )}
+                </div>
               </div>
               <Button
                 type="submit"

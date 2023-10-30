@@ -1,0 +1,12 @@
+.pt-multi-items {
+  @apply rounded-md bg-pt-black-100 p-4 text-white;
+  & .placeholder {
+    @apply font-bold uppercase;
+  }
+  & .input-field {
+    @apply w-full bg-pt-black-100 border-b border-pt-black-600;
+    &:focus-visible {
+      @apply outline-none;
+    }
+  }
+}

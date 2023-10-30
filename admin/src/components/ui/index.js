@@ -3,6 +3,7 @@ import TextInput from "./TextInput";
 import AvatarUpload from "./AvatarUpload";
 import Button from "./Button";
 import CheckBox from "./CheckBox";
+import Check from "./Check";
 import Dropdown from "./Dropdown";
 import MobileNav from "./MobileNav";
 import Nav from "./Nav";
@@ -13,6 +14,7 @@ import SelectField from "./SelectField";
 import StatusBadge from "./StatusBadge";
 import SwitchField from "./SwitchField";
 import TextArea from "./TextArea";
+import AddMultiValues from "./AddMultiValues";
 
 export {
   TypeRadio,
@@ -20,6 +22,7 @@ export {
   AvatarUpload,
   Button,
   CheckBox,
+  Check,
   Dropdown,
   MobileNav,
   Nav,
@@ -30,4 +33,5 @@ export {
   StatusBadge,
   SwitchField,
   TextArea,
+  AddMultiValues,
 };

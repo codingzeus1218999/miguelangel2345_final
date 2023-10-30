@@ -2,6 +2,7 @@ import express from "express";
 import auths from "./auths.js";
 import users from "./users.js";
 import prizes from "./prizes.js";
+import items from "./items.js";
 import raffles from "./raffles.js";
 import chatbotSettingsGeneral from "./chatbotSettingsGeneral.js";
 import chatbotSettingsCommand from "./chatbotSettingsCommand.js";
@@ -15,6 +16,7 @@ export default () => {
   auths(router);
   users(router);
   prizes(router);
+  items(router);
   raffles(router);
   chatbotSettingsGeneral(router);
   chatbotSettingsCommand(router);

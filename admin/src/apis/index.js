@@ -385,3 +385,21 @@ export const getRaffleList = async (count) => {
     console.log(err);
   }
 };
+
+export const addItem = async (formData) => {
+  try {
+    const res = await axios.post(`${constants.ADMIN_API_URL}/item`, formData, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
+        "x-rapidapi-host": "file-upload8.p.rapidapi.com",
+        "x-rapidapi-key": "your-rapidapi-key-here",
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};

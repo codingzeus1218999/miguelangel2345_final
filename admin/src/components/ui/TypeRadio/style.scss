@@ -1,7 +1,7 @@
 .pt-type-radio-container {
   @apply rounded-md bg-pt-black-100 p-4 text-white;
   & .placeholder {
-    @apply text-white font-bold;
+    @apply text-white font-bold uppercase;
   }
   & .item {
     @apply cursor-pointer flex flex-row gap-2 items-center;

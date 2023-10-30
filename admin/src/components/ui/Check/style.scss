@@ -1,0 +1,11 @@
+.pt-check-container {
+  @apply flex flex-row gap-3 items-center;
+  & label {
+    @apply text-white;
+  }
+  &.has-error {
+    & label {
+      @apply text-red-400 border-b border-red-400;
+    }
+  }
+}
