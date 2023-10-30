@@ -1,15 +1,14 @@
 import express from "express";
 import http from "http";
-import path from "path";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
-import { fileURLToPath } from "url";
 import ejs from "ejs";
 
 import router from "./router/index.js";
 import constants from "./constants/index.js";
+import { printMessage } from "./utils/index.js";
 
 dotenv.config();
 
@@ -24,13 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use("/api", router());
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "../", "build")));
 app.use(express.static("public"));
-app.get("*", async (req, res) => {
-  res.sendFile(path.join(__dirname, "../", "build", "index.html"));
-});
 
 app.engine("html", ejs.renderFile);
 app.set("view engine", "html");
@@ -40,7 +33,7 @@ const server = http.createServer(app);
 const port = process.env.PORT || 5000;
 
 server.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  printMessage(`Server is running on http://localhost:${port}`, "info");
 });
 
 mongoose
@@ -49,8 +42,8 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("MongoDB has been connected...");
+    printMessage("MongoDB has been connected...", "info");
   })
   .catch((err) => {
-    console.log(err);
+    printMessage(err, "error");
   });

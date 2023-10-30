@@ -6,10 +6,12 @@ import Avatar from "react-avatar";
 import { NotificationManager } from "react-notifications";
 import { useNavigate } from "react-router-dom";
 
-import TextInput from "../../components/ui/TextInput";
-import PasswordInput from "../../components/ui/PasswordInput";
-import CheckBox from "../../components/ui/CheckBox";
-import Button from "../../components/ui/Button";
+import {
+  TextInput,
+  PasswordInput,
+  CheckBox,
+  Button,
+} from "../../components/ui";
 
 import { loginApi } from "../../apis";
 

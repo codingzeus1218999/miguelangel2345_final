@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import Layout from "../../components/layout";
-import Button from "../../components/ui/Button";
+import { Button } from "../../components/ui";
 
 import { NavContext } from "../../context/NavContext";
 

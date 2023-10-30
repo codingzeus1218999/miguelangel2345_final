@@ -6,18 +6,21 @@ import { NotificationManager } from "react-notifications";
 import { MetroSpinner } from "react-spinners-kit";
 
 import Layout from "../../components/layout";
-import Button from "../../components/ui/Button";
-import TextInput from "../../components/ui/TextInput";
-import NumberInput from "../../components/ui/NumberInput";
-import TextArea from "../../components/ui/TextArea";
-import SwitchField from "../../components/ui/SwitchField";
-import SelectField from "../../components/ui/SelectField";
+
+import {
+  Button,
+  NumberInput,
+  TextArea,
+  TextInput,
+  SwitchField,
+  SelectField,
+} from "../../components/ui";
 
 import { NavContext } from "../../context/NavContext";
 
 import { editPrize, getPrizeInfoById } from "../../apis";
 
-import DefaultItemImage from "../../assets/images/money.jfif";
+import { ProductDefault } from "../../assets/images";
 import constants from "../../constants";
 
 export default function EditPrize() {
@@ -25,7 +28,7 @@ export default function EditPrize() {
   const { id } = useParams();
   const [prizeInfo, setPrizeInfo] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
-  const [displayImage, setDisplayImage] = useState(DefaultItemImage);
+  const [displayImage, setDisplayImage] = useState(ProductDefault);
   const [componentState, setComponentState] = useState("");
   const fileInputRef = useRef(null);
 
@@ -44,7 +47,7 @@ export default function EditPrize() {
 
   const onImageRemove = (callback) => {
     setSelectedImage(null);
-    setDisplayImage(DefaultItemImage);
+    setDisplayImage(ProductDefault);
     setComponentState("");
     callback();
   };

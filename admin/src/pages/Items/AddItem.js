@@ -1,25 +1,166 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Field, Form, Formik } from "formik";
+import * as Yup from "yup";
+import { MetroSpinner } from "react-spinners-kit";
+import { NotificationManager } from "react-notifications";
 
 import Layout from "../../components/layout";
-import Button from "../../components/ui/Button";
-
 import { NavContext } from "../../context/NavContext";
+import { TextInput, TypeRadio, Button } from "../../components/ui";
+import { ProductDefault } from "../../assets/images";
 
 export default function AddItem() {
   const { setNav } = useContext(NavContext);
+  const [itemType, setItemType] = useState("redeem");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [displayImage, setDisplayImage] = useState(ProductDefault);
+  const [componentState, setComponentState] = useState("");
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     setNav("items");
   }, [setNav]);
 
+  const onImageChange = (e) => {
+    setSelectedImage(e.target.files[0]);
+    setComponentState("set");
+    let reader = new FileReader();
+    reader.readAsDataURL(e.target.files[0]);
+    reader.onload = () => {
+      setDisplayImage(reader.result);
+    };
+    reader.onerror = (err) => {
+      NotificationManager.error(err);
+    };
+  };
+
+  const onImageRemove = () => {
+    setSelectedImage(null);
+    setDisplayImage(ProductDefault);
+    setComponentState("");
+  };
+
   return (
     <Layout>
-      <h1 className="page-title">Add Item</h1>
-      <Link to="/items" className="mt-6 block w-fit">
-        <Button>back to list</Button>
-      </Link>
-      <div className="mt-6"></div>
+      <div className="flex justify-between items-center">
+        <h1 className="page-title">Add Item</h1>
+        <Link to="/items" className="block w-fit">
+          <Button>back to list</Button>
+        </Link>
+      </div>
+      <div className="mt-6">
+        <Formik
+          initialValues={{
+            type: "redeem",
+            name: "",
+            description: "",
+            cost: 0,
+            quantity: -1,
+            coolDownGlobal: 0,
+            coolDownUser: 0,
+            image: null,
+            isNoticeInChat: false,
+            shouldBeSubscriber: false,
+            requirements: [],
+            codes: [],
+            shouldDiscard: false,
+            selectRandom: false,
+          }}
+          validationSchema={Yup.object().shape({
+            type: Yup.string()
+              .oneOf(["redeem", "key", "raffle"])
+              .required("This field is required"),
+            // name: Yup.string().required("This field is required"),
+            // cost: Yup.number()
+            //   .min(0, "Minimum cost is 0")
+            //   .required("This field is required"),
+            // quantity: Yup.number()
+            //   .min(-1, "Minimum quantity is -1")
+            //   .required("This field is required"),
+            // coolDownGlobal: Yup.number()
+            //   .min(0, "Minimum cooldown is 0")
+            //   .required("This field is required"),
+            // coolDownUser: Yup.number()
+            //   .min(0, "Minimum cooldown is 0")
+            //   .required("This field is required"),
+            // isNoticeInChat: Yup.boolean(),
+            // shouldBeSubscriber: Yup.boolean(),
+            // shouldDiscard: Yup.boolean(),
+            // selectRandom: Yup.boolean(),
+          })}
+          onSubmit={async (values, actions) => {
+            const formData = new FormData();
+            formData.append("image", selectedImage);
+            formData.append("info", JSON.stringify(values));
+            console.log(values);
+          }}
+        >
+          {({ isValid, isSubmitting }) => (
+            <Form>
+              <Field
+                name="type"
+                placeholder="Item type"
+                component={TypeRadio}
+                items={[
+                  {
+                    value: "redeem",
+                    title: "Redeem item with custom fields",
+                  },
+                  { value: "key", title: "Random key list" },
+                  { value: "raffle", title: "raffle item" },
+                ]}
+                onClickItem={(v) => {
+                  setItemType(v);
+                }}
+              />
+              <div className="grid md:grid-cols-3 gap-10 mt-6">
+                <div>
+                  <div>
+                    <div className="flex flex-col justify-center gap-6 items-center w-full">
+                      <img
+                        alt="item"
+                        src={displayImage}
+                        className="cursor-pointer hover:opacity-80 hover:filter transition-all rounded-md w-72 max-w-full"
+                        onClick={() => fileInputRef.current.click()}
+                      />
+                      <Button
+                        onClick={() => onImageRemove()}
+                        disabled={componentState === ""}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                    <input
+                      type="file"
+                      onChange={onImageChange}
+                      ref={fileInputRef}
+                      className="hidden"
+                      accept="image/*"
+                    />
+                  </div>
+                  <Field name="name" component={TextInput} placeholder="name" />
+                </div>
+                <div></div>
+                <div></div>
+              </div>
+              <Button
+                type="submit"
+                disabled={!isValid || isSubmitting}
+                className="mt-6 float-right"
+              >
+                {isSubmitting ? (
+                  <div className="mx-auto w-fit">
+                    <MetroSpinner color="#000000" size={25} />
+                  </div>
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </div>
     </Layout>
   );
 }

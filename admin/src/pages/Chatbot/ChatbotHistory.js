@@ -3,7 +3,7 @@ import { NotificationManager } from "react-notifications";
 import moment from "moment";
 
 import Layout from "../../components/layout";
-import Button from "../../components/ui/Button";
+import { Button } from "../../components/ui";
 import { NavContext } from "../../context/NavContext";
 import { getChatbotEvents, getChatbotMessages } from "../../apis";
 import PageSpinner from "../../components/form/PageSpinner";

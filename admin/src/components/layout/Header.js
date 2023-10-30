@@ -4,12 +4,8 @@ import jwtDecode from "jwt-decode";
 import { NotificationManager } from "react-notifications";
 import Avatar from "react-avatar";
 
-import Nav from "../ui/Nav";
-import MobileNav from "../ui/MobileNav";
-import Dropdown from "../ui/Dropdown";
-import HamburgerImage from "../../assets/images/hamburger.svg";
-import CloseImage from "../../assets/images/close.svg";
-import DefaultAvatarImage from "../../assets/images/avatar.jpg";
+import { MobileNav, Nav, Dropdown } from "../ui";
+import { AvatarDefault, IconHamburger, IconClose } from "../../assets/images";
 import { UserContext } from "../../context/UserContext";
 import { getUserInfoFromEmail } from "../../apis";
 import constants from "../../constants";
@@ -110,7 +106,7 @@ export default function Header() {
                 src={
                   account.avatar
                     ? `${constants.AVATAR_DIR}/${account.avatar}`
-                    : DefaultAvatarImage
+                    : AvatarDefault
                 }
                 round={true}
                 size="40"
@@ -120,7 +116,7 @@ export default function Header() {
           </Dropdown>
         )}
         <img
-          src={isShowMobileMenu ? CloseImage : HamburgerImage}
+          src={isShowMobileMenu ? IconClose : IconHamburger}
           alt="humberger"
           className="sm:hidden cursor-pointer"
           onClick={() => {

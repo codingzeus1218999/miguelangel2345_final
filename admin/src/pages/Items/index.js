@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Layout from "../../components/layout";
 import { NavContext } from "../../context/NavContext";
-import Button from "../../components/ui/Button";
+import { Button } from "../../components/ui";
 
 export default function Items() {
   const { setNav } = useContext(NavContext);

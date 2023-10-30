@@ -2,17 +2,17 @@ import { useRef, useState } from "react";
 import Avatar from "react-avatar";
 import { NotificationManager } from "react-notifications";
 
-import Button from "../ui/Button";
+import { Button } from "../index";
 
-import DefaultAvatarImage from "../../assets/images/avatar.jpg";
+import { AvatarDefault } from "../../../assets/images";
 
-import { removeUserAvatar, uploadUserAvatar } from "../../apis";
-import constants from "../../constants";
+import { removeUserAvatar, uploadUserAvatar } from "../../../apis";
+import constants from "../../../constants";
 
 export default function AvatarUpload({ email, avatar }) {
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [displayAvatar, setDisplayAvatar] = useState(
-    avatar ? `${constants.AVATAR_DIR}/${avatar}` : DefaultAvatarImage
+    avatar ? `${constants.AVATAR_DIR}/${avatar}` : AvatarDefault
   );
   const [componentState, setComponentState] = useState(
     avatar ? "old" : "empty"
@@ -22,7 +22,7 @@ export default function AvatarUpload({ email, avatar }) {
 
   const onAvatarRemove = () => {
     setSelectedAvatar(null);
-    setDisplayAvatar(DefaultAvatarImage);
+    setDisplayAvatar(AvatarDefault);
     setComponentState(thisAvatar ? "removed" : "empty");
   };
   const onAvatarChange = (e) => {

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import Layout from "../../components/layout";
 import { NavContext } from "../../context/NavContext";
-import Button from "../../components/ui/Button";
+import { Button } from "../../components/ui";
 
 export default function NotFound() {
   const { setNav } = useContext(NavContext);

@@ -7,11 +7,13 @@ import { MetroSpinner } from "react-spinners-kit";
 import Switch from "react-switch";
 
 import Layout from "../../components/layout";
-import Button from "../../components/ui/Button";
-import TextInput from "../../components/ui/TextInput";
-import PasswordInput from "../../components/ui/PasswordInput";
-import TextArea from "../../components/ui/TextArea";
-import AvatarUpload from "../../components/ui/AvatarUpload";
+import {
+  AvatarUpload,
+  Button,
+  TextArea,
+  TextInput,
+  PasswordInput,
+} from "../../components/ui";
 
 import { NavContext } from "../../context/NavContext";
 

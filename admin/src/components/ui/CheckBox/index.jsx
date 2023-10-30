@@ -1,8 +1,10 @@
 import { useState } from "react";
 
-import CheckboxImage from "../../assets/images/checkbox.svg";
-import CheckedImage from "../../assets/images/checkbox_checked.svg";
-import CheckboxErrorImage from "../../assets/images/checkbox_error.svg";
+import {
+  CheckboxBox,
+  CheckboxChecked,
+  CheckboxError,
+} from "../../../assets/images";
 
 export default function CheckBox({ field, form, ...props }) {
   const [isTouched, setIsTouched] = useState(false);
@@ -24,9 +26,7 @@ export default function CheckBox({ field, form, ...props }) {
     >
       <img
         alt="checkbox"
-        src={
-          hasError ? CheckboxErrorImage : value ? CheckedImage : CheckboxImage
-        }
+        src={hasError ? CheckboxError : value ? CheckboxChecked : CheckboxBox}
       />
       <p>{title}</p>
       <input type="checkbox" {...field} className="hidden" />

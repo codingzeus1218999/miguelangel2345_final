@@ -3,25 +3,25 @@ import { Link } from "react-router-dom";
 import { Field, Formik, Form } from "formik";
 import * as Yup from "yup";
 import { MetroSpinner } from "react-spinners-kit";
+import { NotificationManager } from "react-notifications";
 
 import Layout from "../../components/layout";
-import Button from "../../components/ui/Button";
-import TextInput from "../../components/ui/TextInput";
-import TextArea from "../../components/ui/TextArea";
-import NumberInput from "../../components/ui/NumberInput";
-import SwitchField from "../../components/ui/SwitchField";
-import SelectField from "../../components/ui/SelectField";
-
+import {
+  TextInput,
+  Button,
+  NumberInput,
+  SwitchField,
+  TextArea,
+  SelectField,
+} from "../../components/ui";
 import { NavContext } from "../../context/NavContext";
-
-import DefaultItemImage from "../../assets/images/money.jfif";
-import { NotificationManager } from "react-notifications";
+import { ProductDefault } from "../../assets/images";
 import { addPrize } from "../../apis";
 
 export default function AddPrize() {
   const { setNav } = useContext(NavContext);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [displayImage, setDisplayImage] = useState(DefaultItemImage);
+  const [displayImage, setDisplayImage] = useState(ProductDefault);
   const [componentState, setComponentState] = useState("");
   const fileInputRef = useRef(null);
 
@@ -44,7 +44,7 @@ export default function AddPrize() {
 
   const onImageRemove = () => {
     setSelectedImage(null);
-    setDisplayImage(DefaultItemImage);
+    setDisplayImage(ProductDefault);
     setComponentState("");
   };
 
@@ -101,7 +101,7 @@ export default function AddPrize() {
               actions.setSubmitting(false);
               if (res.success) {
                 NotificationManager.success("New prize was added successfuly");
-                setDisplayImage(DefaultItemImage);
+                setDisplayImage(ProductDefault);
                 setComponentState("");
                 setSelectedImage(null);
                 actions.resetForm();

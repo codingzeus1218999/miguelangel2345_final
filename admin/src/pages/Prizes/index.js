@@ -8,12 +8,11 @@ import { NotificationManager } from "react-notifications";
 import DataTable from "react-data-table-component";
 
 import Layout from "../../components/layout";
-import Button from "../../components/ui/Button";
-import StatusBadge from "../../components/ui/StatusBadge";
+import { Button, StatusBadge } from "../../components/ui";
 
 import { NavContext } from "../../context/NavContext";
 
-import DefaultItemImage from "../../assets/images/money.jfif";
+import { ProductDefault } from "../../assets/images";
 
 import { commafy } from "../../utils";
 import { getPrizeList, deletePrizeApi } from "../../apis";
@@ -72,7 +71,7 @@ export default function Prizes() {
         <Avatar
           size="40"
           src={
-            row.image ? `${constants.PRIZE_DIR}/${row.image}` : DefaultItemImage
+            row.image ? `${constants.PRIZE_DIR}/${row.image}` : ProductDefault
           }
         />
       ),

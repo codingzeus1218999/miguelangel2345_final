@@ -8,9 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 import Layout from "../../components/layout";
-import StatusBadge from "../../components/ui/StatusBadge";
+import { StatusBadge } from "../../components/ui";
 
-import DefaultAvatarImage from "../../assets/images/avatar.jpg";
+import { AvatarDefault } from "../../assets/images";
 
 import { NavContext } from "../../context/NavContext";
 
@@ -27,9 +27,7 @@ const columns = [
         round={true}
         size="40"
         src={
-          row.avatar
-            ? `${constants.AVATAR_DIR}/${row.avatar}`
-            : DefaultAvatarImage
+          row.avatar ? `${constants.AVATAR_DIR}/${row.avatar}` : AvatarDefault
         }
       />
     ),

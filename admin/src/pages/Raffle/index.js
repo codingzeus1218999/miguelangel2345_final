@@ -6,9 +6,7 @@ import * as Yup from "yup";
 import { MetroSpinner } from "react-spinners-kit";
 
 import Layout from "../../components/layout";
-import Button from "../../components/ui/Button";
-import TextInput from "../../components/ui/TextInput";
-import NumberInput from "../../components/ui/NumberInput";
+import { TextInput, Button, NumberInput } from "../../components/ui";
 import PageSpinner from "../../components/form/PageSpinner";
 
 import { NavContext } from "../../context/NavContext";
