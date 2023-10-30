@@ -8,7 +8,7 @@ import Button from "../../components/ui/Button";
 import Point from "../../components/ui/Point";
 import PrizeCard from "../../components/form/PrizeCard";
 
-import { ProductDefault } from "../../assets/images";
+import DefaultItemImage from "../../assets/images/money.jfif";
 import BackImage from "../../assets/images/back.svg";
 // import LockImage from "../..//assets/images/mod_item_locked.svg";
 
@@ -68,7 +68,7 @@ export default function News() {
               src={
                 prize.image
                   ? `${constants.PRIZE_DIR}/${prize.image}`
-                  : ProductDefault
+                  : DefaultItemImage
               }
               alt="Prize"
               className="mx-auto"
@@ -145,7 +145,7 @@ export default function News() {
                   img={
                     p.image
                       ? `${constants.PRIZE_DIR}/${p.image}`
-                      : ProductDefault
+                      : DefaultItemImage
                   }
                   title={p.name}
                   points={p.points}

@@ -164,3 +164,35 @@ export const verifiedTwoStep = async (data) => {
     return err.response.data;
   }
 };
+
+export const getItems = async () => {
+  try {
+    const res = await axios.get(`${constants.API_URL}/items`);
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const getItemInfoById = async (id) => {
+  try {
+    const res = await axios.get(`${constants.API_URL}/item`, {
+      params: { id },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const getLatestItems = async () => {
+  try {
+    const res = await axios.get(`${constants.API_URL}/item/latest`);
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};

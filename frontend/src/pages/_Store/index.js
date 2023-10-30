@@ -1,30 +1,30 @@
 import { useState, useContext, useEffect } from "react";
 import { NotificationManager } from "react-notifications";
 
-import Point from "../../components/ui/Point";
+import Point from "../../components/ui/Point/Point";
 import Layout from "../../components/layout";
 import Button from "../../components/ui/Button";
+import PrizeCard from "../../components/form/PrizeCard";
 import StoreInfoModal from "../../components/form/StoreInfoModal";
+
+import DefaultItemImage from "../../assets/images/money.jfif";
+import Info from "../../assets/images/info.svg";
+import ImageMerch from "../../assets/images/merch.webp";
 
 import { NavContext } from "../../context/NavContext";
 import { ModalContext } from "../../context/ModalContext";
-import { getItems } from "../../apis";
-import { ItemCard } from "../../components/ui";
-import { Info, Merch } from "../../assets/images";
+import { getPrizes } from "../../apis";
+import constants from "../../constants";
 
 export default function Store() {
   const { setNav } = useContext(NavContext);
   const { setModal } = useContext(ModalContext);
-  const [items, setItems] = useState([]);
+  const [prizes, setPrizes] = useState([]);
 
   const fetchData = async () => {
     try {
-      const res = await getItems();
-      if (res.success) {
-        setItems(res.data.items);
-      } else {
-        NotificationManager.error(res.message);
-      }
+      const res = await getPrizes();
+      setPrizes(res.prizes);
     } catch (err) {
       NotificationManager.error(
         "Something was wrong on connection with server"
@@ -60,8 +60,20 @@ export default function Store() {
         <Button>Connect to stake.com</Button>
       </div>
       <div className="mt-6 grid sm:grid-cols-4 gap-4 grid-cols-1">
-        {items.map((p) => (
-          <ItemCard key={p._id} item={p} />
+        {prizes.map((p) => (
+          <PrizeCard
+            key={p._id}
+            id={p._id}
+            img={
+              p.image ? `${constants.PRIZE_DIR}/${p.image}` : DefaultItemImage
+            }
+            title={p.name}
+            points={p.points}
+            isLocked={p.isLocked}
+            wagerState={p.wagerMethod}
+            min={p.wagerMin}
+            max={p.wagerMax}
+          />
         ))}
       </div>
       <div className="mt-6 flex flex-col-reverse gap-4 md:grid md:grid-cols-4 text-white">
@@ -99,7 +111,7 @@ export default function Store() {
               See the merch store
             </Button>
             <img
-              src={Merch}
+              src={ImageMerch}
               className="absolute right-0 bottom-2 -z-10"
               alt="merch"
             />

@@ -1,5 +1,5 @@
-import Points from "../../assets/images/points.svg";
-import { commafy } from "../../utils";
+import { Points } from "../../../assets/images";
+import { commafy } from "../../../utils";
 
 export default function Point({ className, val }) {
   return (

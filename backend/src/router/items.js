@@ -4,7 +4,7 @@ import {
   // getPrizeInfoById,
   // deletePrize,
   // editPrize,
-  // getPrizes,
+  getItems,
   // getPrize,
   // getLatestPrizes,
 } from "../controllers/index.js";
@@ -12,7 +12,7 @@ import {
 import { isAuthorized } from "../middlewares/index.js";
 
 export default (router) => {
-  // router.get("/prizes", getPrizes);
+  router.get("/items", getItems);
   // router.get("/prize", getPrize);
   // router.get("/prize/latest", getLatestPrizes);
 

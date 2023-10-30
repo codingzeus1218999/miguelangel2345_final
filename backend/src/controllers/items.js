@@ -185,18 +185,23 @@ export const addItem = async (req, res) => {
 //   }
 // };
 
-// export const getPrizes = async (req, res) => {
-//   try {
-//     const prizes = await PrizeModel.find({ deleted: false });
-//     return res.status(200).json({
-//       success: true,
-//       prizes,
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     return res.sendStatus(400);
-//   }
-// };
+export const getItems = async (req, res) => {
+  try {
+    const items = await ItemModel.find({ deleted: false });
+    return res.status(200).json({
+      success: true,
+      message: "Get items for store front",
+      data: { items },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get items",
+      data: {},
+    });
+  }
+};
 
 // export const getPrize = async (req, res) => {
 //   try {
