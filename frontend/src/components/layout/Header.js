@@ -18,6 +18,14 @@ import { UserContext } from "../../context/UserContext";
 import { getUserInfoFromEmail } from "../../apis";
 import constants from "../../constants";
 
+const menu = [
+  { link: "casino-bonus", name: "casino-bonus", title: "Casino Bonus" },
+  { link: "videos", name: "videos", title: "Videos" },
+  { link: "stream", name: "stream", title: "Stream" },
+  { link: "tournaments", name: "tournaments", title: "Tournaments" },
+  { link: "store", name: "store", title: "Store" },
+];
+
 export default function Header() {
   const navigate = useNavigate();
   const { setModal } = useContext(ModalContext);
@@ -79,21 +87,11 @@ export default function Header() {
             <img src={Logo} alt="Logo" />
           </Nav>
           <div className="sm:flex flex-row gap-1 hidden items-center">
-            <Nav onClick={() => onClickNav("casino-bonus")} name="casino-bonus">
-              Casino Bonus
-            </Nav>
-            <Nav onClick={() => onClickNav("videos")} name="videos">
-              Videos
-            </Nav>
-            <Nav onClick={() => onClickNav("stream")} name="stream">
-              Stream
-            </Nav>
-            <Nav onClick={() => onClickNav("tournaments")} name="tournaments">
-              Tournaments
-            </Nav>
-            <Nav onClick={() => onClickNav("store")} name="store">
-              Store
-            </Nav>
+            {menu.map((m, idx) => (
+              <Nav key={idx} onClick={() => onClickNav(m.link)} name={m.name}>
+                {m.title}
+              </Nav>
+            ))}
           </div>
         </div>
         {isAuthenticated ? (
@@ -135,24 +133,11 @@ export default function Header() {
       <div
         className={`sm:hidden flex-col ${isShowMobileMenu ? "flex" : "hidden"}`}
       >
-        <MobileNav
-          onClick={() => onClickNav("casino-bonus")}
-          name="casino-bonus"
-        >
-          Casino Bonus
-        </MobileNav>
-        <MobileNav onClick={() => onClickNav("videos")} name="videos">
-          Videos
-        </MobileNav>
-        <MobileNav onClick={() => onClickNav("stream")} name="stream">
-          Stream
-        </MobileNav>
-        <MobileNav onClick={() => onClickNav("tournaments")} name="tournaments">
-          Tournaments
-        </MobileNav>
-        <MobileNav onClick={() => onClickNav("store")} name="store">
-          Store
-        </MobileNav>
+        {menu.map((m, idx) => (
+          <MobileNav key={idx} onClick={() => onClickNav(m.link)} name={m.name}>
+            {m.title}
+          </MobileNav>
+        ))}
       </div>
     </header>
   );

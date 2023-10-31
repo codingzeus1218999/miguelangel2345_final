@@ -133,7 +133,7 @@ export default function AddItem() {
                     title: "Redeem item with custom fields",
                   },
                   { value: "key", title: "Random key list" },
-                  { value: "raffle", title: "raffle item" },
+                  { value: "raffle", title: "Raffle item" },
                 ]}
                 onClickItem={(v) => {
                   setItemType(v);
