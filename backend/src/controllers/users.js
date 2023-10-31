@@ -1,13 +1,11 @@
 import bcrypt from "bcrypt";
 import pkg from "lodash";
-import nodemailer from "nodemailer";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import formidable from "formidable";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import ejs from "ejs";
 
 import constants from "../constants/index.js";
 import {
@@ -17,7 +15,7 @@ import {
   getUserByForgotPasswordToken,
   getUsersByQuery,
 } from "../db/users.js";
-import { printMessage } from "../utils/index.js";
+import { printMessage, sendEmail } from "../utils/index.js";
 
 const { get } = pkg;
 
@@ -31,14 +29,27 @@ export const forgotPassword = async (req, res) => {
       account
         .save()
         .then((user) => {
-          if (sendForgotPasswordEmail(email, forgotPasswordToken)) {
-            return res
-              .status(200)
-              .json({ success: true, message: "Email sent." });
+          if (
+            sendEmail(
+              email,
+              "resetPassword",
+              {
+                link_url: `${constants.FRONTEND_URL}/forgot-password/${verificationToken}`,
+              },
+              "Did you forgot your password?"
+            )
+          ) {
+            return res.status(200).json({
+              success: true,
+              message: "Email sent. Please check your mailbox",
+              data: {},
+            });
           } else {
-            return res
-              .status(500)
-              .json({ success: false, message: "Email sending failed." });
+            return res.status(500).json({
+              success: false,
+              message: "Email sending failed",
+              data: {},
+            });
           }
         })
         .catch((err) => {
@@ -249,57 +260,6 @@ export const changePassword = async (req, res) => {
     console.log(err);
     return res.sendStatus(400);
   }
-};
-
-const sendForgotPasswordEmail = (email, verificationToken) => {
-  return new Promise((resolve, reject) => {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const templateFolderName = path.join(
-      __dirname,
-      "../",
-      "templates",
-      "mails"
-    );
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: constants.VERIFICATION_MAIL_ADDRESS,
-        pass: constants.VERIFICATION_MAIL_PASSWORD,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
-    ejs.renderFile(
-      `${templateFolderName}/resetPassword.ejs`,
-      {
-        link_url: `${constants.FRONTEND_URL}/forgot-password/${verificationToken}`,
-      },
-      (err, html) => {
-        if (err) {
-          console.log(err);
-          resolve(false);
-        } else {
-          const mailOptions = {
-            from: constants.VERIFICATION_MAIL_ADDRESS,
-            to: email,
-            subject: "Did you forget your password?",
-            html: html,
-          };
-          transporter.sendMail(mailOptions, (err, info) => {
-            if (err) {
-              console.log("Email sending failed:", err);
-              resolve(false);
-            } else {
-              console.log("Email sent:", info.response);
-              resolve(true);
-            }
-          });
-        }
-      }
-    );
-  });
 };
 
 export const getUserList = async (req, res) => {

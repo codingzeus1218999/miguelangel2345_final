@@ -5,8 +5,9 @@ import fs from "fs";
 import pkg from "lodash";
 
 import { ItemModel } from "../db/items.js";
-import { printMessage } from "../utils/index.js";
+import { printMessage, sendEmail } from "../utils/index.js";
 import { UserModel } from "../db/users.js";
+import constants from "../constants/index.js";
 const { get } = pkg;
 
 export const addItem = async (req, res) => {
@@ -293,6 +294,19 @@ export const purchaseItem = async (req, res) => {
         message: "Saving user change failed",
         data: {},
       });
+    printMessage(`${user.name} has been purchased ${item.name}`, "success");
+    sendEmail(
+      user.email,
+      "noticePurchasingItem",
+      {
+        type: item.type,
+        name: item.name,
+        description: item.description,
+        cost: item.cost,
+        codes: item.codes,
+      },
+      "Success in purchasing in Miguelangel2345"
+    );
     return res.status(200).json({
       success: true,
       message: `Successfully purchased ${newItem.name}`,

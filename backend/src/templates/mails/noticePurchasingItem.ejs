@@ -1,0 +1,19 @@
+<html>
+  <head></head>
+  <body>
+    <div>
+      <h1>Thanks for purchaing our items</h1>
+      <p><strong>name: </strong><%= name %></p>
+      <p><%= description %></p>
+      <p><strong>points: </strong><%= cost %></p>
+      <% if (type === 'key') { %>
+      <strong>codes: </strong>
+      <div style="margin-left: 20px">
+        <% for (var i = 0; i < codes.length; i++) { %>
+        <p><%= codes[i] %></p>
+        <% } %>
+      </div>
+      <% } %>
+    </div>
+  </body>
+</html>

@@ -1,11 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import pkg from "lodash";
-import nodemailer from "nodemailer";
 import crypto from "crypto";
-import ejs from "ejs";
-import { fileURLToPath } from "url";
-import path from "path";
 
 import constants from "../constants/index.js";
 import {
@@ -13,7 +9,7 @@ import {
   getAllowedUserByEmail,
   getUserByVerificationToken,
 } from "../db/users.js";
-import { printMessage } from "../utils/index.js";
+import { printMessage, sendEmail } from "../utils/index.js";
 
 const { get } = pkg;
 
@@ -68,7 +64,16 @@ export const signUp = async (req, res) => {
     newUser
       .save()
       .then((user) => {
-        if (sendVerificationEmail(email, verificationToken)) {
+        if (
+          sendEmail(
+            email,
+            "registerVerification",
+            {
+              link_url: `${constants.FRONTEND_URL}/verify/${verificationToken}`,
+            },
+            "Email verification"
+          )
+        ) {
           printMessage(`${user.email} wants to register`, "info");
           return res.status(200).json({
             success: true,
@@ -157,58 +162,6 @@ export const signInAdmin = async (req, res) => {
     console.log(err);
     return res.sendStatus(400);
   }
-};
-
-const sendVerificationEmail = (email, verificationToken) => {
-  return new Promise((resolve, reject) => {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const templateFolderName = path.join(
-      __dirname,
-      "../",
-      "templates",
-      "mails"
-    );
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: constants.VERIFICATION_MAIL_ADDRESS,
-        pass: constants.VERIFICATION_MAIL_PASSWORD,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
-    ejs.renderFile(
-      `${templateFolderName}/registerVerification.ejs`,
-      { link_url: `${constants.FRONTEND_URL}/verify/${verificationToken}` },
-      (err, html) => {
-        if (err) {
-          printMessage("Email sending failed: " + err, "error");
-          resolve(false);
-        } else {
-          const mailOptions = {
-            from: constants.VERIFICATION_MAIL_ADDRESS,
-            to: email,
-            subject: "Email verification",
-            html: html,
-          };
-          transporter.sendMail(mailOptions, (err, info) => {
-            if (err) {
-              printMessage("Email sending failed: " + err, "error");
-              resolve(false);
-            } else {
-              printMessage(
-                "Verification email sent: " + info?.accepted?.[0],
-                "success"
-              );
-              resolve(true);
-            }
-          });
-        }
-      }
-    );
-  });
 };
 
 export const verifiedTwoStep = async (req, res) => {

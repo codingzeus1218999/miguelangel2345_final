@@ -1,5 +1,6 @@
 const MONGODB_URL = "mongodb://127.0.0.1:27017/miguelangel2345";
 const FRONTEND_URL = "http://localhost:3010";
+const BACKEND_URL = "http://localhost:5000";
 const SECRET = "miguelangel2345";
 const EXPIRESTIME = "2h";
 const EXPIRESFOREVERTIME = "365d";
@@ -10,6 +11,7 @@ const VERIFICATION_MAIL_PASSWORD = "vmsmxagtzqddmvtw";
 export default {
   MONGODB_URL,
   FRONTEND_URL,
+  BACKEND_URL,
   SECRET,
   EXPIRESTIME,
   EXPIRESFOREVERTIME,
