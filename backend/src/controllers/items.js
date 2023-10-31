@@ -77,25 +77,31 @@ export const addItem = async (req, res) => {
 //   }
 // };
 
-// export const getPrizeInfoById = async (req, res) => {
-//   try {
-//     const prize = await PrizeModel.findById(req.query.id);
-//     if (prize.deleted) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "This item was deleted",
-//       });
-//     } else {
-//       return res.status(200).json({
-//         success: true,
-//         prize,
-//       });
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     return res.sendStatus(400);
-//   }
-// };
+export const getItemInfoById = async (req, res) => {
+  try {
+    const item = await ItemModel.findOne({ _id: req.query.id, deleted: false });
+    if (item) {
+      return res.status(200).json({
+        success: true,
+        message: "Get item info by id",
+        data: { item },
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "There is no item with this id",
+        data: {},
+      });
+    }
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Getting item in backend failed",
+      data: {},
+    });
+  }
+};
 
 // export const deletePrize = async (req, res) => {
 //   try {
@@ -203,38 +209,22 @@ export const getItems = async (req, res) => {
   }
 };
 
-// export const getPrize = async (req, res) => {
-//   try {
-//     const prize = await PrizeModel.findOne({
-//       deleted: false,
-//       _id: req.query.id,
-//     });
-//     if (prize) {
-//       return res.status(200).json({
-//         success: true,
-//         prize,
-//       });
-//     } else {
-//       return res.status(400).json({
-//         success: false,
-//         message: "There is no prize with this id",
-//       });
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     return res.sendStatus(400);
-//   }
-// };
-
-// export const getLatestPrizes = async (req, res) => {
-//   try {
-//     const prizes = await getLatest4();
-//     return res.status(200).json({
-//       success: true,
-//       prizes,
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     return res.sendStatus(400);
-//   }
-// };
+export const getLatestItems = async (req, res) => {
+  try {
+    const items = await ItemModel.find({ deleted: false })
+      .sort({ createdAt: "desc" })
+      .limit(5);
+    return res.status(200).json({
+      success: true,
+      message: "Get latest 5 items",
+      data: { items },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Getting latest items failed",
+      data: {},
+    });
+  }
+};
