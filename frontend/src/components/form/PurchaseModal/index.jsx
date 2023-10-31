@@ -7,12 +7,14 @@ import constants from "../../../constants";
 import { Button, Point } from "../../ui";
 import { UserContext } from "../../../context/UserContext";
 import "./style.scss";
+import { NotificationManager } from "react-notifications";
+import { purchaseItem } from "../../../apis";
 
 ReactModal.setAppElement("#root");
 
-export default function PurchaseModal({ item }) {
+export default function PurchaseModal({ item, afterSuccess }) {
   const { modal, setModal } = useContext(ModalContext);
-  const { account } = useContext(UserContext);
+  const { account, setAccount } = useContext(UserContext);
   const [requirements, setRequirements] = useState({});
 
   const customStyles = {
@@ -41,8 +43,27 @@ export default function PurchaseModal({ item }) {
     }
   }, [item]);
 
-  const onClickRedeem = () => {
-    console.log(item._id, account._id, requirements);
+  const onClickRedeem = async () => {
+    try {
+      const res = await purchaseItem({
+        itemId: item._id,
+        userId: account._id,
+        requirements: JSON.stringify(requirements),
+      });
+      if (res.success) {
+        setAccount(res.data.newUser);
+        afterSuccess(res.data.newItem);
+        NotificationManager.success(res.message);
+        setModal("");
+      } else {
+        NotificationManager.error(res.message);
+      }
+    } catch (err) {
+      console.log(err);
+      NotificationManager.error(
+        "Something went wrong with connecting to server"
+      );
+    }
   };
 
   const onChangeRequirement = (field, v) => {

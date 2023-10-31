@@ -2,9 +2,12 @@ import formidable from "formidable";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import pkg from "lodash";
 
 import { ItemModel } from "../db/items.js";
 import { printMessage } from "../utils/index.js";
+import { UserModel } from "../db/users.js";
+const { get } = pkg;
 
 export const addItem = async (req, res) => {
   try {
@@ -224,6 +227,82 @@ export const getLatestItems = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Getting latest items failed",
+      data: {},
+    });
+  }
+};
+
+export const purchaseItem = async (req, res) => {
+  try {
+    const itemId = get(req.body, "itemId").toString();
+    const userId = get(req.body, "userId").toString();
+    const requirements = JSON.parse(get(req.body, "requirements").toString());
+    const item = await ItemModel.findOne({ _id: itemId, deleted: false });
+    const user = await UserModel.findOne({ _id: userId, allowed: true });
+    if (!item)
+      return res.status(500).json({
+        success: false,
+        message: "There is no item with this id",
+        data: {},
+      });
+    if (!user)
+      return res.status(500).json({
+        success: false,
+        message: "There is no user with this id",
+        data: {},
+      });
+    if (item.quantity < -1 || item.quantity === 0)
+      return res.status(400).json({
+        success: false,
+        message: "Balance is low",
+        data: {},
+      });
+    if (item.cost > user.points)
+      return res.status(400).json({
+        success: false,
+        message: "Your points is low",
+        data: {},
+      });
+    if (
+      item.type === "redeem" &&
+      item.requirements.filter(
+        (r) =>
+          requirements[`${r}`] === undefined ||
+          requirements[`${r}`].trim() === ""
+      ).length > 0
+    )
+      return res.status(400).json({
+        success: false,
+        message: "Please fill the requirement infos",
+        data: {},
+      });
+    if (item.quantity !== -1) item.quantity = item.quantity - 1;
+    user.items = [...user.items, { item: itemId, requirements: requirements }];
+    user.points = user.points - item.cost;
+    const newItem = await item.save();
+    const newUser = await user.save();
+    if (!newItem)
+      return res.status(400).json({
+        success: false,
+        message: "Saving item change failed",
+        data: {},
+      });
+    if (!newUser)
+      return res.status(400).json({
+        success: false,
+        message: "Saving user change failed",
+        data: {},
+      });
+    return res.status(200).json({
+      success: true,
+      message: `Successfully purchased ${newItem.name}`,
+      data: { newItem, newUser },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Failed to purchasing item",
       data: {},
     });
   }

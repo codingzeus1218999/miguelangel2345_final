@@ -20,6 +20,13 @@ const UserSchema = new mongoose.Schema({
       amount: { type: Number, required: true, default: 0 },
     },
   ],
+  items: [
+    {
+      item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
+      date: { type: Date, default: Date.now },
+      requirements: { type: Object },
+    },
+  ],
   created_at: { type: Date, required: true, default: Date.now },
 });
 

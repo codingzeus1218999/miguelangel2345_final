@@ -167,3 +167,17 @@ export const getLatestItems = async () => {
     return err.response.data;
   }
 };
+
+export const purchaseItem = async (data) => {
+  try {
+    const res = await axios.put(`${constants.API_URL}/item/purchase`, data, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};

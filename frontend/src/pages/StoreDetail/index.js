@@ -140,7 +140,7 @@ export default function News() {
           <ElementLoadingSpinner />
         </div>
       )}
-      <PurchaseModal item={item} />
+      <PurchaseModal item={item} afterSuccess={(v) => setItem(v)} />
     </Layout>
   );
 }
