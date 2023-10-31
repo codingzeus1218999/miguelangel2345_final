@@ -1,0 +1,8 @@
+.pt-purchase-modal {
+  & input.requirement {
+    @apply bg-pt-black-100 rounded-md p-2 text-xl;
+    &:focus-visible {
+      @apply outline-none;
+    }
+  }
+}

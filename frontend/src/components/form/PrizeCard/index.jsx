@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 
-import { Point } from "../ui";
-import { commafy } from "../../utils";
-import { IconTick } from "../../assets/images";
+import { Point } from "../../ui";
+import { commafy } from "../../../utils";
+import { IconTick } from "../../../assets/images";
+import "./style.scss";
 
 export default function PrizeCard({
   id,

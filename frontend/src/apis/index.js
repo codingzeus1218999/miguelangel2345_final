@@ -113,35 +113,6 @@ export const changePassword = (data, callback1, callback2) => {
     .catch((err) => callback2(err));
 };
 
-export const getPrizes = async () => {
-  try {
-    const res = await axios.get(`${constants.API_URL}/prizes`);
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const getPrizeInfoById = async (id) => {
-  try {
-    const res = await axios.get(`${constants.API_URL}/prize`, {
-      params: { id },
-    });
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const getLatestPrizes = async () => {
-  try {
-    const res = await axios.get(`${constants.API_URL}/prize/latest`);
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 export const getKickInfoByName = async (id) => {
   try {
     const res = await axios.get(`${constants.KICK_API_URL}/${id}`);

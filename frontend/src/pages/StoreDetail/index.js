@@ -17,13 +17,13 @@ import { NavContext } from "../../context/NavContext";
 import { UserContext } from "../../context/UserContext";
 import { ModalContext } from "../../context/ModalContext";
 import { getLatestItems, getItemInfoById } from "../../apis";
-import { commafy } from "../../utils";
 import constants from "../../constants";
+import { PurchaseModal } from "../../components/form";
 
 export default function News() {
   const { setNav } = useContext(NavContext);
   const { isAuthenticated } = useContext(UserContext);
-  const { modal, setModal } = useContext(ModalContext);
+  const { setModal } = useContext(ModalContext);
   const { id } = useParams();
   const [item, setItem] = useState({});
   const [latestItems, setLatestItems] = useState([]);
@@ -80,11 +80,30 @@ export default function News() {
               />
             </div>
             <div className="text-white">
-              <h1 className=" font-bold text-xl">{item.name}</h1>
-              <Point val={item.cost} />
+              <h1 className="font-bold text-xl">{item.name}</h1>
+              <Point val={item.cost} className="mt-6" />
               <p className="mt-6">{item.description}</p>
+              {item?.quantity > -1 && (
+                <h1 className="mt-6 font-bold text-xl">
+                  Quantity: {item.quantity}
+                </h1>
+              )}
+              {item?.type === "key" && (
+                <div className="mt-6 flex flex-col gap-3">
+                  <h1 className="font-bold text-xl">Codes:</h1>
+                  {item?.codes.map((c, idx) => (
+                    <h1 key={idx}>{c}</h1>
+                  ))}
+                </div>
+              )}
               {isAuthenticated ? (
-                <Button className="text-black mt-6 w-full">Buy ticket</Button>
+                <Button
+                  className="text-black mt-6 w-full"
+                  onClick={() => setModal("purchase")}
+                  disabled={item?.quantity < -1 || item?.quantity === 0}
+                >
+                  Buy ticket
+                </Button>
               ) : (
                 <Button
                   className="text-black mt-6 w-full"
@@ -121,6 +140,7 @@ export default function News() {
           <ElementLoadingSpinner />
         </div>
       )}
+      <PurchaseModal item={item} />
     </Layout>
   );
 }
