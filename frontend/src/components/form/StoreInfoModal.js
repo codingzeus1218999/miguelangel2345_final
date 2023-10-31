@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import ReactModal from "react-modal";
 
-import CloseImage from "../../assets/images/close.svg";
+import { IconClose } from "../../assets/images";
 
 import { ModalContext } from "../../context/ModalContext";
 
@@ -37,7 +37,7 @@ export default function StoreInfoModal() {
         <div>
           <img
             alt="close"
-            src={CloseImage}
+            src={IconClose}
             onClick={() => setModal("")}
             className="cursor-pointer ml-auto"
           />

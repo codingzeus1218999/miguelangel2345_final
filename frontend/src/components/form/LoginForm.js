@@ -4,13 +4,9 @@ import * as Yup from "yup";
 import { NotificationManager } from "react-notifications";
 import { MetroSpinner } from "react-spinners-kit";
 
-import LogoImage from "../../assets/images/logo.svg";
-import CloseImage from "../../assets/images/close.svg";
+import { Logo, IconClose } from "../../assets/images";
 
-import Button from "../ui/Button";
-import TextInput from "../ui/TextInput";
-import PasswordInput from "../ui/PasswordInput";
-import CheckBox from "../ui/CheckBox";
+import { Button, TextInput, PasswordInput, CheckBox } from "../ui";
 
 import { UserContext } from "../../context/UserContext";
 import { ModalContext } from "../../context/ModalContext";
@@ -24,10 +20,10 @@ export default function LoginForm() {
   return (
     <div>
       <div className="flex justify-between items-center">
-        <img alt="logo" src={LogoImage} width={56} />
+        <img alt="logo" src={Logo} width={56} />
         <img
           alt="close"
-          src={CloseImage}
+          src={IconClose}
           onClick={() => setModal("")}
           className="cursor-pointer"
         />

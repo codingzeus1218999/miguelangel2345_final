@@ -3,12 +3,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { NotificationManager } from "react-notifications";
 
 import Layout from "../../components/layout";
-import ButtonPink from "../../components/ui/ButtonPink";
-import Button from "../../components/ui/Button";
-import { ElementLoadingSpinner, ItemCard, Point } from "../../components/ui";
+import {
+  Button,
+  ButtonPink,
+  ElementLoadingSpinner,
+  ItemCard,
+  Point,
+} from "../../components/ui";
 
-import { ProductDefault } from "../../assets/images";
-import BackImage from "../../assets/images/back.svg";
+import { ProductDefault, IconBack } from "../../assets/images";
 
 import { NavContext } from "../../context/NavContext";
 import { UserContext } from "../../context/UserContext";
@@ -59,7 +62,7 @@ export default function News() {
           className="cursor-pointer block mb-6 text-white font-bold sm:hidden"
           onClick={() => navigate("/store")}
         >
-          <img alt="back" src={BackImage} className="inline-block" />
+          <img alt="back" src={IconBack} className="inline-block" />
           Store
         </span>
         {Object.keys(item).length > 0 ? (

@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
-import Point from "../ui/Point";
+import { Point } from "../ui";
 import { commafy } from "../../utils";
-import Tick from "../../assets/images/tick.svg";
+import { IconTick } from "../../assets/images";
 
 export default function PrizeCard({
   id,
@@ -46,7 +46,7 @@ export default function PrizeCard({
           </div>
         ) : (
           <div className="flex flex-row sm:justify-end items-center gap-1">
-            <img src={Tick} width={16} height={16} alt="Tick" />
+            <img src={IconTick} width={16} height={16} alt="IconTick" />
             <span className="text-pt-black-500 text-sm">
               Item always unlocked
             </span>

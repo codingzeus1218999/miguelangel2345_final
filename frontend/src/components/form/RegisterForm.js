@@ -6,13 +6,9 @@ import { NotificationManager } from "react-notifications";
 
 import { ModalContext } from "../../context/ModalContext";
 
-import LogoImage from "../../assets/images/logo.svg";
-import CloseImage from "../../assets/images/close.svg";
+import { Logo, IconClose } from "../../assets/images";
 
-import Button from "../ui/Button";
-import TextInput from "../ui/TextInput";
-import PasswordInput from "../ui/PasswordInput";
-import CheckBox from "../ui/CheckBox";
+import { Button, TextInput, PasswordInput, CheckBox } from "../ui";
 import { registerApi } from "../../apis";
 
 export default function RegisterForm() {
@@ -21,10 +17,10 @@ export default function RegisterForm() {
   return (
     <div>
       <div className="flex justify-between items-center">
-        <img alt="logo" src={LogoImage} width={56} />
+        <img alt="logo" src={Logo} width={56} />
         <img
           alt="close"
-          src={CloseImage}
+          src={IconClose}
           onClick={() => setModal("")}
           className="cursor-pointer"
         />

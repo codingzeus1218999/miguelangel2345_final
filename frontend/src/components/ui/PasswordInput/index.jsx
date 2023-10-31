@@ -1,9 +1,11 @@
 import { useState } from "react";
 
-import VisibieOnImage from "../../assets/images/visibility_on.svg";
-import VisibieOffImage from "../../assets/images/visibility_off.svg";
-import verifiedImage from "../../assets/images/pass_state_ver.105e4416.svg";
-import unverifiedImage from "../../assets/images/pass_state_not_ver.4dae1e58.svg";
+import {
+  IconVisibilityOff,
+  IconVisibilityOn,
+  IconPassStateNot,
+  IconPassStateVer,
+} from "../../../assets/images";
 
 export default function PasswordInput({ field, form, ...props }) {
   const [visible, setVisible] = useState(false);
@@ -31,7 +33,7 @@ export default function PasswordInput({ field, form, ...props }) {
           {...field}
         />
         <img
-          src={visible ? VisibieOnImage : VisibieOffImage}
+          src={visible ? IconVisibilityOn : IconVisibilityOff}
           className="cursor-pointer"
           onClick={() => {
             setVisible(!visible);
@@ -43,7 +45,7 @@ export default function PasswordInput({ field, form, ...props }) {
         <div className="grid grid-cols-12 text-xs uppercase font-semibold bg-pt-black-100 rounded-md p-2">
           <div className="col-span-5">
             <img
-              src={/[a-zA-Z]/.test(value) ? verifiedImage : unverifiedImage}
+              src={/[a-zA-Z]/.test(value) ? IconPassStateVer : IconPassStateNot}
               className="inline"
               alt="dot"
             />
@@ -53,8 +55,8 @@ export default function PasswordInput({ field, form, ...props }) {
             <img
               src={
                 /^(?=.*[!@#$%^&*])/g.test(value)
-                  ? verifiedImage
-                  : unverifiedImage
+                  ? IconPassStateVer
+                  : IconPassStateNot
               }
               className="inline"
               alt="dot"
@@ -63,7 +65,9 @@ export default function PasswordInput({ field, form, ...props }) {
           </div>
           <div className="col-span-5">
             <img
-              src={/^(?=.*\d)/.test(value) ? verifiedImage : unverifiedImage}
+              src={
+                /^(?=.*\d)/.test(value) ? IconPassStateVer : IconPassStateNot
+              }
               className="inline"
               alt="dot"
             />
@@ -71,7 +75,7 @@ export default function PasswordInput({ field, form, ...props }) {
           </div>
           <div className="col-span-7">
             <img
-              src={value.length > 7 ? verifiedImage : unverifiedImage}
+              src={value.length > 7 ? IconPassStateVer : IconPassStateNot}
               className="inline"
               alt="dot"
             />

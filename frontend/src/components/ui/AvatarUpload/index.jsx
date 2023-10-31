@@ -1,22 +1,20 @@
 import { useContext, useRef, useState } from "react";
 import Avatar from "react-avatar";
-
-import Button from "../ui/Button";
-
-import DefaultAvatarImage from "../../assets/images/avatar.jpg";
-
-import { UserContext } from "../../context/UserContext";
 import { NotificationManager } from "react-notifications";
-import { removeAvatar, uploadAvatar } from "../../apis";
-import constants from "../../constants";
+
+import Button from "../Button";
+
+import { AvatarDefault } from "../../../assets/images";
+
+import { UserContext } from "../../../context/UserContext";
+import { removeAvatar, uploadAvatar } from "../../../apis";
+import constants from "../../../constants";
 
 export default function AvatarUpload() {
   const { account, setAccount } = useContext(UserContext);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [displayAvatar, setDisplayAvatar] = useState(
-    account.avatar
-      ? `${constants.AVATAR_DIR}/${account.avatar}`
-      : DefaultAvatarImage
+    account.avatar ? `${constants.AVATAR_DIR}/${account.avatar}` : AvatarDefault
   );
   const [componentState, setComponentState] = useState(
     account.avatar ? "old" : "empty"
@@ -25,7 +23,7 @@ export default function AvatarUpload() {
 
   const onAvatarRemove = () => {
     setSelectedAvatar(null);
-    setDisplayAvatar(DefaultAvatarImage);
+    setDisplayAvatar(AvatarDefault);
     setComponentState(account.avatar ? "removed" : "empty");
   };
   const onAvatarChange = (e) => {

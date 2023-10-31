@@ -1,16 +1,14 @@
 import { useState, useContext, useEffect } from "react";
 import { NotificationManager } from "react-notifications";
 
-import Point from "../../components/ui/Point";
 import Layout from "../../components/layout";
-import Button from "../../components/ui/Button";
+import { Button, Point, ItemCard } from "../../components/ui";
 import StoreInfoModal from "../../components/form/StoreInfoModal";
 
 import { NavContext } from "../../context/NavContext";
 import { ModalContext } from "../../context/ModalContext";
 import { getItems } from "../../apis";
-import { ItemCard } from "../../components/ui";
-import { Info, Merch } from "../../assets/images";
+import { IconInfo, Merch } from "../../assets/images";
 
 export default function Store() {
   const { setNav } = useContext(NavContext);
@@ -43,7 +41,7 @@ export default function Store() {
         <h1 className="page-title">Points Store</h1>
         <img
           alt="info"
-          src={Info}
+          src={IconInfo}
           className="cursor-pointer"
           onClick={() => {
             setModal("storeInfo");

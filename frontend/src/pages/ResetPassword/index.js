@@ -3,12 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { MetroSpinner } from "react-spinners-kit";
+import { NotificationManager } from "react-notifications";
 
-import PasswordInput from "../../components/ui/PasswordInput";
-import Button from "../../components/ui/Button";
+import { Button, PasswordInput } from "../../components/ui";
 
 import { verifyPwdTokenApi, resetPasswordApi } from "../../apis";
-import { NotificationManager } from "react-notifications";
 
 export default function ResetPassword() {
   const navigator = useNavigate();

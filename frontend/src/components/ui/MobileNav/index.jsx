@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { NavContext } from "../../context/NavContext";
+import { NavContext } from "../../../context/NavContext";
 
 export default function MobileNav({ children, onClick, name }) {
   const { nav } = useContext(NavContext);

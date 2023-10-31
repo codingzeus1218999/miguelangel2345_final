@@ -3,14 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { NotificationManager } from "react-notifications";
 
 import Layout from "../../components/layout";
-import ButtonPink from "../../components/ui/ButtonPink";
-import Button from "../../components/ui/Button";
-import Point from "../../components/ui/Point";
+import { ButtonPink, Button, Point } from "../../components/ui";
 import PrizeCard from "../../components/form/PrizeCard";
 
-import DefaultItemImage from "../../assets/images/money.jfif";
-import BackImage from "../../assets/images/back.svg";
-// import LockImage from "../..//assets/images/mod_item_locked.svg";
+import { ProductDefault, IconBack } from "../../assets/images";
 
 import { NavContext } from "../../context/NavContext";
 import { UserContext } from "../../context/UserContext";
@@ -59,7 +55,7 @@ export default function News() {
           className="cursor-pointer block mb-6 text-white font-bold sm:hidden"
           onClick={() => navigate("/store")}
         >
-          <img alt="back" src={BackImage} className="inline-block" />
+          <img alt="back" src={IconBack} className="inline-block" />
           Store
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -68,7 +64,7 @@ export default function News() {
               src={
                 prize.image
                   ? `${constants.PRIZE_DIR}/${prize.image}`
-                  : DefaultItemImage
+                  : ProductDefault
               }
               alt="Prize"
               className="mx-auto"
@@ -145,7 +141,7 @@ export default function News() {
                   img={
                     p.image
                       ? `${constants.PRIZE_DIR}/${p.image}`
-                      : DefaultItemImage
+                      : ProductDefault
                   }
                   title={p.name}
                   points={p.points}

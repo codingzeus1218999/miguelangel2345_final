@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
-import LogoKick from "../../assets/images/logo-kick.svg";
-import LogoDscrd from "../../assets/images/logo-dscrd.webp";
-import LogoYt from "../../assets/images/logo-yt.webp";
-import LogoFcb from "../../assets/images/logo-fcb.webp";
-import LogoInsta from "../../assets/images/logo-insta.webp";
-import LogoTwttr from "../../assets/images/logo-twttr.webp";
+import {
+  LogoKick,
+  LogoDscrd,
+  LogoYt,
+  LogoFcb,
+  LogoInsta,
+  LogoTwttr,
+} from "../../assets/images";
 
 export default function Footer() {
   const navigate = useNavigate();

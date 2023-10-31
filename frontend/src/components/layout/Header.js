@@ -4,16 +4,14 @@ import jwtDecode from "jwt-decode";
 import { NotificationManager } from "react-notifications";
 import Avatar from "react-avatar";
 
-import Button from "../ui/Button";
-import Nav from "../ui/Nav";
-import MobileNav from "../ui/MobileNav";
-import Dropdown from "../ui/Dropdown";
-import Point from "../ui/Point";
+import { Button, Nav, MobileNav, Dropdown, Point } from "../ui";
 
-import LogoImage from "../../assets/images/logo.svg";
-import HamburgerImage from "../../assets/images/hamburger.svg";
-import CloseImage from "../../assets/images/close.svg";
-import DefaultAvatarImage from "../../assets/images/avatar.jpg";
+import {
+  Logo,
+  IconHamburger,
+  IconClose,
+  AvatarDefault,
+} from "../../assets/images";
 
 import { ModalContext } from "../../context/ModalContext";
 import { UserContext } from "../../context/UserContext";
@@ -78,7 +76,7 @@ export default function Header() {
       <div className="container mx-auto flex flex-row justify-between items-center">
         <div className="flex flex-row items-center">
           <Nav onClick={() => onClickNav("")} name="home">
-            <img src={LogoImage} alt="Logo" />
+            <img src={Logo} alt="Logo" />
           </Nav>
           <div className="sm:flex flex-row gap-1 hidden items-center">
             <Nav onClick={() => onClickNav("casino-bonus")} name="casino-bonus">
@@ -113,7 +111,7 @@ export default function Header() {
                 src={
                   account.avatar
                     ? `${constants.AVATAR_DIR}/${account.avatar}`
-                    : DefaultAvatarImage
+                    : AvatarDefault
                 }
                 round={true}
                 size="40"
@@ -126,7 +124,7 @@ export default function Header() {
           <Button onClick={onClickLogin}>Log in</Button>
         )}
         <img
-          src={isShowMobileMenu ? CloseImage : HamburgerImage}
+          src={isShowMobileMenu ? IconClose : IconHamburger}
           alt="humberger"
           className="sm:hidden cursor-pointer"
           onClick={() => {

@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
-
-import Button from "../../components/ui/Button";
-
-import { getKickInfoByName, verifiedTwoStep, verifyEmailApi } from "../../apis";
 import { NotificationManager } from "react-notifications";
 import { Field, Form, Formik } from "formik";
-import TextInput from "../../components/ui/TextInput";
 import { MetroSpinner } from "react-spinners-kit";
+
+import { Button, TextInput } from "../../components/ui";
+
+import { getKickInfoByName, verifiedTwoStep, verifyEmailApi } from "../../apis";
 import { generateVerificationRandomCode } from "../../utils";
 
 export default function VerifyEmail() {

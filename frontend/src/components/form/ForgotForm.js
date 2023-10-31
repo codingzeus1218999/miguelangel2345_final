@@ -1,15 +1,14 @@
 import { useContext } from "react";
 import { Field, Formik, Form } from "formik";
 import * as Yup from "yup";
+import { NotificationManager } from "react-notifications";
 
-import BackImage from "../../assets/images/back.svg";
+import { IconBack } from "../../assets/images";
 
-import Button from "../ui/Button";
-import TextInput from "../ui/TextInput";
+import { Button, TextInput } from "../ui";
 
 import { ModalContext } from "../../context/ModalContext";
 import { forgotPasswordApi } from "../../apis";
-import { NotificationManager } from "react-notifications";
 
 export default function ForgotForm() {
   const { setModal } = useContext(ModalContext);
@@ -17,7 +16,7 @@ export default function ForgotForm() {
   return (
     <div>
       <span className="cursor-pointer" onClick={() => setModal("login")}>
-        <img alt="back" src={BackImage} className="inline-block" />
+        <img alt="back" src={IconBack} className="inline-block" />
         Log in
       </span>
       <h1 className="mt-4 font-semibold text-2xl">Forgot Password</h1>

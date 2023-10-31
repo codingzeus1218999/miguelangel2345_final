@@ -1,19 +1,21 @@
 import { useContext, useEffect } from "react";
 import { Field, Formik, Form } from "formik";
 import * as Yup from "yup";
+import { NotificationManager } from "react-notifications";
 
 import Layout from "../../components/layout";
-import AvatarUpload from "../../components/ui/AvatarUpload";
-import TextInput from "../../components/ui/TextInput";
-import TextArea from "../../components/ui/TextArea";
-import Button from "../../components/ui/Button";
-import PasswordInput from "../../components/ui/PasswordInput";
+import {
+  AvatarUpload,
+  TextArea,
+  TextInput,
+  Button,
+  PasswordInput,
+} from "../../components/ui";
 
 import { NavContext } from "../../context/NavContext";
 import { UserContext } from "../../context/UserContext";
 import { commafy } from "../../utils";
 import { changePassword, updateInfo } from "../../apis";
-import { NotificationManager } from "react-notifications";
 
 export default function Profile() {
   const { setNav } = useContext(NavContext);
