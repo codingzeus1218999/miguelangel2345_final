@@ -420,3 +420,21 @@ export const getRedemptionHistoryList = async (query) => {
     return err.response.data;
   }
 };
+
+export const processRedemption = async (id, state, query) => {
+  try {
+    const res = await axios.put(
+      `${constants.ADMIN_API_URL}/item/process`,
+      { id, state, query },
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};

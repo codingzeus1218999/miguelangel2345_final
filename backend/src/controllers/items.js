@@ -405,6 +405,39 @@ export const getRedemptionHistoryList = async (req, res) => {
   }
 };
 
+export const processRedemption = async (req, res) => {
+  try {
+    const redemptionId = get(req.body, "id").toString();
+    const newState = get(req.body, "state").toString();
+    const query = get(req.body, "query");
+
+    const p = await UserModel.findOneAndUpdate(
+      { "items._id": redemptionId },
+      { $set: { "items.$.state": newState } },
+      { new: true }
+    );
+
+    printMessage(`Redemption of ${p.name} has been ${newState}`, "success");
+
+    const { redemptions, count } = await getRedemptions("pending", query);
+    return res.status(200).json({
+      success: true,
+      data: {
+        redemptions,
+        count,
+      },
+      message: `Successfully ${newState} item`,
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(400).json({
+      success: false,
+      message: "Failed to process redemption",
+      data: {},
+    });
+  }
+};
+
 const getRedemptions = async (cat, query) => {
   const searchStr = query.searchStr;
   const perPage = Number(query.perPage);
@@ -434,7 +467,7 @@ const getRedemptions = async (cat, query) => {
     },
     {
       $project: {
-        _id: 0,
+        _id: "$items._id",
         name: 1,
         email: 1,
         purchasedItem: "$purchasedItems",
@@ -486,7 +519,7 @@ const getRedemptions = async (cat, query) => {
     },
     {
       $project: {
-        _id: 0,
+        _id: "$items._id",
         name: 1,
         email: 1,
         purchasedItem: "$purchasedItems",

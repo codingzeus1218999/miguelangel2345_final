@@ -1,22 +1,25 @@
 import { useContext, useEffect, useState } from "react";
 import { NotificationManager } from "react-notifications";
-
-import Layout from "../../components/layout";
-import { NavContext } from "../../context/NavContext";
-import { getRedemptionPendingList } from "../../apis";
-import { Link } from "react-router-dom";
-import { Button } from "../../components/ui";
+import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
   faClock,
   faMultiply,
 } from "@fortawesome/free-solid-svg-icons";
-import DataTable from "react-data-table-component";
 import Avatar from "react-avatar";
+import moment from "moment";
+import { Link } from "react-router-dom";
+
+import Layout from "../../components/layout";
+import { NavContext } from "../../context/NavContext";
+import {
+  getRedemptionPendingList,
+  processRedemption as processRedemptionApi,
+} from "../../apis";
+import { Button } from "../../components/ui";
 import constants from "../../constants";
 import { ProductDefault } from "../../assets/images";
-import moment from "moment";
 
 const customStyles = {
   pagination: {
@@ -63,12 +66,31 @@ export default function Redemptions() {
   const [loading, setLoading] = useState(true);
   const [loadCount, setLoadCount] = useState(0);
 
-  const approveRedemption = async (id) => {
-    console.log(id);
-  };
-
-  const rejectRedemption = async (id) => {
-    console.log(id);
+  const processRedemption = async (id, state) => {
+    setLoading(true);
+    try {
+      const res = await processRedemptionApi(id, state, {
+        searchStr,
+        sortDir,
+        sortField,
+        currentPage,
+        perPage,
+      });
+      if (res.success) {
+        setRedemptions(res.data.redemptions);
+        setTotalRows(res.data.count);
+        NotificationManager.success(res.message);
+      } else {
+        NotificationManager.error(res.message);
+      }
+    } catch (err) {
+      console.log(err);
+      NotificationManager.error(
+        "Something was wrong with connection with server"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const columns = [
@@ -126,14 +148,14 @@ export default function Redemptions() {
       selector: (row) => (
         <>
           <span
-            onClick={() => approveRedemption(row.purchasedItem._id)}
+            onClick={() => processRedemption(row._id, "approved")}
             className="text-green-600 hover:font-bold cursor-pointer"
           >
             <FontAwesomeIcon icon={faCheck} />
           </span>
           &nbsp;&nbsp;&nbsp;
           <span
-            onClick={() => rejectRedemption(row.purchasedItem._id)}
+            onClick={() => processRedemption(row._id, "rejected")}
             className="text-red-600 hover:font-bold cursor-pointer"
           >
             <FontAwesomeIcon icon={faMultiply} />
