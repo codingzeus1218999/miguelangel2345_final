@@ -7,7 +7,6 @@ import pkg from "lodash";
 import { ItemModel, getItemsByQuery } from "../db/items.js";
 import { printMessage, sendEmail } from "../utils/index.js";
 import { UserModel } from "../db/users.js";
-import constants from "../constants/index.js";
 const { get } = pkg;
 
 export const addItem = async (req, res) => {
@@ -144,70 +143,98 @@ export const deleteItem = async (req, res) => {
   }
 };
 
-// export const editPrize = async (req, res) => {
-//   try {
-//     const __filename = fileURLToPath(import.meta.url);
-//     const __dirname = path.dirname(__filename);
-//     const folderName = path.join(__dirname, "../", "../", "public", "prizes");
-//     if (!fs.existsSync(folderName)) {
-//       if (!fs.existsSync(path.join(__dirname, "../", "../", "public")))
-//         fs.mkdirSync(path.join(__dirname, "../", "../", "public"));
-//       fs.mkdirSync(folderName);
-//     }
-//     const form = formidable({
-//       uploadDir: folderName,
-//       keepExtensions: true,
-//       multiples: false,
-//     });
-//     form.parse(req, async (err, fields, file) => {
-//       if (err) {
-//         console.log(err);
-//         return res.sendStatus(400);
-//       }
-//       const prize = await PrizeModel.findById(fields.id);
-//       if (prize) {
-//         const {
-//           image,
-//           name,
-//           description,
-//           points,
-//           shouldModerator,
-//           isLocked,
-//           wagerMethod,
-//           wagerMin,
-//           wagerMax,
-//         } = JSON.parse(fields.info);
-//         prize.name = name;
-//         prize.description = description;
-//         prize.points = points;
-//         prize.shouldModerator = shouldModerator;
-//         prize.isLocked = isLocked;
-//         prize.wagerMethod = wagerMethod;
-//         prize.wagerMin = wagerMin;
-//         prize.wagerMax = wagerMax;
-//         prize.image =
-//           Object.keys(file).length > 0 ? file.image[0].newFilename : image;
-//         prize
-//           .save()
-//           .then((prize) => {
-//             return res.status(200).json({ success: true, prize });
-//           })
-//           .catch((err) => {
-//             console.log(err);
-//             return res.sendStatus(400);
-//           });
-//       } else {
-//         return res.status(400).json({
-//           success: false,
-//           message: "There is no prize with this id",
-//         });
-//       }
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     return res.sendStatus(400);
-//   }
-// };
+export const editItem = async (req, res) => {
+  try {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const folderName = path.join(__dirname, "../", "../", "public", "items");
+    if (!fs.existsSync(folderName)) {
+      if (!fs.existsSync(path.join(__dirname, "../", "../", "public")))
+        fs.mkdirSync(path.join(__dirname, "../", "../", "public"));
+      fs.mkdirSync(folderName);
+    }
+    const form = formidable({
+      uploadDir: folderName,
+      keepExtensions: true,
+      multiples: false,
+    });
+    form.parse(req, async (err, fields, file) => {
+      if (err) {
+        printMessage(err, "error");
+        return res.status(400).json({
+          success: false,
+          message: "Failed to upload image",
+          data: {},
+        });
+      }
+      const item = await ItemModel.findOne({ _id: fields.id, deleted: false });
+      if (item) {
+        const {
+          type,
+          image,
+          name,
+          cost,
+          coolDownGlobal,
+          coolDownUser,
+          codes,
+          description,
+          quantity,
+          isNoticeInChat,
+          shouldBeSubscriber,
+          requirements,
+          shouldDiscard,
+          selectRandom,
+        } = JSON.parse(fields.info);
+        item.type = type;
+        item.name = name;
+        item.description = description;
+        item.cost = cost;
+        item.shouldBeSubscriber = shouldBeSubscriber;
+        item.coolDownGlobal = coolDownGlobal;
+        item.coolDownUser = coolDownUser;
+        item.codes = codes;
+        item.quantity = quantity;
+        item.isNoticeInChat = isNoticeInChat;
+        item.requirements = requirements;
+        item.shouldDiscard = shouldDiscard;
+        item.selectRandom = selectRandom;
+        item.image =
+          Object.keys(file).length > 0 ? file.image[0].newFilename : image;
+        item
+          .save()
+          .then((newItem) => {
+            printMessage(`${newItem.name} has been updated`, "info");
+            return res.status(200).json({
+              success: true,
+              message: "Successfully changed",
+              data: { newItem },
+            });
+          })
+          .catch((err) => {
+            printMessage(err, "error");
+            return res.status(400).json({
+              success: false,
+              message: "Failed to changing the item",
+              data: {},
+            });
+          });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "There is no item with this id",
+          data: {},
+        });
+      }
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(400).json({
+      success: false,
+      message: "Failed to updating item info",
+      data: {},
+    });
+  }
+};
 
 export const getItems = async (req, res) => {
   try {

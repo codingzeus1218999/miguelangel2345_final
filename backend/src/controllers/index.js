@@ -1,6 +1,5 @@
 export * from "./auths.js";
 export * from "./users.js";
-export * from "./prizes.js";
 export * from "./items.js";
 export * from "./raffles.js";
 export * from "./chatbotSettingsGeneral.js";

@@ -2,7 +2,7 @@ import {
   addItem,
   getItemList,
   deleteItem,
-  // editPrize,
+  editItem,
   getItems,
   getItemInfoById,
   getLatestItems,
@@ -19,7 +19,7 @@ export default (router) => {
 
   router.post("/admin/item", isAuthorized, addItem);
   router.get("/admin/items", isAuthorized, getItemList);
-  // router.get("/admin/prize", isAuthorized, getPrizeInfoById);
+  router.get("/admin/item", isAuthorized, getItemInfoById);
   router.delete("/admin/item", isAuthorized, deleteItem);
-  // router.put("/admin/prize", isAuthorized, editPrize);
+  router.put("/admin/item", isAuthorized, editItem);
 };

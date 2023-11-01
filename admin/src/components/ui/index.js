@@ -15,6 +15,7 @@ import StatusBadge from "./StatusBadge";
 import SwitchField from "./SwitchField";
 import TextArea from "./TextArea";
 import AddMultiValues from "./AddMultiValues";
+import ElementLoadingSpinner from "./ElementLoadingSpinner";
 
 export {
   TypeRadio,
@@ -34,4 +35,5 @@ export {
   SwitchField,
   TextArea,
   AddMultiValues,
+  ElementLoadingSpinner,
 };

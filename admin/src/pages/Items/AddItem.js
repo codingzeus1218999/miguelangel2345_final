@@ -115,6 +115,7 @@ export default function AddItem() {
                 NotificationManager.error(res.message);
               }
             } catch (err) {
+              console.log(err);
               NotificationManager.error("Something is wrong, please try again");
             } finally {
               actions.setSubmitting(false);

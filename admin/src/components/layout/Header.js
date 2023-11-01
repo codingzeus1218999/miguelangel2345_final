@@ -12,7 +12,6 @@ import constants from "../../constants";
 
 const menu = [
   { link: "users", name: "users", title: "Users" },
-  { link: "prizes", name: "prizes", title: "Prizes" },
   { link: "items", name: "items", title: "Items" },
   {
     link: "chatbot-settings",

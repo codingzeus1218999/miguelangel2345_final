@@ -171,82 +171,6 @@ export const changeUserRole = async (data) => {
   }
 };
 
-export const addPrize = async (formData) => {
-  try {
-    const res = await axios.post(`${constants.ADMIN_API_URL}/prize`, formData, {
-      headers: {
-        Authorization: localStorage.getItem("token"),
-        Accept: "application/json",
-        "Content-Type": "multipart/form-data",
-        "x-rapidapi-host": "file-upload8.p.rapidapi.com",
-        "x-rapidapi-key": "your-rapidapi-key-here",
-      },
-    });
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const editPrize = async (formData) => {
-  try {
-    const res = await axios.put(`${constants.ADMIN_API_URL}/prize`, formData, {
-      headers: {
-        Authorization: localStorage.getItem("token"),
-        Accept: "application/json",
-        "Content-Type": "multipart/form-data",
-        "x-rapidapi-host": "file-upload8.p.rapidapi.com",
-        "x-rapidapi-key": "your-rapidapi-key-here",
-      },
-    });
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const getPrizeList = async (query) => {
-  try {
-    const res = await axios.get(`${constants.ADMIN_API_URL}/prizes`, {
-      headers: {
-        Authorization: localStorage.getItem("token"),
-      },
-      params: query,
-    });
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const getPrizeInfoById = async (id) => {
-  try {
-    const res = await axios.get(`${constants.ADMIN_API_URL}/prize`, {
-      params: { id },
-      headers: {
-        Authorization: localStorage.getItem("token"),
-      },
-    });
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const deletePrizeApi = async (id, query) => {
-  try {
-    const res = await axios.delete(`${constants.ADMIN_API_URL}/prize`, {
-      params: { id, query },
-      headers: {
-        Authorization: localStorage.getItem("token"),
-      },
-    });
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 export const getChatbotSettingsGeneral = async () => {
   try {
     const res = await axios.get(
@@ -425,6 +349,39 @@ export const deleteItem = async (id, query) => {
       params: { id, query },
       headers: {
         Authorization: localStorage.getItem("token"),
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const getItemInfoById = async (id) => {
+  try {
+    const res = await axios.get(`${constants.ADMIN_API_URL}/item`, {
+      params: { id },
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const editItem = async (formData) => {
+  try {
+    const res = await axios.put(`${constants.ADMIN_API_URL}/item`, formData, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
+        "x-rapidapi-host": "file-upload8.p.rapidapi.com",
+        "x-rapidapi-key": "your-rapidapi-key-here",
       },
     });
     return res.data;
