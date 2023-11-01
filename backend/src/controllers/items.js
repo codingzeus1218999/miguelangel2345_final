@@ -411,9 +411,22 @@ export const processRedemption = async (req, res) => {
     const newState = get(req.body, "state").toString();
     const query = get(req.body, "query");
 
+    const user = await UserModel.findOne({ "items._id": redemptionId });
+    const userItems = [...user.items];
+    const itemId = userItems.find(
+      (t) => t._id.toString() === redemptionId
+    ).item;
+    const item = await ItemModel.findById(itemId);
+
     const p = await UserModel.findOneAndUpdate(
       { "items._id": redemptionId },
-      { $set: { "items.$.state": newState } },
+      {
+        $set: {
+          "items.$.state": newState,
+          points:
+            newState === "approved" ? user.points : user.points + item.cost,
+        },
+      },
       { new: true }
     );
 
