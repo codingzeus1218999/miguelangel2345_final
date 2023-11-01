@@ -468,6 +468,7 @@ const getRedemptions = async (cat, query) => {
     {
       $project: {
         _id: "$items._id",
+        state: "$items.state",
         name: 1,
         email: 1,
         purchasedItem: "$purchasedItems",
@@ -520,6 +521,7 @@ const getRedemptions = async (cat, query) => {
     {
       $project: {
         _id: "$items._id",
+        state: "$items.state",
         name: 1,
         email: 1,
         purchasedItem: "$purchasedItems",
