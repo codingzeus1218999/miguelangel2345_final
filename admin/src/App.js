@@ -4,6 +4,8 @@ import { NotificationContainer } from "react-notifications";
 import Login from "./pages/Login";
 import EditUser from "./pages/Users/EditUser";
 import Users from "./pages/Users";
+import Redemptions from "./pages/Redemptions";
+import RedemptionHistory from "./pages/Redemptions/RedemptionHistory";
 import Raffle from "./pages/Raffle";
 import ChatbotSettings from "./pages/Chatbot/ChatbotSettings";
 import ChatbotHistory from "./pages/Chatbot/ChatbotHistory";
@@ -25,6 +27,12 @@ function App() {
             <Route exact path="/" element={<Login />} />
             <Route exact path="/users" element={<Users />} />
             <Route exact path="/users/:id" element={<EditUser />} />
+            <Route exact path="/redemptions" element={<Redemptions />} />
+            <Route
+              exact
+              path="/redemption-history"
+              element={<RedemptionHistory />}
+            />
             <Route exact path="/items" element={<Items />} />
             <Route exact path="/items/:id" element={<EditItem />} />
             <Route exact path="/items/add" element={<AddItem />} />

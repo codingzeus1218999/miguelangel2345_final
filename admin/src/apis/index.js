@@ -390,3 +390,33 @@ export const editItem = async (formData) => {
     return err.response.data;
   }
 };
+
+export const getRedemptionPendingList = async (query) => {
+  try {
+    const res = await axios.get(`${constants.ADMIN_API_URL}/item/pending`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+      params: query,
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const getRedemptionHistoryList = async (query) => {
+  try {
+    const res = await axios.get(`${constants.ADMIN_API_URL}/item/history`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+      params: query,
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};

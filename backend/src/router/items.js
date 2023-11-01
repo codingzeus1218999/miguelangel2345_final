@@ -7,6 +7,8 @@ import {
   getItemInfoById,
   getLatestItems,
   purchaseItem,
+  getRedemptionPendingList,
+  getRedemptionHistoryList,
 } from "../controllers/index.js";
 
 import { isAuthorized, isAuthenticated } from "../middlewares/index.js";
@@ -22,4 +24,6 @@ export default (router) => {
   router.get("/admin/item", isAuthorized, getItemInfoById);
   router.delete("/admin/item", isAuthorized, deleteItem);
   router.put("/admin/item", isAuthorized, editItem);
+  router.get("/admin/item/pending", isAuthorized, getRedemptionPendingList);
+  router.get("/admin/item/history", isAuthorized, getRedemptionHistoryList);
 };

@@ -362,3 +362,153 @@ export const purchaseItem = async (req, res) => {
     });
   }
 };
+
+export const getRedemptionPendingList = async (req, res) => {
+  try {
+    const { redemptions, count } = await getRedemptions("pending", req.query);
+    return res.status(200).json({
+      success: true,
+      data: {
+        redemptions,
+        count,
+      },
+      message: "Got all pending redemptions for admin",
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(400).json({
+      success: false,
+      message: "Failed to getting pending redemptions for admin",
+      data: {},
+    });
+  }
+};
+
+export const getRedemptionHistoryList = async (req, res) => {
+  try {
+    const { redemptions, count } = await getRedemptions("history", req.query);
+    return res.status(200).json({
+      success: true,
+      data: {
+        redemptions,
+        count,
+      },
+      message: "Got all redemption history for admin",
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(400).json({
+      success: false,
+      message: "Failed to getting redemption history for admin",
+      data: {},
+    });
+  }
+};
+
+const getRedemptions = async (cat, query) => {
+  const searchStr = query.searchStr;
+  const perPage = Number(query.perPage);
+  const currentPage = Number(query.currentPage);
+  const sortField = query.sortField;
+  const sortDir = query.sortDir === "asc" ? 1 : -1;
+
+  const redemptions = await UserModel.aggregate([
+    {
+      $unwind: "$items",
+    },
+    {
+      $match: {
+        "items.state": cat === "pending" ? "pending" : { $ne: "pending" },
+      },
+    },
+    {
+      $lookup: {
+        from: "items",
+        localField: "items.item",
+        foreignField: "_id",
+        as: "purchasedItems",
+      },
+    },
+    {
+      $unwind: "$purchasedItems",
+    },
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        email: 1,
+        purchasedItem: "$purchasedItems",
+        purchaseDate: "$items.date",
+      },
+    },
+    {
+      $match: {
+        $or: [
+          { email: { $regex: searchStr, $options: "i" } },
+          { name: { $regex: searchStr, $options: "i" } },
+          { "purchasedItem.name": { $regex: searchStr, $options: "i" } },
+          {
+            "purchasedItem.description": { $regex: searchStr, $options: "i" },
+          },
+        ],
+      },
+    },
+    {
+      $sort: { [sortField]: sortDir },
+    },
+    {
+      $skip: (currentPage - 1) * perPage,
+    },
+    {
+      $limit: perPage,
+    },
+  ]);
+
+  const allRedemptions = await UserModel.aggregate([
+    {
+      $unwind: "$items",
+    },
+    {
+      $match: {
+        "items.state": cat === "pending" ? "pending" : { $ne: "pending" },
+      },
+    },
+    {
+      $lookup: {
+        from: "items",
+        localField: "items.item",
+        foreignField: "_id",
+        as: "purchasedItems",
+      },
+    },
+    {
+      $unwind: "$purchasedItems",
+    },
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        email: 1,
+        purchasedItem: "$purchasedItems",
+        purchaseDate: "$items.date",
+      },
+    },
+    {
+      $match: {
+        $or: [
+          { email: { $regex: searchStr, $options: "i" } },
+          { name: { $regex: searchStr, $options: "i" } },
+          { "purchasedItem.name": { $regex: searchStr, $options: "i" } },
+          {
+            "purchasedItem.description": { $regex: searchStr, $options: "i" },
+          },
+        ],
+      },
+    },
+  ]);
+
+  return {
+    redemptions,
+    count: allRedemptions.length,
+  };
+};

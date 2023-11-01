@@ -1,19 +1,22 @@
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { faAdd, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NotificationManager } from "react-notifications";
-import DataTable from "react-data-table-component";
-import moment from "moment";
-import Avatar from "react-avatar";
 
 import Layout from "../../components/layout";
 import { NavContext } from "../../context/NavContext";
-import { Button, StatusBadge } from "../../components/ui";
+import { getRedemptionPendingList } from "../../apis";
+import { Link } from "react-router-dom";
+import { Button } from "../../components/ui";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCheck,
+  faClock,
+  faMultiply,
+} from "@fortawesome/free-solid-svg-icons";
+import DataTable from "react-data-table-component";
+import Avatar from "react-avatar";
 import constants from "../../constants";
 import { ProductDefault } from "../../assets/images";
-import { commafy } from "../../utils";
-import { getItemList, deleteItem as deleteItemApi } from "../../apis";
+import moment from "moment";
 
 const customStyles = {
   pagination: {
@@ -28,47 +31,57 @@ const customStyles = {
   },
 };
 
-export default function Items() {
+export default function Redemptions() {
   const { setNav } = useContext(NavContext);
   const [searchStr, setSearchStr] = useState(
-    localStorage.getItem("items-search-str")
-      ? localStorage.getItem("items-search-str")
+    localStorage.getItem("redemptions-search-str")
+      ? localStorage.getItem("redemptions-search-str")
       : ""
   );
   const [sortField, setSortField] = useState(
-    localStorage.getItem("items-sort-field")
-      ? localStorage.getItem("items-sort-field")
+    localStorage.getItem("redemptions-sort-field")
+      ? localStorage.getItem("redemptions-sort-field")
       : "name"
   );
   const [sortDir, setSortDir] = useState(
-    localStorage.getItem("items-sort-dir")
-      ? localStorage.getItem("items-sort-dir")
+    localStorage.getItem("redemptions-sort-dir")
+      ? localStorage.getItem("redemptions-sort-dir")
       : "asc"
   );
   const [perPage, setPerPage] = useState(
-    localStorage.getItem("items-per-page")
-      ? localStorage.getItem("items-per-page")
+    localStorage.getItem("redemptions-per-page")
+      ? localStorage.getItem("redemptions-per-page")
       : 10
   );
   const [currentPage, setCurrentPage] = useState(
-    localStorage.getItem("items-current-page")
-      ? localStorage.getItem("items-current-page")
+    localStorage.getItem("redemptions-current-page")
+      ? localStorage.getItem("redemptions-current-page")
       : 1
   );
   const [totalRows, setTotalRows] = useState(0);
-  const [items, setItems] = useState([]);
+  const [redemptions, setRedemptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadCount, setLoadCount] = useState(0);
+
+  const approveRedemption = async (id) => {
+    console.log(id);
+  };
+
+  const rejectRedemption = async (id) => {
+    console.log(id);
+  };
 
   const columns = [
     {
       name: "#",
-      field: "image",
+      field: "purchasedItem.image",
       selector: (row) => (
         <Avatar
           size="40"
           src={
-            row.image ? `${constants.ITEM_DIR}/${row.image}` : ProductDefault
+            row.purchasedItem.image
+              ? `${constants.ITEM_DIR}/${row.purchasedItem.image}`
+              : ProductDefault
           }
         />
       ),
@@ -76,49 +89,35 @@ export default function Items() {
     },
     {
       name: "Name",
-      field: "name",
-      selector: (row) => row.name,
+      field: "purchasedItem.name",
       sortable: true,
-      width: "100px",
+      selector: (row) => row.purchasedItem.name,
     },
     {
       name: "Type",
-      field: "type",
-      selector: (row) => row.type,
+      field: "purchasedItem.type",
+      selector: (row) => row.purchasedItem.type,
       sortable: true,
       width: "100px",
     },
     {
-      name: "Description",
-      field: "description",
-      selector: (row) => row.description,
-    },
-    {
-      name: "Cost",
-      field: "cost",
-      selector: (row) => commafy(row.cost),
+      name: "User kick name",
+      field: "name",
+      selector: (row) => row.name,
       sortable: true,
-      width: "100px",
+      width: "200px",
     },
     {
-      name: "Quantity",
-      field: "quantity",
-      selector: (row) => commafy(row.quantity),
+      name: "User email",
+      field: "email",
+      selector: (row) => row.email,
       sortable: true,
-      width: "100px",
+      width: "200px",
     },
     {
-      name: "Only subscriber",
-      field: "shouldBeSubscriber",
-      selector: (row) => (
-        <StatusBadge status={row.shouldBeSubscriber} labels={["no", "yes"]} />
-      ),
-      width: "100px",
-    },
-    {
-      name: "Created_at",
-      field: "createdSt",
-      selector: (row) => moment(row.createdAt).format("MM/DD/YYYY"),
+      name: "Date",
+      field: "purchaseDate",
+      selector: (row) => moment(row.purchaseDate).format("YYYY/MM/DD"),
       sortable: true,
       width: "100px",
     },
@@ -126,18 +125,18 @@ export default function Items() {
       name: "Action",
       selector: (row) => (
         <>
-          <Link
-            to={`/items/${row._id}`}
-            className="text-yellow-600 hover:font-bold"
+          <span
+            onClick={() => approveRedemption(row.purchasedItem._id)}
+            className="text-green-600 hover:font-bold cursor-pointer"
           >
-            <FontAwesomeIcon icon={faEdit} />
-          </Link>
+            <FontAwesomeIcon icon={faCheck} />
+          </span>
           &nbsp;&nbsp;&nbsp;
           <span
-            onClick={() => deleteItem(row._id)}
+            onClick={() => rejectRedemption(row.purchasedItem._id)}
             className="text-red-600 hover:font-bold cursor-pointer"
           >
-            <FontAwesomeIcon icon={faTrash} />
+            <FontAwesomeIcon icon={faMultiply} />
           </span>
         </>
       ),
@@ -145,42 +144,15 @@ export default function Items() {
     },
   ];
 
-  const deleteItem = async (id) => {
-    setLoading(true);
-    try {
-      const res = await deleteItemApi(id, {
-        searchStr,
-        sortDir,
-        sortField,
-        currentPage,
-        perPage,
-      });
-      if (res.success) {
-        setItems(res.data.items);
-        setTotalRows(res.data.count);
-        NotificationManager.success(res.message);
-      } else {
-        NotificationManager.error(res.message);
-      }
-    } catch (err) {
-      console.log(err);
-      NotificationManager.error(
-        "Something was wrong with connection with server"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    setNav("items");
+    setNav("redemptions");
   }, [setNav]);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await getItemList({
+        const res = await getRedemptionPendingList({
           searchStr,
           sortDir,
           sortField,
@@ -188,7 +160,7 @@ export default function Items() {
           perPage,
         });
         if (res.success) {
-          setItems(res.data.items);
+          setRedemptions(res.data.redemptions);
           setTotalRows(res.data.count);
           setLoading(false);
         } else {
@@ -206,7 +178,7 @@ export default function Items() {
 
   return (
     <Layout>
-      <h1 className="page-title">Items</h1>
+      <h1 className="page-title">Redemptions</h1>
       <div className="mt-6 flex flex-row gap-2 flex-wrap items-center justify-between">
         <div className="flex flex-row gap-2 flex-wrap items-center">
           <input
@@ -216,19 +188,19 @@ export default function Items() {
             value={searchStr}
             onChange={({ target }) => {
               setSearchStr(target.value);
-              localStorage.setItem("items-search-str", target.value);
+              localStorage.setItem("redemptions-search-str", target.value);
             }}
           />
         </div>
-        <Link to="/items/add">
+        <Link to="/redemption-history">
           <Button>
-            <FontAwesomeIcon icon={faAdd} /> Add
+            <FontAwesomeIcon icon={faClock} /> History
           </Button>
         </Link>
       </div>
       <div className="mt-6 rounded-t-md">
         <DataTable
-          data={items}
+          data={redemptions}
           columns={columns}
           customStyles={customStyles}
           dense
@@ -242,12 +214,12 @@ export default function Items() {
           paginationPerPage={perPage}
           onChangeRowsPerPage={(pp) => {
             setPerPage(pp);
-            localStorage.setItem("items-per-page", pp);
+            localStorage.setItem("redemptions-per-page", pp);
           }}
           onChangePage={(p) => {
             if (loadCount !== 0) {
               setCurrentPage(p);
-              localStorage.setItem("items-current-page", p);
+              localStorage.setItem("redemptions-current-page", p);
             }
             setLoadCount(loadCount + 1);
           }}
@@ -255,9 +227,9 @@ export default function Items() {
           onSort={(c, d) => {
             setSortField(c.field);
             setSortDir(d === "asc" ? "asc" : "desc");
-            localStorage.setItem("items-sort-field", c.field);
+            localStorage.setItem("redemptions-sort-field", c.field);
             localStorage.setItem(
-              "items-sort-dir",
+              "redemptions-sort-dir",
               d === "asc" ? "asc" : "desc"
             );
           }}

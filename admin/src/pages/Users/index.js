@@ -181,6 +181,7 @@ export default function Users() {
           value={searchStr}
           onChange={({ target }) => {
             setSearchStr(target.value);
+            localStorage.setItem("users-search-str", target.value);
           }}
         />
       </div>

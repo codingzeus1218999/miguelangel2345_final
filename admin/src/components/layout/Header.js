@@ -13,6 +13,7 @@ import constants from "../../constants";
 const menu = [
   { link: "users", name: "users", title: "Users" },
   { link: "items", name: "items", title: "Items" },
+  { link: "redemptions", name: "redemptions", title: "Redemptions" },
   {
     link: "chatbot-settings",
     name: "chatbot-settings",
@@ -85,7 +86,7 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-pt-black-100 sticky top-0">
+    <header className="bg-pt-black-100 sticky top-0 z-50">
       <div className="container mx-auto flex flex-row justify-between items-center">
         <div className="flex flex-row items-center">
           <div className="sm:flex flex-row gap-1 hidden items-center">
