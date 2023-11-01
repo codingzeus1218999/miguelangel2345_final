@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+const TypeItemState = ["pending", "rejected", "approved"];
+
 const UserSchema = new mongoose.Schema({
   name: { type: String },
   email: { type: String, required: true },
@@ -12,19 +14,12 @@ const UserSchema = new mongoose.Schema({
   avatar: { type: String, default: "" },
   role: { type: String, required: true, default: "user" },
   isModerator: { type: Boolean, default: false },
-  prizes: [
-    {
-      prize: { type: mongoose.Schema.Types.ObjectId, ref: "Prize" },
-      date: { type: Date },
-      hasWon: { type: Boolean, required: true, default: false },
-      amount: { type: Number, required: true, default: 0 },
-    },
-  ],
   items: [
     {
       item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
       date: { type: Date, default: Date.now },
       requirements: { type: Object },
+      state: { type: String, enum: TypeItemState, default: "pending" },
     },
   ],
   created_at: { type: Date, required: true, default: Date.now },

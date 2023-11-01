@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 import pkg from "lodash";
 
-import { ItemModel } from "../db/items.js";
+import { ItemModel, getItemsByQuery } from "../db/items.js";
 import { printMessage, sendEmail } from "../utils/index.js";
 import { UserModel } from "../db/users.js";
 import constants from "../constants/index.js";
@@ -67,19 +67,26 @@ export const addItem = async (req, res) => {
   }
 };
 
-// export const getPrizeList = async (req, res) => {
-//   try {
-//     const { prizes, count } = await getPrizesByQuery(req.query);
-//     return res.status(200).json({
-//       success: true,
-//       prizes,
-//       count,
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     return res.sendStatus(400);
-//   }
-// };
+export const getItemList = async (req, res) => {
+  try {
+    const { items, count } = await getItemsByQuery(req.query);
+    return res.status(200).json({
+      success: true,
+      data: {
+        items,
+        count,
+      },
+      message: "Got all items for admin",
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(400).json({
+      success: false,
+      message: "Failed to getting items for admin",
+      data: {},
+    });
+  }
+};
 
 export const getItemInfoById = async (req, res) => {
   try {
@@ -107,28 +114,35 @@ export const getItemInfoById = async (req, res) => {
   }
 };
 
-// export const deletePrize = async (req, res) => {
-//   try {
-//     const prize = await PrizeModel.findById(req.query.id);
-//     if (prize) {
-//       prize.deleted = true;
-//       const p = await prize.save();
-//       const { prizes, count } = await getPrizesByQuery(req.query.query);
-//       return res.status(200).json({
-//         success: true,
-//         prizes,
-//         count,
-//       });
-//     } else {
-//       return res.status(400).json({
-//         success: false,
-//         message: "There is no prize with this id",
-//       });
-//     }
-//   } catch (err) {
-//     return res.sendStatus(400);
-//   }
-// };
+export const deleteItem = async (req, res) => {
+  try {
+    const item = await ItemModel.findById(req.query.id);
+    if (item) {
+      item.deleted = true;
+      const p = await item.save();
+      printMessage(`${p.name} has been deleted`, "info");
+      const { items, count } = await getItemsByQuery(req.query.query);
+      return res.status(200).json({
+        success: true,
+        message: "Successfully deleted",
+        data: { items, count },
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "There is no item with this id",
+        data: {},
+      });
+    }
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(400).json({
+      success: false,
+      message: "Failed to deleting item",
+      data: {},
+    });
+  }
+};
 
 // export const editPrize = async (req, res) => {
 //   try {

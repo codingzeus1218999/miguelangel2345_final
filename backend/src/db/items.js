@@ -22,3 +22,19 @@ const ItemSchema = new mongoose.Schema({
 });
 
 export const ItemModel = mongoose.model("Item", ItemSchema);
+
+export const getItemsByQuery = async (query) => {
+  const filter = {
+    $or: [
+      { name: { $regex: new RegExp(`${query.searchStr}`, "i") } },
+      { description: { $regex: new RegExp(`${query.searchStr}`, "i") } },
+    ],
+    deleted: false,
+  };
+  const items = await ItemModel.find(filter)
+    .sort({ [query.sortField]: query.sortDir })
+    .skip(query.perPage * (query.currentPage - 1))
+    .limit(query.perPage);
+  const count = await ItemModel.countDocuments(filter);
+  return { items, count };
+};

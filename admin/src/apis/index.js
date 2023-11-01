@@ -403,3 +403,33 @@ export const addItem = async (formData) => {
     return err.response.data;
   }
 };
+
+export const getItemList = async (query) => {
+  try {
+    const res = await axios.get(`${constants.ADMIN_API_URL}/items`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+      params: query,
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const deleteItem = async (id, query) => {
+  try {
+    const res = await axios.delete(`${constants.ADMIN_API_URL}/item`, {
+      params: { id, query },
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
