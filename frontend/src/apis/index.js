@@ -181,3 +181,18 @@ export const purchaseItem = async (data) => {
     return err.response.data;
   }
 };
+
+export const getRedemptions = async (query) => {
+  try {
+    const res = await axios.get(`${constants.API_URL}/user/redemptions`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+      params: query,
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};

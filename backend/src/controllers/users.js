@@ -16,6 +16,7 @@ import {
   getUsersByQuery,
 } from "../db/users.js";
 import { printMessage, sendEmail } from "../utils/index.js";
+import mongoose from "mongoose";
 
 const { get } = pkg;
 
@@ -637,5 +638,98 @@ export const addPointsToUsersRaffle = async (req, res) => {
   } catch (err) {
     console.log(err);
     return res.sendStatus(400);
+  }
+};
+
+export const getRedemptions = async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    const searchStr = req.query.searchStr;
+    const perPage = Number(req.query.perPage);
+    const currentPage = Number(req.query.currentPage);
+    const sortField = req.query.sortField;
+    const sortDir = req.query.sortDir === "asc" ? 1 : -1;
+
+    const redemptions = await UserModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(userId) } },
+      { $unwind: "$items" },
+      {
+        $lookup: {
+          from: "items",
+          localField: "items.item",
+          foreignField: "_id",
+          as: "item",
+        },
+      },
+      { $unwind: "$item" },
+      {
+        $match: {
+          $or: [
+            { "item.name": { $regex: searchStr, $options: "i" } },
+            { "item.description": { $regex: searchStr, $options: "i" } },
+          ],
+        },
+      },
+      {
+        $project: {
+          _id: "$items._id",
+          itemId: "$item._id",
+          name: "$item.name",
+          type: "$item.type",
+          description: "$item.description",
+          cost: "$item.cost",
+          image: "$item.image",
+          requirements: "$item.requirements",
+          codes: "$item.codes",
+          date: "$items.date",
+          state: "$items.state",
+        },
+      },
+      { $sort: { [sortField]: sortDir } },
+      {
+        $skip: (currentPage - 1) * perPage,
+      },
+      {
+        $limit: perPage,
+      },
+    ]);
+
+    const allRedemptions = await UserModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(userId) } },
+      { $unwind: "$items" },
+      {
+        $lookup: {
+          from: "items",
+          localField: "items.item",
+          foreignField: "_id",
+          as: "item",
+        },
+      },
+      { $unwind: "$item" },
+      {
+        $match: {
+          $or: [
+            { "item.name": { $regex: searchStr, $options: "i" } },
+            { "item.description": { $regex: searchStr, $options: "i" } },
+          ],
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        redemptions,
+        count: allRedemptions.length,
+      },
+      message: "Got all purchased items",
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(400).json({
+      success: false,
+      message: "Failed to getting purchased items",
+      data: {},
+    });
   }
 };

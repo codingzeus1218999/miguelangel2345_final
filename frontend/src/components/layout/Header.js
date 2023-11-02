@@ -101,6 +101,10 @@ export default function Header() {
                 title: "Profile",
                 onClick: () => navigate("/profile"),
               },
+              {
+                title: "Purchased Items",
+                onClick: () => navigate("/purchased-items"),
+              },
               { title: "Log out", onClick: () => onClickLogout() },
             ]}
           >

@@ -21,6 +21,7 @@ import {
   addPointsToUsersChatbot,
   delPointsToUsersChatbot,
   addPointsToUsersRaffle,
+  getRedemptions,
 } from "../controllers/index.js";
 
 import { isAuthenticated, isAuthorized } from "../middlewares/index.js";
@@ -34,6 +35,7 @@ export default (router) => {
   router.post("/user/upload-avatar", isAuthenticated, uploadAvatar);
   router.put("/user/update-info", isAuthenticated, updateInfo);
   router.put("/user/change-password", isAuthenticated, changePassword);
+  router.get("/user/redemptions", isAuthenticated, getRedemptions);
 
   router.get("/admin/users", isAuthorized, getUserList);
   router.get("/admin/user", isAuthorized, getUserInfoById);

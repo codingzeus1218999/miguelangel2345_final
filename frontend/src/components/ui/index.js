@@ -11,6 +11,7 @@ import Nav from "./Nav";
 import PasswordInput from "./PasswordInput";
 import TextArea from "./TextArea";
 import TextInput from "./TextInput";
+import StatusBadge from "./StatusBadge";
 
 export {
   ItemCard,
@@ -26,4 +27,5 @@ export {
   PasswordInput,
   TextArea,
   TextInput,
+  StatusBadge,
 };

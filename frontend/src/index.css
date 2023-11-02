@@ -115,4 +115,7 @@
     box-shadow: inset 0 0 0 1px #dd92de, inset 0 0 8px 4px #ff00fd,
       inset 0 0 16px 2px rgba(0, 0, 0, 0.8), 0 0 8px 2px #ff00fd;
   }
+  input.pt-search-input {
+    @apply p-2 rounded-md focus-visible:outline-none max-w-full w-64 block;
+  }
 }

@@ -25,6 +25,7 @@ import NotFound from "./pages/NotFound";
 import { NavProvider } from "./context/NavContext";
 import { ModalProvider } from "./context/ModalContext";
 import { UserProvider } from "./context/UserContext";
+import PurchasedItems from "./pages/PurchasedItems";
 
 function App() {
   return (
@@ -61,6 +62,15 @@ function App() {
                 element={
                   <PrivateRoute>
                     <Profile />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                exact
+                path="/purchased-items"
+                element={
+                  <PrivateRoute>
+                    <PurchasedItems />
                   </PrivateRoute>
                 }
               />
