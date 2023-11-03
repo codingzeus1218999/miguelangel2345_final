@@ -64,6 +64,7 @@ export default function EditItem() {
           }
           setItemType(res.data.item.type);
         } else {
+          NotificationManager.error(res.message);
         }
       } catch (err) {
         console.log(err);
