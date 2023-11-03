@@ -61,8 +61,8 @@ export default function EditItem() {
           if (res.data.item.image) {
             setDisplayImage(`${constants.ITEM_DIR}/${res.data.item.image}`);
             setComponentState("set");
-            setItemType(res.data.item.type);
           }
+          setItemType(res.data.item.type);
         } else {
         }
       } catch (err) {
