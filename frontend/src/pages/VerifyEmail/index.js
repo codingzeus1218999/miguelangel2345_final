@@ -55,12 +55,19 @@ export default function VerifyEmail() {
               })}
               onSubmit={async (values, actions) => {
                 try {
-                  const kickUser = await getKickInfoByName(values.name);
-                  if (kickUser?.user?.username === values.name) {
+                  let userName = values.name;
+                  if (userName.includes("_")) {
+                    const tempUser = await getKickInfoByName(userName);
+                    if (tempUser?.user?.username !== userName) {
+                      userName = userName.replace(/_/g, "-");
+                    }
+                  }
+                  const kickUser = await getKickInfoByName(userName);
+                  if (kickUser?.user?.username === userName) {
                     if (kickUser?.user?.bio.includes(verificationRandomCode)) {
                       try {
                         const res = await verifiedTwoStep({
-                          name: values.name,
+                          name: userName,
                           token,
                         });
                         if (res.success) {
