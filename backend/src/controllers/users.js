@@ -733,3 +733,10 @@ export const getRedemptions = async (req, res) => {
     });
   }
 };
+export const getCurrentServerTime = async (req, res) => {
+  return res.status(200).json({
+    success: true,
+    message: "Get current server time",
+    data: { time: Date.now() },
+  });
+};

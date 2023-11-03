@@ -16,18 +16,28 @@ import { ProductDefault, IconBack } from "../../assets/images";
 import { NavContext } from "../../context/NavContext";
 import { UserContext } from "../../context/UserContext";
 import { ModalContext } from "../../context/ModalContext";
-import { getLatestItems, getItemInfoById } from "../../apis";
+import {
+  getLatestItems,
+  getItemInfoById,
+  getCurrentServerTime,
+} from "../../apis";
 import constants from "../../constants";
 import { PurchaseModal } from "../../components/form";
+import { differenceTimes } from "../../utils";
 
 export default function News() {
   const { setNav } = useContext(NavContext);
-  const { isAuthenticated } = useContext(UserContext);
+  const { isAuthenticated, account } = useContext(UserContext);
   const { setModal } = useContext(ModalContext);
   const { id } = useParams();
   const [item, setItem] = useState({});
   const [latestItems, setLatestItems] = useState([]);
+  const [currentServerTime, setCurrentServerTime] = useState(0);
+  const [userLatestTime, setUserLatestTime] = useState(0);
+  const [globalLatestTime, setGlobalLatestTime] = useState(0);
+
   const navigate = useNavigate();
+
   const fetchLatestItems = async () => {
     try {
       const res = await getLatestItems();
@@ -43,18 +53,49 @@ export default function News() {
     const fetchItem = async () => {
       try {
         const res = await getItemInfoById(id);
-        if (res.success) setItem(res.data.item);
-        else NotificationManager.error(res.message);
+        if (res.success) {
+          setItem(res.data.item);
+        } else NotificationManager.error(res.message);
       } catch (err) {
         NotificationManager.error(
           "Something was wrong in connection with server"
         );
       }
     };
+    const timeCheck = setInterval(async () => {
+      try {
+        const res = await getCurrentServerTime();
+        if (res.success) setCurrentServerTime(res.data.time);
+      } catch (err) {
+        console.log(err);
+        NotificationManager.error(
+          "Something went wrong with server connection"
+        );
+      }
+    }, 1000);
     setNav("store");
     fetchItem();
     fetchLatestItems();
+    return () => {
+      clearInterval(timeCheck);
+    };
   }, [id, setNav]);
+
+  useEffect(() => {
+    if (Object.keys(item).length > 0) {
+      setUserLatestTime(
+        item.users
+          .filter((u) => u.user.toString() === account._id)
+          .map((u) => u.date)
+          .sort((a, b) => new Date(b) - new Date(a))?.[0]
+      );
+      setGlobalLatestTime(
+        item.users
+          .map((u) => u.date)
+          .sort((a, b) => new Date(b) - new Date(a))?.[0]
+      );
+    }
+  }, [item]);
   return (
     <Layout>
       <div className="sm:px-16">
@@ -66,8 +107,8 @@ export default function News() {
           Store
         </span>
         {Object.keys(item).length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="sm:col-span-2 bg-pt-black-100 rounded-md">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-2">
               <img
                 src={
                   item.image
@@ -75,7 +116,7 @@ export default function News() {
                     : ProductDefault
                 }
                 alt="Item"
-                className="mx-auto"
+                className="mx-auto rounded-md"
                 width={650}
               />
             </div>
@@ -100,7 +141,14 @@ export default function News() {
                 <Button
                   className="text-black mt-6 w-full"
                   onClick={() => setModal("purchase")}
-                  disabled={item?.quantity < -1 || item?.quantity === 0}
+                  disabled={
+                    item?.quantity < -1 ||
+                    item?.quantity === 0 ||
+                    differenceTimes(currentServerTime, userLatestTime) <
+                      item.coolDownUser ||
+                    differenceTimes(currentServerTime, globalLatestTime) <
+                      item.coolDownGlobal
+                  }
                 >
                   {["redeem", "key"].includes(item.type)
                     ? "redeem item"

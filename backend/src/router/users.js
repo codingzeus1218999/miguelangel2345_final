@@ -22,11 +22,13 @@ import {
   delPointsToUsersChatbot,
   addPointsToUsersRaffle,
   getRedemptions,
+  getCurrentServerTime,
 } from "../controllers/index.js";
 
 import { isAuthenticated, isAuthorized } from "../middlewares/index.js";
 
 export default (router) => {
+  router.get("/user/time", getCurrentServerTime);
   router.post("/user/forgot-password", forgotPassword);
   router.get("/user/forgot-password", forgotPasswordEmail);
   router.put("/user/reset-password", resetPassword);
