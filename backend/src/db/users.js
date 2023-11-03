@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   verification_token: { type: String, required: true },
   forgot_password_token: { type: String },
+  emailVerified: { type: Boolean, required: true, default: false },
   allowed: { type: Boolean, required: true, default: false },
   points: { type: Number, default: 0 },
   bio: { type: String, default: "" },
@@ -37,9 +38,6 @@ export const getUserByEmail = (email) =>
   UserModel.findOne({
     email: { $regex: new RegExp(`^${email}$`, "i") },
   });
-
-export const getUserByVerificationToken = (token) =>
-  UserModel.findOne({ verification_token: token });
 
 export const getUserByForgotPasswordToken = (token) =>
   UserModel.findOne({ forgot_password_token: token });

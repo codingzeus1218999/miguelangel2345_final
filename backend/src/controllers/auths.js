@@ -4,11 +4,7 @@ import pkg from "lodash";
 import crypto from "crypto";
 
 import constants from "../constants/index.js";
-import {
-  UserModel,
-  getAllowedUserByEmail,
-  getUserByVerificationToken,
-} from "../db/users.js";
+import { UserModel, getAllowedUserByEmail } from "../db/users.js";
 import { printMessage, sendEmail } from "../utils/index.js";
 
 const { get } = pkg;
@@ -104,12 +100,16 @@ export const signUp = async (req, res) => {
 
 export const verifyEmail = async (req, res) => {
   try {
-    const account = await getUserByVerificationToken(req.query.token);
-    if (account) {
+    const account = await UserModel.findOne({
+      verification_token: req.query.token,
+    });
+    account.emailVerified = true;
+    const newAccount = await account.save();
+    if (newAccount) {
       return res.status(200).json({
         success: true,
         message: "Email verified",
-        data: { email: account.email },
+        data: { email: newAccount.email },
       });
     } else {
       return res.status(400).json({
@@ -168,7 +168,23 @@ export const verifiedTwoStep = async (req, res) => {
   const name = get(req.body, "name");
   const token = get(req.body, "token");
 
-  const user = await UserModel.findOne({ verification_token: token });
+  const user = await UserModel.findOne({
+    verification_token: token,
+    emailVerified: true,
+  });
+
+  const sameUser = await UserModel.findOne({
+    name: name,
+    allowed: true,
+  });
+
+  if (sameUser)
+    return res.status(400).json({
+      success: false,
+      message: "Already exists same kick user name",
+      data: {},
+    });
+
   if (user) {
     user.name = name;
     user.allowed = true;
