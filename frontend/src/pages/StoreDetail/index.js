@@ -102,7 +102,9 @@ export default function News() {
                   onClick={() => setModal("purchase")}
                   disabled={item?.quantity < -1 || item?.quantity === 0}
                 >
-                  Buy ticket
+                  {["redeem", "key"].includes(item.type)
+                    ? "redeem item"
+                    : "Buy ticket"}
                 </Button>
               ) : (
                 <Button

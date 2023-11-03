@@ -5,7 +5,7 @@ import fs from "fs";
 import pkg from "lodash";
 
 import { ItemModel, getItemsByQuery } from "../db/items.js";
-import { printMessage, sendEmail } from "../utils/index.js";
+import { differenceTimes, printMessage, sendEmail } from "../utils/index.js";
 import { UserModel } from "../db/users.js";
 const { get } = pkg;
 
@@ -318,7 +318,36 @@ export const purchaseItem = async (req, res) => {
         message: "Please fill the requirement infos",
         data: {},
       });
+    // check user cooltime
+    const userHistoryTimes = item.users
+      .filter((u) => u.user.toString() === userId)
+      .map((u) => u.date)
+      .sort((a, b) => new Date(b) - new Date(a));
+    if (
+      userHistoryTimes.length > 0 &&
+      differenceTimes(Date.now(), userHistoryTimes?.[0]) < item.coolDownUser
+    )
+      return res.status(400).json({
+        success: false,
+        message: "You can't redeem this item in user cool down time",
+        data: {},
+      });
+    // check global cooltime
+    const globalHistoryTimes = item.users
+      .map((u) => u.date)
+      .sort((a, b) => new Date(b) - new Date(a));
+    if (
+      globalHistoryTimes.length > 0 &&
+      differenceTimes(Date.now(), globalHistoryTimes?.[0]) < item.coolDownGlobal
+    )
+      return res.status(400).json({
+        success: false,
+        message: "You can't redeem this item in global cool down time",
+        data: {},
+      });
+
     if (item.quantity !== -1) item.quantity = item.quantity - 1;
+    item.users = [...item.users, { user: userId }];
     user.items = [...user.items, { item: itemId, requirements: requirements }];
     user.points = user.points - item.cost;
     const newItem = await item.save();

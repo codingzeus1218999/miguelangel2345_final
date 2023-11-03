@@ -74,3 +74,9 @@ export const sendEmail = (email, template, emailData, emailSubject) => {
     );
   });
 };
+
+export const differenceTimes = (first, second) => {
+  return (
+    Math.abs(new Date(first).getTime() - new Date(second).getTime()) / 1000
+  );
+};

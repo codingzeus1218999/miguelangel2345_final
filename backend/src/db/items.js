@@ -17,6 +17,12 @@ const ItemSchema = new mongoose.Schema({
   codes: [{ type: String }],
   shouldDiscard: { type: Boolean, default: false },
   selectRandom: { type: Boolean, default: false },
+  users: [
+    {
+      user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      date: { type: Date, default: Date.now },
+    },
+  ],
   deleted: { type: Boolean, required: true, default: false },
   createdAt: { type: Date, required: true, default: Date.now },
 });
