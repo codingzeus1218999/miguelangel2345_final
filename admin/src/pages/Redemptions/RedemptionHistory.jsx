@@ -7,7 +7,12 @@ import moment from "moment";
 
 import Layout from "../../components/layout";
 import { NavContext } from "../../context/NavContext";
-import { Button, StatusBadge } from "../../components/ui";
+import {
+  Button,
+  RedemptionCode,
+  RedemptionDetail,
+  StatusBadge,
+} from "../../components/ui";
 import constants from "../../constants";
 import { ProductDefault } from "../../assets/images";
 import { getRedemptionHistoryList } from "../../apis";
@@ -85,6 +90,19 @@ export default function RedemptionHistory() {
       selector: (row) => row.purchasedItem.type,
       sortable: true,
       width: "100px",
+    },
+    {
+      name: "Details",
+      field: "details",
+      selector: (row) =>
+        row.purchasedItem.type === "redeem" ? (
+          <RedemptionDetail details={row.details} />
+        ) : row.purchasedItem.type === "key" ? (
+          <RedemptionCode code={row.code} />
+        ) : (
+          ""
+        ),
+      width: "300px",
     },
     {
       name: "User kick name",

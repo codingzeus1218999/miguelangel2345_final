@@ -549,6 +549,7 @@ const getRedemptions = async (cat, query) => {
         purchasedItem: "$purchasedItems",
         purchaseDate: "$items.date",
         details: "$items.requirements",
+        code: "$items.code",
       },
     },
     {

@@ -17,7 +17,7 @@ import {
   getRedemptionPendingList,
   processRedemption as processRedemptionApi,
 } from "../../apis";
-import { Button, RedemptionDetail } from "../../components/ui";
+import { Button, RedemptionCode, RedemptionDetail } from "../../components/ui";
 import constants from "../../constants";
 import { ProductDefault } from "../../assets/images";
 
@@ -123,9 +123,16 @@ export default function Redemptions() {
       width: "100px",
     },
     {
-      name: "Type",
+      name: "Details",
       field: "details",
-      selector: (row) => <RedemptionDetail details={row.details} />,
+      selector: (row) =>
+        row.purchasedItem.type === "redeem" ? (
+          <RedemptionDetail details={row.details} />
+        ) : row.purchasedItem.type === "key" ? (
+          <RedemptionCode code={row.code} />
+        ) : (
+          ""
+        ),
       width: "300px",
     },
     {
@@ -188,7 +195,6 @@ export default function Redemptions() {
           perPage,
         });
         if (res.success) {
-          console.log(res.data.redemptions);
           setRedemptions(res.data.redemptions);
           setTotalRows(res.data.count);
           setLoading(false);

@@ -17,6 +17,7 @@ import TextArea from "./TextArea";
 import AddMultiValues from "./AddMultiValues";
 import ElementLoadingSpinner from "./ElementLoadingSpinner";
 import RedemptionDetail from "./RedemptionDetail";
+import RedemptionCode from "./RedemptionCode";
 
 export {
   TypeRadio,
@@ -38,4 +39,5 @@ export {
   AddMultiValues,
   ElementLoadingSpinner,
   RedemptionDetail,
+  RedemptionCode,
 };
