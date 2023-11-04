@@ -17,7 +17,7 @@ import {
   getRedemptionPendingList,
   processRedemption as processRedemptionApi,
 } from "../../apis";
-import { Button } from "../../components/ui";
+import { Button, RedemptionDetail } from "../../components/ui";
 import constants from "../../constants";
 import { ProductDefault } from "../../assets/images";
 
@@ -123,6 +123,12 @@ export default function Redemptions() {
       width: "100px",
     },
     {
+      name: "Type",
+      field: "details",
+      selector: (row) => <RedemptionDetail details={row.details} />,
+      width: "300px",
+    },
+    {
       name: "User kick name",
       field: "name",
       selector: (row) => row.name,
@@ -182,6 +188,7 @@ export default function Redemptions() {
           perPage,
         });
         if (res.success) {
+          console.log(res.data.redemptions);
           setRedemptions(res.data.redemptions);
           setTotalRows(res.data.count);
           setLoading(false);
