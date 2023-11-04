@@ -129,14 +129,14 @@ export default function News() {
                   Quantity: {item.quantity}
                 </h1>
               )}
-              {item?.type === "key" && (
+              {/* {item?.type === "key" && (
                 <div className="mt-6 flex flex-col gap-3">
                   <h1 className="font-bold text-xl">Codes:</h1>
                   {item?.codes.map((c, idx) => (
                     <h1 key={idx}>{c}</h1>
                   ))}
                 </div>
-              )}
+              )} */}
               {isAuthenticated ? (
                 <Button
                   className="text-black mt-6 w-full"

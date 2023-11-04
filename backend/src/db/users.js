@@ -21,6 +21,7 @@ const UserSchema = new mongoose.Schema({
       date: { type: Date, default: Date.now },
       requirements: { type: Object },
       state: { type: String, enum: TypeItemState, default: "pending" },
+      code: { type: String },
     },
   ],
   created_at: { type: Date, required: true, default: Date.now },

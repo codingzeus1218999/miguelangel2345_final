@@ -349,17 +349,39 @@ export const purchaseItem = async (req, res) => {
         message: "You can't redeem this item in global cool down time",
         data: {},
       });
-
-    if (item.quantity !== -1) item.quantity = item.quantity - 1;
-    item.users = [...item.users, { user: userId }];
-    user.items = [
-      ...user.items,
-      {
-        item: itemId,
-        requirements: requirements,
-        state: item.type === "key" ? "approved" : "pending",
-      },
-    ];
+    // purchase
+    let selectedCode = "";
+    if (item.type === "key") {
+      const codeIndex = item.selectRandom
+        ? Math.floor(Math.random() * item.codes.length)
+        : 0;
+      selectedCode = item.codes[codeIndex];
+      item.users = [...item.users, { user: userId, code: selectedCode }];
+      user.items = [
+        ...user.items,
+        {
+          item: itemId,
+          requirements: requirements,
+          state: item.type === "redeem" ? "pending" : "approved",
+          code: selectedCode,
+        },
+      ];
+      if (item.shouldDiscard) {
+        item.codes.splice(codeIndex, 1);
+        item.quantity = item.quantity - 1;
+      }
+    } else {
+      if (item.quantity !== -1) item.quantity = item.quantity - 1;
+      item.users = [...item.users, { user: userId }];
+      user.items = [
+        ...user.items,
+        {
+          item: itemId,
+          requirements: requirements,
+          state: item.type === "redeem" ? "pending" : "approved",
+        },
+      ];
+    }
     user.points = user.points - item.cost;
     const newItem = await item.save();
     const newUser = await user.save();
@@ -384,7 +406,7 @@ export const purchaseItem = async (req, res) => {
         name: item.name,
         description: item.description,
         cost: item.cost,
-        codes: item.codes,
+        code: selectedCode,
       },
       "Success in purchasing in Miguelangel2345"
     );
