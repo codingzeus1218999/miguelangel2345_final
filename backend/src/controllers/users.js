@@ -683,6 +683,8 @@ export const getRedemptions = async (req, res) => {
           codes: "$item.codes",
           date: "$items.date",
           state: "$items.state",
+          code: "$items.code",
+          details: "$items.requirements",
         },
       },
       { $sort: { [sortField]: sortDir } },

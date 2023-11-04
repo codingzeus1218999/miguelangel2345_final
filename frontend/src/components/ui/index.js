@@ -12,6 +12,8 @@ import PasswordInput from "./PasswordInput";
 import TextArea from "./TextArea";
 import TextInput from "./TextInput";
 import StatusBadge from "./StatusBadge";
+import RedemptionCode from "./RedemptionCode";
+import RedemptionDetail from "./RedemptionDetail";
 
 export {
   ItemCard,
@@ -28,4 +30,6 @@ export {
   TextArea,
   TextInput,
   StatusBadge,
+  RedemptionCode,
+  RedemptionDetail,
 };

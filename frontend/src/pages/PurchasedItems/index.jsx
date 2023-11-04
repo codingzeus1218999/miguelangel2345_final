@@ -11,7 +11,11 @@ import { UserContext } from "../../context/UserContext";
 import constants from "../../constants";
 import { ProductDefault } from "../../assets/images";
 import { commafy } from "../../utils";
-import { StatusBadge } from "../../components/ui";
+import {
+  RedemptionCode,
+  RedemptionDetail,
+  StatusBadge,
+} from "../../components/ui";
 
 const customStyles = {
   pagination: {
@@ -89,6 +93,19 @@ export default function PurchasedItems() {
       width: "100px",
     },
     {
+      name: "Details",
+      field: "details",
+      selector: (row) =>
+        row.type === "redeem" ? (
+          <RedemptionDetail details={row.details} />
+        ) : row.type === "key" ? (
+          <RedemptionCode code={row.code} />
+        ) : (
+          ""
+        ),
+      width: "300px",
+    },
+    {
       name: "Description",
       field: "description",
       selector: (row) => row.description,
@@ -113,10 +130,12 @@ export default function PurchasedItems() {
         row.state === "pending" ? (
           "pending"
         ) : (
-          <StatusBadge
-            status={row.state === "rejected"}
-            labels={["Approved", "Rejected"]}
-          />
+          <>
+            <StatusBadge
+              status={row.state === "approved"}
+              labels={["Rejected", "Approved"]}
+            />
+          </>
         ),
       width: "150px",
     },
@@ -140,6 +159,7 @@ export default function PurchasedItems() {
         });
         if (res.success) {
           setRedemptions(res.data.redemptions);
+          console.log(res.data.redemptions);
           setTotalRows(res.data.count);
           setLoading(false);
         } else {
