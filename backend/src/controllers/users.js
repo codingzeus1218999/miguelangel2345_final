@@ -529,6 +529,7 @@ export const addPointsToUsersChatbot = async (req, res) => {
     const users = get(req.body, "users").toString();
     const points = Number(get(req.body, "points"));
     const badges = get(req.body, "badges");
+    const activeUsers = get(req.body, "activeUsers");
 
     const isModerator = badges.some((obj) => obj?.type === "moderator");
     const moderator = await UserModel.findOne({
@@ -544,7 +545,7 @@ export const addPointsToUsersChatbot = async (req, res) => {
     }
     if (users === "all") {
       const addRes = await UserModel.updateMany(
-        { allowed: true },
+        { name: { $in: activeUsers }, allowed: true },
         { $inc: { points: points } }
       );
       return res.status(200).json({

@@ -2,9 +2,8 @@ const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
 const dotnet = require("dotenv");
-const browser = require("./browser");
 
-const constants = require("./constants");
+const browser = require("./browser");
 const { printMessage, makeRegex } = require("./utils");
 const {
   login,
@@ -271,6 +270,7 @@ const init = async () => {
               users,
               points,
               badges,
+              activeUsers: activeList.map((a) => a.name),
             });
             if (
               !resAddPointsByChatbot.success &&
@@ -289,7 +289,6 @@ const init = async () => {
                 created_at: Date.now(),
               });
               sendToAdmin({ type: "event", data: resAddEvent.event });
-              printMessage(addPointsMsg, "info");
               const msgToServer = addPointsMsgSuccess
                 .replace("%POINTS%", points)
                 .replace("%NUMBER%", resAddPointsByChatbot.count)
