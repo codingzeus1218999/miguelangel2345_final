@@ -36,6 +36,10 @@ export const addItem = async (req, res) => {
       let newItem = new ItemModel({
         ...JSON.parse(fields.info),
         image: Object.keys(file).length > 0 ? file.image[0].newFilename : "",
+        quantity:
+          fields.info.type === "key"
+            ? fields.info.codes.length
+            : fields.info.quantity,
       });
       newItem
         .save()
@@ -193,7 +197,7 @@ export const editItem = async (req, res) => {
         item.coolDownGlobal = coolDownGlobal;
         item.coolDownUser = coolDownUser;
         item.codes = codes;
-        item.quantity = quantity;
+        item.quantity = type === "key" ? codes.length : quantity;
         item.isNoticeInChat = isNoticeInChat;
         item.requirements = requirements;
         item.shouldDiscard = shouldDiscard;
@@ -348,7 +352,14 @@ export const purchaseItem = async (req, res) => {
 
     if (item.quantity !== -1) item.quantity = item.quantity - 1;
     item.users = [...item.users, { user: userId }];
-    user.items = [...user.items, { item: itemId, requirements: requirements }];
+    user.items = [
+      ...user.items,
+      {
+        item: itemId,
+        requirements: requirements,
+        state: item.type === "key" ? "approved" : "pending",
+      },
+    ];
     user.points = user.points - item.cost;
     const newItem = await item.save();
     const newUser = await user.save();
