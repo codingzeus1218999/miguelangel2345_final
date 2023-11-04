@@ -247,21 +247,25 @@ export default function EditUser() {
                 )}
               </Formik>
               <div className="mt-6 flex flex-row gap-6 items-center">
-                <span className="text-white font-bold tex-lg">Moderator: </span>
+                <span className="text-white font-bold tex-lg uppercase">
+                  Moderator:{" "}
+                </span>
                 <Switch
                   checked={userInfo.isModerator}
                   onChange={onClickModeratorSwitch}
                 />
               </div>
               <div className="mt-6 flex flex-row gap-6 items-center">
-                <span className="text-white font-bold tex-lg">State: </span>
+                <span className="text-white font-bold tex-lg uppercase">
+                  State:{" "}
+                </span>
                 <Switch
                   checked={userInfo.allowed}
                   onChange={onClickStateSwitch}
                 />
               </div>
               <div className="mt-6 flex flex-row gap-6 items-center">
-                <span className="text-white font-bold tex-lg">
+                <span className="text-white font-bold tex-lg uppercase">
                   Admin role:{" "}
                 </span>
                 <Switch

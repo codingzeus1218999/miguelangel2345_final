@@ -34,6 +34,10 @@ export const createChatbotSettingsGeneral = async (req, res) => {
     const points_unit = get(req.body, "pointsUnit");
     const subscriber_multiple = get(req.body, "subscriberMultiple");
     const subscriber_points = get(req.body, "subscriberPoints");
+    const autoRaffle = get(req.body, "autoRaffle");
+    const autoRafflePoints = get(req.body, "autoRafflePoints");
+    const autoRaffleTime = get(req.body, "autoRaffleTime");
+    const autoRaffleWinnerCount = get(req.body, "autoRaffleWinnerCount");
     const email = get(req.body, "email");
     const password = get(req.body, "password");
     const generalSettings = new ChatbotGeneralSettingModel({
@@ -47,6 +51,10 @@ export const createChatbotSettingsGeneral = async (req, res) => {
       subscriber_points,
       email,
       password,
+      autoRaffle,
+      autoRafflePoints,
+      autoRaffleTime,
+      autoRaffleWinnerCount,
     });
     generalSettings
       .save()
@@ -78,6 +86,10 @@ export const updateChatbotSettingsGeneral = async (req, res) => {
       const pointsUnit = get(req.body, "pointsUnit");
       const subscriberMultiple = get(req.body, "subscriberMultiple");
       const subscriberPoints = get(req.body, "subscriberPoints");
+      const autoRaffle = get(req.body, "autoRaffle");
+      const autoRafflePoints = get(req.body, "autoRafflePoints");
+      const autoRaffleTime = get(req.body, "autoRaffleTime");
+      const autoRaffleWinnerCount = get(req.body, "autoRaffleWinnerCount");
       const email = get(req.body, "email");
       const password = get(req.body, "password");
       generalSettings.channel1 = channel1;
@@ -88,6 +100,10 @@ export const updateChatbotSettingsGeneral = async (req, res) => {
       generalSettings.points_unit = pointsUnit;
       generalSettings.subscriber_multiple = subscriberMultiple;
       generalSettings.subscriber_points = subscriberPoints;
+      generalSettings.autoRaffle = autoRaffle;
+      generalSettings.autoRafflePoints = autoRafflePoints;
+      generalSettings.autoRaffleTime = autoRaffleTime;
+      generalSettings.autoRaffleWinnerCount = autoRaffleWinnerCount;
       generalSettings.email = email;
       generalSettings.password = password;
       generalSettings

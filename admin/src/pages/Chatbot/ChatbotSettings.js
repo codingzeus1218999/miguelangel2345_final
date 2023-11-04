@@ -5,7 +5,13 @@ import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 
 import Layout from "../../components/layout";
-import { TextInput, Button, TextArea, NumberInput } from "../../components/ui";
+import {
+  TextInput,
+  Button,
+  TextArea,
+  NumberInput,
+  SwitchField,
+} from "../../components/ui";
 import { NavContext } from "../../context/NavContext";
 
 import {
@@ -70,6 +76,10 @@ export default function ChatbotSettings() {
                   pointsUnit: generalSettings?.points_unit,
                   subscriberMultiple: generalSettings?.subscriber_multiple,
                   subscriberPoints: generalSettings?.subscriber_points,
+                  autoRaffle: generalSettings?.autoRaffle,
+                  autoRafflePoints: generalSettings?.autoRafflePoints,
+                  autoRaffleTime: generalSettings?.autoRaffleTime,
+                  autoRaffleWinnerCount: generalSettings?.autoRaffleWinnerCount,
                   email: generalSettings?.email,
                   password: generalSettings?.password,
                 }}
@@ -89,6 +99,17 @@ export default function ChatbotSettings() {
                     "This field should be number"
                   ).min(1, "Minimum value is 1"),
                   subscriberPoints: Yup.number(
+                    "This field should be number"
+                  ).min(1, "Minimum value is 1"),
+                  autoRaffle: Yup.boolean("This field should be boolean"),
+                  autoRafflePoints: Yup.number(
+                    "This field should be number"
+                  ).min(1, "Minimum value is 1"),
+                  autoRaffleTime: Yup.number("This field should be number").min(
+                    1,
+                    "Minimum value is 1"
+                  ),
+                  autoRaffleWinnerCount: Yup.number(
                     "This field should be number"
                   ).min(1, "Minimum value is 1"),
                   email: Yup.string()
@@ -127,6 +148,11 @@ export default function ChatbotSettings() {
                           pointsUnit: res.settings.points_unit,
                           subscriberMultiple: res.settings.subscriber_multiple,
                           subscriberPoints: res.settings.subscriber_points,
+                          autoRaffle: res.settings.autoRaffle,
+                          autoRafflePoints: res.settings.autoRafflePoints,
+                          autoRaffleTime: res.settings.autoRaffleTime,
+                          autoRaffleWinnerCount:
+                            res.settings.autoRaffleWinnerCount,
                           email: res.settings.email,
                           password: res.settings.password,
                         });
@@ -192,6 +218,30 @@ export default function ChatbotSettings() {
                       name="subscriberPoints"
                       component={NumberInput}
                       placeholder="points to new subscriber"
+                      className="mt-6"
+                    />
+                    <Field
+                      name="autoRaffle"
+                      component={SwitchField}
+                      placeholder="auto raffle"
+                      className="mt-6"
+                    />
+                    <Field
+                      name="autoRafflePoints"
+                      component={NumberInput}
+                      placeholder="points to add to auto raffle winner"
+                      className="mt-6"
+                    />
+                    <Field
+                      name="autoRaffleTime"
+                      component={NumberInput}
+                      placeholder="duration between auto raffles (s)"
+                      className="mt-6"
+                    />
+                    <Field
+                      name="autoRaffleWinnerCount"
+                      component={NumberInput}
+                      placeholder="count of winners in auto raffle"
                       className="mt-6"
                     />
                     <Field
