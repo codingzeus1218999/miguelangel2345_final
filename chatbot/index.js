@@ -1,12 +1,27 @@
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
-const axios = require("axios");
 const dotnet = require("dotenv");
-const colors = require("colors");
 const browser = require("./browser");
 
 const constants = require("./constants");
+const { printMessage, makeRegex } = require("./utils");
+const {
+  login,
+  getCommandSettings,
+  getGeneralSettings,
+  addPointsToUser,
+  addServerMessage,
+  raffleDone,
+  addPointsToWinners,
+  addEvent,
+  addChannelMessage,
+  addUserToRaffle,
+  getPoints,
+  addPointsByChatbot,
+  delPointsByChatbot,
+  createRaffle,
+} = require("./apis");
 
 dotnet.config();
 const port = process.env.PORT || 5001;
@@ -15,34 +30,7 @@ const server = http.createServer(app);
 
 const init = async () => {
   try {
-    // Login to backend as admin
-    const loginRes = await axios.post(
-      `${constants.BACKEND_API_URL}/auth/login`,
-      {
-        email: constants.ADMIN_EMAIL,
-        password: constants.ADMIN_PASSWORD,
-        rememberMe: true,
-      }
-    );
-    const { token } = loginRes.data;
-
-    // Get settings for a chatbot
-    const settingsCommandRes = await axios.get(
-      `${constants.BACKEND_API_URL}/chatbot/settings/command`,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
-    const settingsGeneralRes = await axios.get(
-      `${constants.BACKEND_API_URL}/chatbot/settings/general`,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    const { token } = await login();
     const {
       raffleStart,
       raffleJoin,
@@ -58,7 +46,7 @@ const init = async () => {
       delPointsMsg,
       delPointsMsgSuccess,
       delPointsMsgNotPermission,
-    } = settingsCommandRes.data.settings;
+    } = await getCommandSettings(token);
     const {
       channel1,
       channel2,
@@ -69,14 +57,14 @@ const init = async () => {
       subscriber_points,
       email: botMail,
       password: botPwd,
-    } = settingsGeneralRes.data.settings;
+    } = await getGeneralSettings(token);
 
     // Open web browser
     browser.initBrowser(botMail, botPwd);
 
     // If success in opening web browser
     browser.emitter.on("ready", () => {
-      console.log("Browser ready...".bgWhite.green);
+      printMessage("Browser ready", "success");
 
       // Initialize
       const aWebSocket = new WebSocket(ws_end_point);
@@ -112,25 +100,17 @@ const init = async () => {
               ? points_unit
               : al.lastAddedPoints * subscriber_multiple
             : points_unit;
-          const resBackend = await axios.put(
-            `${constants.BACKEND_API_URL}/user/add-points`,
-            {
-              name: al.name,
-              points: p,
-            },
-            { headers: { Authorization: token } }
-          );
-          if (resBackend.data.success) {
-            const resEvent = await axios.post(
-              `${constants.BACKEND_API_URL}/chatbot/event`,
-              {
-                event: "AddPoint_Watcher",
-                content: `Added ${p} points to watcher, ${al.name}`,
-                created_at: Date.now(),
-              },
-              { headers: { Authorization: token } }
-            );
-            sendToAdmin({ type: "event", data: resEvent.data.event });
+          const resAddPointsToUser = await addPointsToUser(token, {
+            name: al.name,
+            points: p,
+          });
+          if (resAddPointsToUser.success) {
+            const resAddEvent = await addEvent(token, {
+              event: "AddPoint_Watcher",
+              content: `Added ${p} points to watcher, ${al.name}`,
+              created_at: Date.now(),
+            });
+            sendToAdmin({ type: "event", data: resAddEvent.event });
           }
           tempActiveList.push({ ...al, addedPoints: p });
         }
@@ -140,96 +120,43 @@ const init = async () => {
 
       // Send message to channel server
       const sendToServer = async (msg) => {
-        const resBackend = await axios.post(
-          `${constants.BACKEND_API_URL}/server/message`,
-          {
-            message: msg,
-          },
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-        if (resBackend.data.success) {
+        const resAddMessage = await addServerMessage(token, { message: msg });
+        if (resAddMessage.success) {
           browser.sendMessage(msg);
         }
       };
 
       const doneRaffle = async (raffle) => {
-        const resBackendRaffle = await axios.put(
-          `${constants.BACKEND_API_URL}/raffle/done`,
-          {
-            raffle,
-          },
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-        if (resBackendRaffle.data.success) {
-          const resBackendUser = await axios.put(
-            `${constants.BACKEND_API_URL}/user/add-points-raffle`,
-            {
-              users: resBackendRaffle.data.raffle.winners,
-              points: raffle.points,
-            },
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          );
-          const resEventRaffle = await axios.post(
-            `${constants.BACKEND_API_URL}/chatbot/event`,
-            {
-              event: "DoneRaffle",
-              content: `Ended ${raffle.name} raffle in ${raffle.time} seconds`,
-              created_at: Date.now(),
-            },
-            { headers: { Authorization: token } }
-          );
-          sendToAdmin({ type: "event", data: resEventRaffle.data.event });
-          const resEventUser = await axios.post(
-            `${constants.BACKEND_API_URL}/chatbot/event`,
-            {
-              event: "AddPoint_Winners",
-              content: `Added ${raffle.points} points to ${resBackendUser.data.count} users`,
-              created_at: Date.now(),
-            },
-            { headers: { Authorization: token } }
-          );
-          sendToAdmin({ type: "event", data: resEventUser.data.event });
+        const resRaffleDone = await raffleDone(token, { raffle });
+        if (resRaffleDone.success) {
+          const resAddPointsToWinners = await addPointsToWinners(token, {
+            users: resRaffleDone.raffle.winners,
+            points: raffle.points,
+          });
+          const resAddEventRaffle = await addEvent(token, {
+            event: "DoneRaffle",
+            content: `Ended ${raffle.name} raffle in ${raffle.time} seconds`,
+            created_at: Date.now(),
+          });
+          sendToAdmin({ type: "event", data: resAddEventRaffle.event });
+          const resAddEventUser = await addEvent(token, {
+            event: "AddPoint_Winners",
+            content: `Added ${raffle.points} points to ${resAddPointsToWinners.count} users`,
+            created_at: Date.now(),
+          });
+          sendToAdmin({ type: "event", data: resAddEventUser.event });
           sendToAdmin({
             type: "raffle-done",
-            data: resBackendRaffle.data.raffle,
+            data: resRaffleDone.raffle,
           });
-          if (resBackendUser.data.usernames !== "") {
+          if (resAddPointsToWinners.usernames !== "") {
             const msgToServer = raffleEnd
-              .replace("%USERS%", resBackendUser.data.usernames)
+              .replace("%USERS%", resAddPointsToWinners.usernames)
               .replace("%POINTS%", raffle.points)
               .replace("%NAME%", raffle.name);
             sendToServer(msgToServer);
           }
         }
-      };
-
-      // Make regex for addPoint and delPoint
-      const makeRegex = (str) => {
-        const regexStr = str
-          .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-          .replace(/%\w+%/g, (match) => {
-            if (match === "%USERS%") {
-              return "([\\w,\\s]+)";
-            } else if (match === "%POINTS%") {
-              return "(\\d+)";
-            } else {
-              return match;
-            }
-          })
-          .replace(/\s+/g, "\\s+");
-        return new RegExp(`^${regexStr}$`);
       };
 
       // Data for getting websocket
@@ -263,12 +190,13 @@ const init = async () => {
       aWebSocket.on("open", () => {
         aWebSocket.send(JSON.stringify(data1));
         aWebSocket.send(JSON.stringify(data2));
-        console.log(
-          "WebSocket connected to the channel of kick.com".bgWhite.green
+        printMessage(
+          "WebSocket connected to the channel of kick.com",
+          "success"
         );
       });
       aWebSocket.on("message", async (message) => {
-        console.log("Received message from kick.com:".bgMagenta.white.bold);
+        printMessage("Received message from kick.com:", "info");
         console.log(JSON.parse(message));
         const { event, data } = JSON.parse(message);
 
@@ -282,40 +210,24 @@ const init = async () => {
               identity: { badges },
             },
           } = JSON.parse(data);
-          const resMsg = await axios.post(
-            `${constants.BACKEND_API_URL}/chatbot/message`,
-            {
-              event: "ChatMessage",
-              name: username,
-              content,
-              created_at,
-              badges,
-            },
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          );
-          sendToAdmin({ type: "message", data: resMsg.data.msg });
-          addUserToActiveList(resMsg.data.msg);
+          const resAddChannelMessage = await addChannelMessage(token, {
+            event: "ChatMessage",
+            name: username,
+            content,
+            created_at,
+            badges,
+          });
+          sendToAdmin({ type: "message", data: resAddChannelMessage.msg });
+          addUserToActiveList(resAddChannelMessage.msg);
 
           // If user wants to join to raffle
           if (content === raffleJoin) {
-            const resBackend = await axios.put(
-              `${constants.BACKEND_API_URL}/raffle/add-user`,
-              {
-                username,
-              },
-              {
-                headers: {
-                  Authorization: token,
-                },
-              }
-            );
+            const resAddUserToRaffle = await addUserToRaffle(token, {
+              username,
+            });
             if (
-              resBackend.data.success === false &&
-              resBackend.data.status === "not-ready"
+              resAddUserToRaffle.success === false &&
+              resAddUserToRaffle.status === "not-ready"
             ) {
               const msgToServer = raffleNotReady.replace(
                 "%USER%",
@@ -324,8 +236,8 @@ const init = async () => {
               sendToServer(msgToServer);
             }
             if (
-              resBackend.data.success === false &&
-              resBackend.data.status === "no-register"
+              resAddUserToRaffle.success === false &&
+              resAddUserToRaffle.status === "no-register"
             ) {
               const msgToServer = raffleCant.replace("%USER%", `@${username}`);
               sendToServer(msgToServer);
@@ -334,18 +246,8 @@ const init = async () => {
 
           // If user wants to know remaining points
           if (content === pointsRemaining) {
-            const resBackend = await axios.get(
-              `${constants.BACKEND_API_URL}/user/points`,
-              {
-                params: {
-                  username,
-                },
-                headers: {
-                  Authorization: token,
-                },
-              }
-            );
-            if (!resBackend.data.success) {
+            const resGetPoints = await getPoints(token, { username });
+            if (!resGetPoints.success) {
               const msgToServer = pointsRemainingNotRegistered.replace(
                 "%USER%",
                 `@${username}`
@@ -354,7 +256,7 @@ const init = async () => {
             } else {
               const msgToServer = pointsRemainingMsg
                 .replace("%USER%", `@${username}`)
-                .replace("%POINTS%", resBackend.data.points);
+                .replace("%POINTS%", resGetPoints.points);
               sendToServer(msgToServer);
             }
           }
@@ -364,23 +266,15 @@ const init = async () => {
             const match = content.match(regexAddPoint);
             const users = match[1];
             const points = match[2];
-            const resBackend = await axios.put(
-              `${constants.BACKEND_API_URL}/user/add-points-chatbot`,
-              {
-                username,
-                users,
-                points,
-                badges,
-              },
-              {
-                headers: {
-                  Authorization: token,
-                },
-              }
-            );
+            const resAddPointsByChatbot = await addPointsByChatbot(token, {
+              username,
+              users,
+              points,
+              badges,
+            });
             if (
-              !resBackend.data.success &&
-              resBackend.data.status === "not-allowed"
+              !resAddPointsByChatbot.success &&
+              resAddPointsByChatbot.status === "not-allowed"
             ) {
               const msgToServer = addPointsMsgNotPermission.replace(
                 "%USER%",
@@ -388,21 +282,17 @@ const init = async () => {
               );
               sendToServer(msgToServer);
             }
-            if (resBackend.data.success) {
-              const resEvent = await axios.post(
-                `${constants.BACKEND_API_URL}/chatbot/event`,
-                {
-                  event: "AddPoint_By_Moderator",
-                  content: `Added ${points} points to ${resBackend.data.count} users`,
-                  created_at: Date.now(),
-                },
-                { headers: { Authorization: token } }
-              );
-              sendToAdmin({ type: "event", data: resEvent.data.event });
-              console.log(addPointsMsg);
+            if (resAddPointsByChatbot.success) {
+              const resAddEvent = await addEvent(token, {
+                event: "AddPoint_By_Moderator",
+                content: `Added ${points} points to ${resAddPointsByChatbot.count} users`,
+                created_at: Date.now(),
+              });
+              sendToAdmin({ type: "event", data: resAddEvent.event });
+              printMessage(addPointsMsg, "info");
               const msgToServer = addPointsMsgSuccess
                 .replace("%POINTS%", points)
-                .replace("%NUMBER%", resBackend.data.count)
+                .replace("%NUMBER%", resAddPointsByChatbot.count)
                 .replace("%COMMAND%", addPointsMsg)
                 .replace("%USERS%", "")
                 .replace("%POINTS%", "");
@@ -415,23 +305,15 @@ const init = async () => {
             const match = content.match(regexDelPoint);
             const users = match[1];
             const points = match[2];
-            const resBackend = await axios.put(
-              `${constants.BACKEND_API_URL}/user/del-points-chatbot`,
-              {
-                username,
-                users,
-                points,
-                badges,
-              },
-              {
-                headers: {
-                  Authorization: token,
-                },
-              }
-            );
+            const resDelPointsByChatbot = await delPointsByChatbot(token, {
+              username,
+              users,
+              points,
+              badges,
+            });
             if (
-              !resBackend.data.success &&
-              resBackend.data.status === "not-allowed"
+              !resDelPointsByChatbot.success &&
+              resDelPointsByChatbot.status === "not-allowed"
             ) {
               const msgToServer = delPointsMsgNotPermission.replace(
                 "%USER%",
@@ -439,20 +321,16 @@ const init = async () => {
               );
               sendToServer(msgToServer);
             }
-            if (resBackend.data.success) {
-              const resEvent = await axios.post(
-                `${constants.BACKEND_API_URL}/chatbot/event`,
-                {
-                  event: "DelPoint_By_Moderator",
-                  content: `Removed ${points} points from ${resBackend.data.count} users`,
-                  created_at: Date.now(),
-                },
-                { headers: { Authorization: token } }
-              );
-              sendToAdmin({ type: "event", data: resEvent.data.event });
+            if (resDelPointsByChatbot.success) {
+              const resAddEvent = await addEvent(token, {
+                event: "DelPoint_By_Moderator",
+                content: `Removed ${points} points from ${resDelPointsByChatbot.count} users`,
+                created_at: Date.now(),
+              });
+              sendToAdmin({ type: "event", data: resAddEvent.event });
               const msgToServer = delPointsMsgSuccess
                 .replace("%POINTS%", points)
-                .replace("%NUMBER%", resBackend.data.count)
+                .replace("%NUMBER%", resDelPointsByChatbot.count)
                 .replace("%COMMAND%", delPointsMsg)
                 .replace("%POINTS%", "")
                 .replace("%USERS%", "");
@@ -464,84 +342,61 @@ const init = async () => {
         // If user subscribes
         if (event === "App\\Events\\SubscriptionEvent") {
           const { username, months } = JSON.parse(data);
-          const resMsg = await axios.post(
-            `${constants.BACKEND_API_URL}/chatbot/message`,
-            {
-              event: "Subscription",
-              name: username,
-              content: `Subscribe the channel for ${months} months`,
+          const resAddChannelMessage = await addChannelMessage(token, {
+            event: "Subscription",
+            name: username,
+            content: `Subscribe the channel for ${months} months`,
+            created_at: Date.now(),
+            badges: [],
+          });
+          sendToAdmin({ type: "message", data: resAddChannelMessage.msg });
+          const resAddPointsToUser = await addPointsToUser(token, {
+            name: username,
+            points: subscriber_points,
+          });
+          if (resAddPointsToUser.success) {
+            const resAddEvent = await addEvent(token, {
+              event: "AddPoint_New_Subscriber",
+              content: `Added ${subscriber_points} points to new subscriber, ${username}`,
               created_at: Date.now(),
-              badges: [],
-            },
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          );
-          sendToAdmin({ type: "message", data: resMsg.data.msg });
-          const resBackend = await axios.put(
-            `${constants.BACKEND_API_URL}/user/add-points`,
-            {
-              name: username,
-              points: subscriber_points,
-            },
-            { headers: { Authorization: token } }
-          );
-          if (resBackend.data.success) {
-            const resEvent = await axios.post(
-              `${constants.BACKEND_API_URL}/chatbot/event`,
-              {
-                event: "AddPoint_New_Subscriber",
-                content: `Added ${subscriber_points} points to new subscriber, ${username}`,
-                created_at: Date.now(),
-              },
-              { headers: { Authorization: token } }
-            );
-            sendToAdmin({ type: "event", data: resEvent.data.event });
+            });
+            sendToAdmin({ type: "event", data: resAddEvent.event });
           }
         }
       });
       aWebSocket.on("close", () => {
-        console.log(
-          "WebSocket disconnected from the channel of kick.com".bgCyan.blue
+        printMessage(
+          "WebSocket disconnected from the channel of kick.com",
+          "error"
         );
       });
       aWebSocket.on("error", () => {
-        console.log(
-          "There occurs error in connection with the channel of kick.com"
-            .bgYellow.red
+        printMessage(
+          "There occurs error in connection with the channel of kick.com",
+          "error"
         );
       });
       cServer.on("connection", (cSocket) => {
-        console.log("Admin connected to the chatbot".bgWhite.green);
+        printMessage("Admin connected to the chatbot", "success");
         cSocket.on("message", async (message) => {
-          console.log("Received message from an admin:".bgMagenta.white.bold);
+          printMessage("Received message from an admin:", "info");
           console.log(JSON.parse(message));
           const { type, data } = JSON.parse(message);
 
           // If created new raffle
           if (type === "raffle-create") {
-            const resBackend = await axios.post(
-              `${constants.BACKEND_API_URL}/raffle`,
-              data,
-              { headers: { Authorization: token } }
-            );
-            if (resBackend.data.success) {
+            const resCreateRaffle = await createRaffle(token, data);
+            if (resCreateRaffle.success) {
               sendToAdmin({
                 type: "raffle-created",
-                data: resBackend.data.raffle,
+                data: resCreateRaffle.raffle,
               });
-              const resEvent = await axios.post(
-                `${constants.BACKEND_API_URL}/chatbot/event`,
-                {
-                  event: "Raffle_Created",
-                  content: `Created ${resBackend.data.raffle.name} Raffle / ${resBackend.data.raffle.points} points`,
-                  created_at: Date.now(),
-                },
-                { headers: { Authorization: token } }
-              );
-              sendToAdmin({ type: "event", data: resEvent.data.event });
+              const resAddEvent = await addEvent(token, {
+                event: "Raffle_Created",
+                content: `Created ${resCreateRaffle.raffle.name} Raffle / ${resCreateRaffle.raffle.points} points`,
+                created_at: Date.now(),
+              });
+              sendToAdmin({ type: "event", data: resAddEvent.event });
               const msgToServer = raffleStart
                 .replace("%NAME%", data.name)
                 .replace("%POINTS%", data.points)
@@ -549,31 +404,31 @@ const init = async () => {
                 .replace("%COMMAND%", raffleJoin);
               sendToServer(msgToServer);
               setTimeout(() => {
-                doneRaffle(resBackend.data.raffle);
+                doneRaffle(resCreateRaffle.raffle);
               }, Number(data.time) * 1000);
             }
           }
         });
         cSocket.on("close", () => {
-          console.log("Admin disconnected from the chatbot".bgCyan.blue);
+          printMessage("Admin disconnected from the chatbot", "error");
         });
         cSocket.on("error", () => {
-          console.log("Admin disconnected from the chatbot".bgYellow.red);
+          printMessage("Admin disconnected from the chatbot", "error");
         });
       });
       cServer.on("close", () => {
-        console.log("Closed the connection with the admins".bgCyan.blue);
+        printMessage("Closed the connection with the admins", "error");
       });
       cServer.on("error", () => {
-        console.log("There is bug in connection with admin site".bgYellow.red);
+        printMessage("There is bug in connection with admin site", "error");
       });
     });
   } catch (err) {
-    console.log("Error occurs".bgYellow.red);
+    printMessage("Error occurs", "error");
   }
 };
 
 server.listen(port, () => {
-  console.log(`Chatbot is running on port ${port}`.bgWhite.green);
+  printMessage(`Chatbot is running on port ${port}`, "info");
   init();
 });

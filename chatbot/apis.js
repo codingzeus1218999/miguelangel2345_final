@@ -1,0 +1,278 @@
+const axios = require("axios");
+
+const constants = require("./constants");
+const { printMessage } = require("./utils");
+
+const login = async () => {
+  try {
+    const res = await axios.post(`${constants.BACKEND_API_URL}/auth/login`, {
+      email: constants.ADMIN_EMAIL,
+      password: constants.ADMIN_PASSWORD,
+      rememberMe: true,
+    });
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `login to backend failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const getCommandSettings = async (token) => {
+  try {
+    const res = await axios.get(
+      `${constants.BACKEND_API_URL}/chatbot/settings/command`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data.settings;
+  } catch (err) {
+    printMessage(
+      `getting command settings from backend failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const getGeneralSettings = async (token) => {
+  try {
+    const res = await axios.get(
+      `${constants.BACKEND_API_URL}/chatbot/settings/general`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data.settings;
+  } catch (err) {
+    printMessage(
+      `getting general settings from backend failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const addPointsToUser = async (token, data) => {
+  try {
+    const res = await axios.put(
+      `${constants.BACKEND_API_URL}/user/add-points`,
+      data,
+      { headers: { Authorization: token } }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `adding points to user failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const addEvent = async (token, data) => {
+  try {
+    const res = await axios.post(
+      `${constants.BACKEND_API_URL}/chatbot/event`,
+      data,
+      { headers: { Authorization: token } }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `adding event to backend failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const addServerMessage = async (token, data) => {
+  try {
+    const res = await axios.post(
+      `${constants.BACKEND_API_URL}/server/message`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `adding server message to backend failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const raffleDone = async (token, data) => {
+  try {
+    const res = await axios.put(
+      `${constants.BACKEND_API_URL}/raffle/done`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `finishing raffle failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const addPointsToWinners = async (token, data) => {
+  try {
+    const res = await axios.put(
+      `${constants.BACKEND_API_URL}/user/add-points-raffle`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `adding points to winners failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const addChannelMessage = async (token, data) => {
+  try {
+    const res = await axios.post(
+      `${constants.BACKEND_API_URL}/chatbot/message`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `adding channel message to backend failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const addUserToRaffle = async (token, data) => {
+  try {
+    const res = await axios.put(
+      `${constants.BACKEND_API_URL}/raffle/add-user`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `adding user to raffle failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const getPoints = async (token, params) => {
+  try {
+    const res = await axios.get(`${constants.BACKEND_API_URL}/user/points`, {
+      params,
+      headers: {
+        Authorization: token,
+      },
+    });
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `getting points failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const addPointsByChatbot = async (token, data) => {
+  try {
+    const res = await axios.put(
+      `${constants.BACKEND_API_URL}/user/add-points-chatbot`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `adding points by chatbot failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const delPointsByChatbot = async (token, data) => {
+  try {
+    const res = await axios.put(
+      `${constants.BACKEND_API_URL}/user/del-points-chatbot`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `deleting by chatbot failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const createRaffle = async (token, data) => {
+  try {
+    const res = await axios.post(`${constants.BACKEND_API_URL}/raffle`, data, {
+      headers: { Authorization: token },
+    });
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `creating raffle failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+module.exports = {
+  login,
+  getCommandSettings,
+  getGeneralSettings,
+  addPointsToUser,
+  addEvent,
+  addServerMessage,
+  raffleDone,
+  addPointsToWinners,
+  addChannelMessage,
+  addUserToRaffle,
+  getPoints,
+  addPointsByChatbot,
+  delPointsByChatbot,
+  createRaffle,
+};

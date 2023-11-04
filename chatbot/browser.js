@@ -2,12 +2,11 @@ require("dotenv").config();
 const playwright = require("playwright-extra");
 const stealthPlugin = require("puppeteer-extra-plugin-stealth");
 const EventEmitter = require("events");
-const colors = require("colors");
 
 const constants = require("./constants");
+const { printMessage } = require("./utils");
 
 const emitter = new EventEmitter();
-
 const blockedResources = [
   "*/favicon.ico",
   ".jpg",
@@ -19,7 +18,6 @@ const blockedResources = [
   ".webp",
   "q.stripe.com",
 ];
-
 let browser, page, client, context;
 
 async function sendMessage(message) {
@@ -28,25 +26,24 @@ async function sendMessage(message) {
     messageInput.focus();
     messageInput.textContent = message;
     const enterKeyEvent = new KeyboardEvent("keydown", { key: "Enter" });
-    messageInput.dispatchEvent(enterKeyEvent);
     const agreeButton = document.querySelector(
       'button[class="variant-action size-sm !w-full"]'
     );
     if (agreeButton) {
       agreeButton.click();
-      messageInput.dispatchEvent(enterKeyEvent);
     }
+    messageInput.dispatchEvent(enterKeyEvent);
   }, message);
 }
 
 async function initBrowser(botMail, botPwd) {
-  console.log("Launching browser...".bgWhite.yellow);
+  printMessage("Launching browser", "info");
   playwright.chromium.use(stealthPlugin());
   browser = await playwright.chromium.launch({
     headless: false,
     devtools: false,
   });
-  console.log("Browser opened...".bgWhite.green);
+  printMessage("Browser opened", "success");
   context = await browser.newContext();
   page = await context.newPage();
   client = await page.context().newCDPSession(page);
