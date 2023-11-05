@@ -22,15 +22,15 @@ import {
   createChatbotSettingsCommand,
   updateChatbotSettingsCommand,
 } from "../../apis";
-import PageSpinner from "../../components/form/PageSpinner";
+import { PageSpinner } from "../../components/form";
 
-export default function ChatbotSettings() {
+export default function ChatbotSettings1() {
   const { setNav } = useContext(NavContext);
   const [generalSettings, setGeneralSettings] = useState({});
   const [commandSettings, setCommandSettings] = useState({});
   const [visible, setVisible] = useState(false);
   useEffect(() => {
-    setNav("chatbot-settings");
+    setNav("chatbot-settings-1");
     const fetchSettings = async () => {
       try {
         setVisible(false);
@@ -58,7 +58,7 @@ export default function ChatbotSettings() {
     <Layout>
       {visible ? (
         <>
-          <h1 className="page-title">Chatbot Settings</h1>
+          <h1 className="page-title">Chatbot Settings 1</h1>
           <h1 className="danger-title mt-6">
             &#9888; After creating or updating these settings, please restart
             the chatbot application.

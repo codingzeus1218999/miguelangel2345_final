@@ -7,7 +7,7 @@ import { MetroSpinner } from "react-spinners-kit";
 
 import Layout from "../../components/layout";
 import { TextInput, Button, NumberInput } from "../../components/ui";
-import PageSpinner from "../../components/form/PageSpinner";
+import { PageSpinner } from "../../components/form";
 
 import { NavContext } from "../../context/NavContext";
 

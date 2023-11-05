@@ -5,7 +5,7 @@ import Layout from "../../components/layout";
 import { NavContext } from "../../context/NavContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
-import PageSpinner from "../../components/form/PageSpinner";
+import { PageSpinner } from "../../components/form";
 import constants from "../../constants";
 
 export default function ChatbotRealtime() {

@@ -7,7 +7,8 @@ import Users from "./pages/Users";
 import Redemptions from "./pages/Redemptions";
 import RedemptionHistory from "./pages/Redemptions/RedemptionHistory";
 import Raffle from "./pages/Raffle";
-import ChatbotSettings from "./pages/Chatbot/ChatbotSettings";
+import ChatbotSettings1 from "./pages/Chatbot/ChatbotSettings1";
+import ChatbotSettings2 from "./pages/Chatbot/ChatbotSettings2";
 import ChatbotHistory from "./pages/Chatbot/ChatbotHistory";
 import ChatbotRealtime from "./pages/Chatbot/ChatbotRealtime";
 import NotFound from "./pages/NotFound";
@@ -38,8 +39,13 @@ function App() {
             <Route exact path="/items/add" element={<AddItem />} />
             <Route
               exact
-              path="/chatbot-settings"
-              element={<ChatbotSettings />}
+              path="/chatbot-settings-1"
+              element={<ChatbotSettings1 />}
+            />
+            <Route
+              exact
+              path="/chatbot-settings-2"
+              element={<ChatbotSettings2 />}
             />
             <Route exact path="/chatbot-history" element={<ChatbotHistory />} />
             <Route

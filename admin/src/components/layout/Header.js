@@ -15,9 +15,14 @@ const menu = [
   { link: "items", name: "items", title: "Items" },
   { link: "redemptions", name: "redemptions", title: "Redemptions" },
   {
-    link: "chatbot-settings",
-    name: "chatbot-settings",
-    title: "Chatbot Settings",
+    link: "chatbot-settings-1",
+    name: "chatbot-settings-1",
+    title: "Chatbot Settings 1",
+  },
+  {
+    link: "chatbot-settings-2",
+    name: "chatbot-settings-2",
+    title: "Chatbot Settings 2",
   },
   {
     link: "chatbot-history",

@@ -5,6 +5,7 @@ export * from "./itemRaffles.js";
 export * from "./raffles.js";
 export * from "./chatbotSettingsGeneral.js";
 export * from "./chatbotSettingsCommand.js";
+export * from "./chatbotSettingsAdditionalCommand.js";
 export * from "./chatbotMessages.js";
 export * from "./chatbotEvents.js";
 export * from "./serverMessages.js";

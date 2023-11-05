@@ -489,3 +489,74 @@ export const chooseWinners = async (data) => {
     return err.response.data;
   }
 };
+
+export const getChatbotSettingsAdditionalCommands = async (grade) => {
+  try {
+    const res = await axios.get(
+      `${constants.ADMIN_API_URL}/chatbot/settings/additional-commands`,
+      {
+        params: { grade },
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const createChatbotSettingsAdditionalCommand = async (data) => {
+  try {
+    const res = await axios.post(
+      `${constants.ADMIN_API_URL}/chatbot/settings/additional-command`,
+      data,
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const updateChatbotSettingsAdditionalCommand = async (data) => {
+  try {
+    const res = await axios.put(
+      `${constants.ADMIN_API_URL}/chatbot/settings/additional-command`,
+      data,
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+export const deleteChatbotSettingsAdditionalCommand = async (id) => {
+  try {
+    const res = await axios.delete(
+      `${constants.ADMIN_API_URL}/chatbot/settings/additional-command`,
+      {
+        params: { id },
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
