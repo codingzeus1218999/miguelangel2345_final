@@ -22,22 +22,19 @@ export const getRaffleList = async (req, res) => {
 
 export const createRaffle = async (req, res) => {
   try {
-    const r = await RaffleModel.findOne({ state: "pending" });
-    if (r) {
-      return res.status(400).json({
-        success: false,
-        message: "Already exists pending raffle",
-      });
-    }
     const name = get(req.body, "name").toString();
     const points = parseInt(get(req.body, "points"));
     const time = parseInt(get(req.body, "time"));
     const winnerCount = parseInt(get(req.body, "winnerCount"));
+    const mode = get(req.body, "mode").toString();
+
+    await RaffleModel.updateMany({ state: "pending" }, { state: "done" });
     const newRaffle = new RaffleModel({
       name,
       points,
       time,
       winnerCount,
+      mode,
     });
     newRaffle
       .save()

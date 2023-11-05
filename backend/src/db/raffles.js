@@ -8,6 +8,7 @@ const RaffleSchema = new mongoose.Schema({
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   winners: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   state: { type: String, default: "pending" },
+  mode: { type: String, default: "manual" },
   created_at: { type: Date, required: true, default: Date.now },
 });
 

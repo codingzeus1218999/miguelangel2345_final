@@ -27,7 +27,7 @@ async function sendMessage(message) {
     messageInput.textContent = message;
     const enterKeyEvent = new KeyboardEvent("keydown", { key: "Enter" });
     const agreeButton = document.querySelector(
-      'button[class="variant-action size-sm !w-full"]'
+      'button[class="variant-action size-md base-button"]'
     );
     if (agreeButton) {
       agreeButton.click();

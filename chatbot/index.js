@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
 const dotnet = require("dotenv");
+const randomstring = require("randomstring");
 
 const browser = require("./browser");
 const { printMessage, makeRegex } = require("./utils");
@@ -54,6 +55,10 @@ const init = async () => {
       points_unit,
       subscriber_multiple,
       subscriber_points,
+      autoRaffle,
+      autoRaffleTime,
+      autoRafflePoints,
+      autoRaffleWinnerCount,
       email: botMail,
       password: botPwd,
     } = await getGeneralSettings(token);
@@ -107,7 +112,6 @@ const init = async () => {
             const resAddEvent = await addEvent(token, {
               event: "AddPoint_Watcher",
               content: `Added ${p} points to watcher, ${al.name}`,
-              created_at: Date.now(),
             });
             sendToAdmin({ type: "event", data: resAddEvent.event });
           }
@@ -135,13 +139,11 @@ const init = async () => {
           const resAddEventRaffle = await addEvent(token, {
             event: "DoneRaffle",
             content: `Ended ${raffle.name} raffle in ${raffle.time} seconds`,
-            created_at: Date.now(),
           });
           sendToAdmin({ type: "event", data: resAddEventRaffle.event });
           const resAddEventUser = await addEvent(token, {
             event: "AddPoint_Winners",
             content: `Added ${raffle.points} points to ${resAddPointsToWinners.count} users`,
-            created_at: Date.now(),
           });
           sendToAdmin({ type: "event", data: resAddEventUser.event });
           sendToAdmin({
@@ -157,6 +159,55 @@ const init = async () => {
           }
         }
       };
+
+      const makeRaffle = async (data) => {
+        const resCreateRaffle = await createRaffle(token, data);
+        if (resCreateRaffle.success) {
+          sendToAdmin({
+            type: "raffle-created",
+            data: resCreateRaffle.raffle,
+          });
+          const resAddEvent = await addEvent(token, {
+            event: "Raffle_Created",
+            content: `Created ${resCreateRaffle.raffle.name} Raffle / ${resCreateRaffle.raffle.points} points`,
+          });
+          sendToAdmin({ type: "event", data: resAddEvent.event });
+          const msgToServer = raffleStart
+            .replace("%NAME%", data.name)
+            .replace("%POINTS%", data.points)
+            .replace("%TIME%", data.time)
+            .replace("%COMMAND%", raffleJoin);
+          sendToServer(msgToServer);
+          setTimeout(() => {
+            doneRaffle(resCreateRaffle.raffle);
+          }, Number(data.time) * 1000);
+        } else {
+          printMessage(resCreateRaffle.message, "error");
+        }
+      };
+
+      if (autoRaffle) {
+        setTimeout(
+          () =>
+            makeRaffle({
+              name: randomstring.generate(),
+              points: autoRafflePoints,
+              time: autoRaffleTime,
+              winnerCount: autoRaffleWinnerCount,
+              mode: "auto",
+            }),
+          2000
+        );
+        setInterval(() => {
+          makeRaffle({
+            name: randomstring.generate(),
+            points: autoRafflePoints,
+            time: autoRaffleTime,
+            winnerCount: autoRaffleWinnerCount,
+            mode: "auto",
+          });
+        }, (autoRaffleTime + 1) * 1000);
+      }
 
       // Data for getting websocket
       const data1 = {
@@ -286,7 +337,6 @@ const init = async () => {
               const resAddEvent = await addEvent(token, {
                 event: "AddPoint_By_Moderator",
                 content: `Added ${points} points to ${resAddPointsByChatbot.count} users`,
-                created_at: Date.now(),
               });
               sendToAdmin({ type: "event", data: resAddEvent.event });
               const msgToServer = addPointsMsgSuccess
@@ -324,7 +374,6 @@ const init = async () => {
               const resAddEvent = await addEvent(token, {
                 event: "DelPoint_By_Moderator",
                 content: `Removed ${points} points from ${resDelPointsByChatbot.count} users`,
-                created_at: Date.now(),
               });
               sendToAdmin({ type: "event", data: resAddEvent.event });
               const msgToServer = delPointsMsgSuccess
@@ -345,7 +394,6 @@ const init = async () => {
             event: "Subscription",
             name: username,
             content: `Subscribe the channel for ${months} months`,
-            created_at: Date.now(),
             badges: [],
           });
           sendToAdmin({ type: "message", data: resAddChannelMessage.msg });
@@ -357,7 +405,6 @@ const init = async () => {
             const resAddEvent = await addEvent(token, {
               event: "AddPoint_New_Subscriber",
               content: `Added ${subscriber_points} points to new subscriber, ${username}`,
-              created_at: Date.now(),
             });
             sendToAdmin({ type: "event", data: resAddEvent.event });
           }
@@ -384,28 +431,7 @@ const init = async () => {
 
           // If created new raffle
           if (type === "raffle-create") {
-            const resCreateRaffle = await createRaffle(token, data);
-            if (resCreateRaffle.success) {
-              sendToAdmin({
-                type: "raffle-created",
-                data: resCreateRaffle.raffle,
-              });
-              const resAddEvent = await addEvent(token, {
-                event: "Raffle_Created",
-                content: `Created ${resCreateRaffle.raffle.name} Raffle / ${resCreateRaffle.raffle.points} points`,
-                created_at: Date.now(),
-              });
-              sendToAdmin({ type: "event", data: resAddEvent.event });
-              const msgToServer = raffleStart
-                .replace("%NAME%", data.name)
-                .replace("%POINTS%", data.points)
-                .replace("%TIME%", data.time)
-                .replace("%COMMAND%", raffleJoin);
-              sendToServer(msgToServer);
-              setTimeout(() => {
-                doneRaffle(resCreateRaffle.raffle);
-              }, Number(data.time) * 1000);
-            }
+            await makeRaffle({ ...data, mode: "manual" });
           }
         });
         cSocket.on("close", () => {
