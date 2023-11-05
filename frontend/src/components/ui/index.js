@@ -14,6 +14,7 @@ import TextInput from "./TextInput";
 import StatusBadge from "./StatusBadge";
 import RedemptionCode from "./RedemptionCode";
 import RedemptionDetail from "./RedemptionDetail";
+import ItemRaffleInfo from "./ItemRaffleInfo";
 
 export {
   ItemCard,
@@ -32,4 +33,5 @@ export {
   StatusBadge,
   RedemptionCode,
   RedemptionDetail,
+  ItemRaffleInfo,
 };

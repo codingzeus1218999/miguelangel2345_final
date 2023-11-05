@@ -1,0 +1,9 @@
+.pt-item-raffle-info {
+  @apply bg-pt-black-100 rounded-md p-2 border-pt-black-500 text-white border;
+  & .pt-label {
+    @apply font-semibold;
+  }
+  & .pt-info-panel {
+    @apply flex flex-row justify-between bg-pt-black-400 rounded-md p-2;
+  }
+}

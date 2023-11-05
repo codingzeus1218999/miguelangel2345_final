@@ -206,3 +206,18 @@ export const getCurrentServerTime = async (query) => {
     return err.response.data;
   }
 };
+
+export const getItemRaffleByItem = async (itemId, state) => {
+  try {
+    const res = await axios.get(`${constants.API_URL}/item-raffle`, {
+      params: { itemId, state },
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};

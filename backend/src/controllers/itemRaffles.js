@@ -6,12 +6,17 @@ const { get } = pkg;
 
 export const getItemRaffleByItem = async (req, res) => {
   try {
-    const raffles = await ItemRaffleModel.find({
-      item: req.query.itemId,
-      state: req.query.state,
-    })
+    const raffles = await ItemRaffleModel.find(
+      req.query.state === "all"
+        ? { item: req.query.itemId }
+        : {
+            item: req.query.itemId,
+            state: req.query.state,
+          }
+    )
       .populate({ path: "participants.user", model: "User" })
-      .populate({ path: "winners", model: "User" });
+      .populate({ path: "winners", model: "User" })
+      .sort({ end_at: 1 });
     return res.status(200).json({
       success: true,
       message: "Got the item raffle",

@@ -8,6 +8,7 @@ import {
   ButtonPink,
   ElementLoadingSpinner,
   ItemCard,
+  ItemRaffleInfo,
   Point,
 } from "../../components/ui";
 
@@ -20,6 +21,7 @@ import {
   getLatestItems,
   getItemInfoById,
   getCurrentServerTime,
+  getItemRaffleByItem,
 } from "../../apis";
 import constants from "../../constants";
 import { PurchaseModal } from "../../components/form";
@@ -31,6 +33,7 @@ export default function News() {
   const { setModal } = useContext(ModalContext);
   const { id } = useParams();
   const [item, setItem] = useState({});
+  const [itemRaffles, setItemRaffles] = useState([]);
   const [latestItems, setLatestItems] = useState([]);
   const [currentServerTime, setCurrentServerTime] = useState(0);
   const [userLatestTime, setUserLatestTime] = useState(0);
@@ -44,6 +47,21 @@ export default function News() {
       if (res.success) setLatestItems(res.data.items);
       else NotificationManager.error(res.message);
     } catch (err) {
+      NotificationManager.error(
+        "Something was wrong in connection with server"
+      );
+    }
+  };
+  const fetchItemRaffle = async () => {
+    try {
+      const res = await getItemRaffleByItem(id, "all");
+      if (res.success) {
+        setItemRaffles(res.data?.itemRaffle);
+      } else {
+        NotificationManager.error(res.message);
+      }
+    } catch (err) {
+      console.log(err);
       NotificationManager.error(
         "Something was wrong in connection with server"
       );
@@ -75,6 +93,7 @@ export default function News() {
     }, 1000);
     setNav("store");
     fetchItem();
+    fetchItemRaffle();
     fetchLatestItems();
     return () => {
       clearInterval(timeCheck);
@@ -129,31 +148,30 @@ export default function News() {
                   Quantity: {item.quantity}
                 </h1>
               )}
-              {/* {item?.type === "key" && (
-                <div className="mt-6 flex flex-col gap-3">
-                  <h1 className="font-bold text-xl">Codes:</h1>
-                  {item?.codes.map((c, idx) => (
-                    <h1 key={idx}>{c}</h1>
-                  ))}
-                </div>
-              )} */}
               {isAuthenticated ? (
-                <Button
-                  className="text-black mt-6 w-full"
-                  onClick={() => setModal("purchase")}
-                  disabled={
-                    item?.quantity < -1 ||
-                    item?.quantity === 0 ||
-                    differenceTimes(currentServerTime, userLatestTime) <
-                      item.coolDownUser ||
-                    differenceTimes(currentServerTime, globalLatestTime) <
-                      item.coolDownGlobal
-                  }
-                >
-                  {["redeem", "key"].includes(item.type)
-                    ? "redeem item"
-                    : "Buy ticket"}
-                </Button>
+                <>
+                  <Button
+                    className="text-black mt-6 w-full"
+                    onClick={() => setModal("purchase")}
+                    disabled={
+                      item?.quantity < -1 ||
+                      item?.quantity === 0 ||
+                      differenceTimes(currentServerTime, userLatestTime) <
+                        item.coolDownUser ||
+                      differenceTimes(currentServerTime, globalLatestTime) <
+                        item.coolDownGlobal
+                    }
+                  >
+                    {["redeem", "key"].includes(item.type)
+                      ? "redeem item"
+                      : "Buy ticket"}
+                  </Button>
+                  {item.type === "raffle" && (
+                    <div className="mt-6">
+                      <ItemRaffleInfo raffles={itemRaffles} />
+                    </div>
+                  )}
+                </>
               ) : (
                 <Button
                   className="text-black mt-6 w-full"
@@ -190,7 +208,13 @@ export default function News() {
           <ElementLoadingSpinner />
         </div>
       )}
-      <PurchaseModal item={item} afterSuccess={(v) => setItem(v)} />
+      <PurchaseModal
+        item={item}
+        afterSuccess={(v) => {
+          setItem(v);
+          fetchItemRaffle();
+        }}
+      />
     </Layout>
   );
 }
