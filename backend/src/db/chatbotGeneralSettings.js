@@ -12,6 +12,7 @@ const ChatbotGeneralSettingSchema = new mongoose.Schema({
   autoRaffle: { type: Boolean, default: true },
   autoRafflePoints: { type: Number, default: 10 },
   autoRaffleTime: { type: Number, default: 60 },
+  autoRaffleBetween: { type: Number, default: 60 },
   autoRaffleWinnerCount: { type: Number, default: 3 },
   email: { type: String, required: true },
   password: { type: String, required: true },

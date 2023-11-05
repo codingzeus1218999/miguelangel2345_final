@@ -79,6 +79,7 @@ export default function ChatbotSettings1() {
                   autoRaffle: generalSettings?.autoRaffle,
                   autoRafflePoints: generalSettings?.autoRafflePoints,
                   autoRaffleTime: generalSettings?.autoRaffleTime,
+                  autoRaffleBetween: generalSettings?.autoRaffleBetween,
                   autoRaffleWinnerCount: generalSettings?.autoRaffleWinnerCount,
                   email: generalSettings?.email,
                   password: generalSettings?.password,
@@ -109,6 +110,9 @@ export default function ChatbotSettings1() {
                     1,
                     "Minimum value is 1"
                   ),
+                  autoRaffleBetween: Yup.number(
+                    "This field should be number"
+                  ).min(1, "Minimum value is 1"),
                   autoRaffleWinnerCount: Yup.number(
                     "This field should be number"
                   ).min(1, "Minimum value is 1"),
@@ -151,6 +155,7 @@ export default function ChatbotSettings1() {
                           autoRaffle: res.settings.autoRaffle,
                           autoRafflePoints: res.settings.autoRafflePoints,
                           autoRaffleTime: res.settings.autoRaffleTime,
+                          autoRaffleBetween: res.settings.autoRaffleBetween,
                           autoRaffleWinnerCount:
                             res.settings.autoRaffleWinnerCount,
                           email: res.settings.email,
@@ -234,6 +239,12 @@ export default function ChatbotSettings1() {
                     />
                     <Field
                       name="autoRaffleTime"
+                      component={NumberInput}
+                      placeholder="duration one raffle (s)"
+                      className="mt-6"
+                    />
+                    <Field
+                      name="autoRaffleBetween"
                       component={NumberInput}
                       placeholder="duration between auto raffles (s)"
                       className="mt-6"

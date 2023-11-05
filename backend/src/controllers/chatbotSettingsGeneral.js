@@ -37,6 +37,7 @@ export const createChatbotSettingsGeneral = async (req, res) => {
     const autoRaffle = get(req.body, "autoRaffle");
     const autoRafflePoints = get(req.body, "autoRafflePoints");
     const autoRaffleTime = get(req.body, "autoRaffleTime");
+    const autoRaffleBetween = get(req.body, "autoRaffleBetween");
     const autoRaffleWinnerCount = get(req.body, "autoRaffleWinnerCount");
     const email = get(req.body, "email");
     const password = get(req.body, "password");
@@ -54,6 +55,7 @@ export const createChatbotSettingsGeneral = async (req, res) => {
       autoRaffle,
       autoRafflePoints,
       autoRaffleTime,
+      autoRaffleBetween,
       autoRaffleWinnerCount,
     });
     generalSettings
@@ -89,6 +91,7 @@ export const updateChatbotSettingsGeneral = async (req, res) => {
       const autoRaffle = get(req.body, "autoRaffle");
       const autoRafflePoints = get(req.body, "autoRafflePoints");
       const autoRaffleTime = get(req.body, "autoRaffleTime");
+      const autoRaffleBetween = get(req.body, "autoRaffleBetween");
       const autoRaffleWinnerCount = get(req.body, "autoRaffleWinnerCount");
       const email = get(req.body, "email");
       const password = get(req.body, "password");
@@ -103,6 +106,7 @@ export const updateChatbotSettingsGeneral = async (req, res) => {
       generalSettings.autoRaffle = autoRaffle;
       generalSettings.autoRafflePoints = autoRafflePoints;
       generalSettings.autoRaffleTime = autoRaffleTime;
+      generalSettings.autoRaffleBetween = autoRaffleBetween;
       generalSettings.autoRaffleWinnerCount = autoRaffleWinnerCount;
       generalSettings.email = email;
       generalSettings.password = password;

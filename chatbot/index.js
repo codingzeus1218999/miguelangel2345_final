@@ -59,6 +59,7 @@ const init = async () => {
       subscriber_points,
       autoRaffle,
       autoRaffleTime,
+      autoRaffleBetween,
       autoRafflePoints,
       autoRaffleWinnerCount,
       email: botMail,
@@ -202,7 +203,7 @@ const init = async () => {
             winnerCount: autoRaffleWinnerCount,
             mode: "auto",
           });
-        }, autoRaffleTime * 1000);
+        }, (autoRaffleTime + autoRaffleBetween) * 1000);
       }
 
       timerSettings.map((t) => {
