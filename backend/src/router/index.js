@@ -7,6 +7,7 @@ import itemRaffles from "./itemRaffles.js";
 import chatbotSettingsGeneral from "./chatbotSettingsGeneral.js";
 import chatbotSettingsCommand from "./chatbotSettingsCommand.js";
 import chatbotSettingsAdditionalCommand from "./chatbotSettingsAdditionalCommand.js";
+import chatbotSettingsTimer from "./chatbotSettingsTimer.js";
 import chatbotMessages from "./chatbotMessages.js";
 import chatbotEvents from "./chatbotEvents.js";
 import serverMessages from "./serverMessages.js";
@@ -22,6 +23,7 @@ export default () => {
   chatbotSettingsGeneral(router);
   chatbotSettingsCommand(router);
   chatbotSettingsAdditionalCommand(router);
+  chatbotSettingsTimer(router);
   chatbotMessages(router);
   chatbotEvents(router);
   serverMessages(router);

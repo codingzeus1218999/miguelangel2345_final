@@ -69,6 +69,18 @@ export const updateChatbotSettingsAdditionalCommand = async (req, res) => {
     const reply = get(req.body, "reply").toString();
     const allow = get(req.body, "allow");
 
+    const temp = await ChatbotAdditionalCommandSettingModel.findOne({
+      command: command,
+      _id: { $ne: id },
+    });
+    if (temp) {
+      return res.status(400).json({
+        success: false,
+        message: "Already exists same command",
+        data: {},
+      });
+    }
+
     const setting = await ChatbotAdditionalCommandSettingModel.findById(id);
     if (!setting) {
       return res.status(400).json({
