@@ -16,10 +16,16 @@ import {
   TextInput,
   TypeRadio,
 } from "../../components/ui";
-import { getItemInfoById, editItem } from "../../apis";
+import {
+  getItemInfoById,
+  editItem,
+  getItemRaffleByItem,
+  createItemRaffle,
+} from "../../apis";
 import { NavContext } from "../../context/NavContext";
 import { ProductDefault } from "../../assets/images";
 import constants from "../../constants";
+import { ItemRaffleWinner } from "../../components/form";
 
 export default function EditItem() {
   const { setNav } = useContext(NavContext);
@@ -28,6 +34,7 @@ export default function EditItem() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [displayImage, setDisplayImage] = useState(ProductDefault);
   const [componentState, setComponentState] = useState("");
+  const [raffleInfo, setRaffleInfo] = useState({});
   const fileInputRef = useRef(null);
   const [itemType, setItemType] = useState("redeem");
 
@@ -74,7 +81,41 @@ export default function EditItem() {
       }
     };
     fetchItemInfo();
+    const fetchItemRaffleInfo = async () => {
+      try {
+        const res = await getItemRaffleByItem(id, "pending");
+        if (res.success) {
+          setRaffleInfo(res.data?.itemRaffle);
+        } else {
+          NotificationManager.error(res.message);
+        }
+      } catch (err) {
+        console.log(err);
+        NotificationManager.error(
+          "Something was wrong in connection with server"
+        );
+      }
+    };
+    fetchItemRaffleInfo();
   }, [id, setNav]);
+
+  const onClickCreateItemRaffle = async () => {
+    try {
+      const res = await createItemRaffle(id);
+      if (res.success) {
+        NotificationManager.success(res.message);
+        setRaffleInfo(res.data?.raffleInfo);
+      } else {
+        NotificationManager.error(res.message);
+      }
+    } catch (err) {
+      console.log(err);
+      NotificationManager.error(
+        "Something was wrong in connection with server"
+      );
+    }
+  };
+
   return (
     <Layout>
       <div className="flex justify-between items-center">
@@ -269,19 +310,17 @@ export default function EditItem() {
                     )}
                   </div>
                 </div>
-                <Button
-                  type="submit"
-                  disabled={!isValid || isSubmitting}
-                  className="mt-6 float-right"
-                >
-                  {isSubmitting ? (
-                    <div className="mx-auto w-fit">
-                      <MetroSpinner color="#000000" size={25} />
-                    </div>
-                  ) : (
-                    "Save"
-                  )}
-                </Button>
+                <div className="mt-6 flex flex-row justify-end">
+                  <Button type="submit" disabled={!isValid || isSubmitting}>
+                    {isSubmitting ? (
+                      <div className="mx-auto w-fit">
+                        <MetroSpinner color="#000000" size={25} />
+                      </div>
+                    ) : (
+                      "Save"
+                    )}
+                  </Button>
+                </div>
               </Form>
             )}
           </Formik>
@@ -291,6 +330,24 @@ export default function EditItem() {
           </div>
         )}
       </div>
+      {itemType === "raffle" && (
+        <div className="mt-6">
+          {raffleInfo && Object.keys(raffleInfo).length > 0 ? (
+            <div className="w-full md:w-2/3">
+              <ItemRaffleWinner
+                raffle={raffleInfo}
+                callback={() => setRaffleInfo({})}
+              />
+            </div>
+          ) : (
+            <div>
+              <Button onClick={() => onClickCreateItemRaffle()}>
+                Create Raffle
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
     </Layout>
   );
 }

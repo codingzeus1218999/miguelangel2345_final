@@ -7,6 +7,7 @@ import pkg from "lodash";
 import { ItemModel, getItemsByQuery } from "../db/items.js";
 import { differenceTimes, printMessage, sendEmail } from "../utils/index.js";
 import { UserModel } from "../db/users.js";
+import { ItemRaffleModel } from "../db/itemRaffles.js";
 const { get } = pkg;
 
 export const addItem = async (req, res) => {
@@ -43,8 +44,12 @@ export const addItem = async (req, res) => {
       });
       newItem
         .save()
-        .then((item) => {
+        .then(async (item) => {
           printMessage(`${item.name} item has been added`, "success");
+          if (item.type === "raffle") {
+            let newItemRaffle = new ItemRaffleModel({ item: item._id });
+            await newItemRaffle.save();
+          }
           return res.status(200).json({
             success: true,
             data: { item },
@@ -349,6 +354,33 @@ export const purchaseItem = async (req, res) => {
         message: "You can't redeem this item in global cool down time",
         data: {},
       });
+    // add info to item-raffle in case of raffle item
+    if (item.type === "raffle") {
+      const itemRaffle = await ItemRaffleModel.findOne({
+        item: itemId,
+        state: "pending",
+      });
+      if (itemRaffle) {
+        if (
+          itemRaffle.participants.map((p) => p.user.toString()).includes(userId)
+        ) {
+          const existingParticipant = itemRaffle.participants.find(
+            (p) => p.user.toString() === userId
+          );
+          existingParticipant.count++;
+        } else {
+          itemRaffle.participants.push({ user: userId, count: 1 });
+        }
+        await itemRaffle.save();
+      } else {
+        return res.status(400).json({
+          success: false,
+          message:
+            "There is no raffle with this item. You can't purchase this item for a while",
+          data: {},
+        });
+      }
+    }
     // purchase
     let selectedCode = "";
     if (item.type === "key") {

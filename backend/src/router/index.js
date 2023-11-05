@@ -3,6 +3,7 @@ import auths from "./auths.js";
 import users from "./users.js";
 import items from "./items.js";
 import raffles from "./raffles.js";
+import itemRaffles from "./itemRaffles.js";
 import chatbotSettingsGeneral from "./chatbotSettingsGeneral.js";
 import chatbotSettingsCommand from "./chatbotSettingsCommand.js";
 import chatbotMessages from "./chatbotMessages.js";
@@ -16,6 +17,7 @@ export default () => {
   users(router);
   items(router);
   raffles(router);
+  itemRaffles(router);
   chatbotSettingsGeneral(router);
   chatbotSettingsCommand(router);
   chatbotMessages(router);

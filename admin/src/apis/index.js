@@ -438,3 +438,54 @@ export const processRedemption = async (id, state, query) => {
     return err.response.data;
   }
 };
+
+export const getItemRaffleByItem = async (itemId, state) => {
+  try {
+    const res = await axios.get(`${constants.ADMIN_API_URL}/item-raffle`, {
+      params: { itemId, state },
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const createItemRaffle = async (id) => {
+  try {
+    const res = await axios.post(
+      `${constants.ADMIN_API_URL}/item-raffle`,
+      { id },
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const chooseWinners = async (data) => {
+  try {
+    const res = await axios.put(
+      `${constants.ADMIN_API_URL}/item-raffle/winners`,
+      data,
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
