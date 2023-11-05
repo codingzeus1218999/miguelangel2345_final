@@ -66,6 +66,7 @@ export const createChatbotSettingsTimer = async (req, res) => {
 
 export const updateChatbotSettingsTimer = async (req, res) => {
   try {
+    const id = get(req.body, "id").toString();
     const name = get(req.body, "name").toString();
     const message = get(req.body, "message").toString();
     const duration = get(req.body, "duration");

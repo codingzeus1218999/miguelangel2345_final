@@ -260,6 +260,46 @@ const createRaffle = async (token, data) => {
   }
 };
 
+const getAdditionalCommandSettings = async (token) => {
+  try {
+    const res = await axios.get(
+      `${constants.BACKEND_API_URL}/chatbot/settings/additional-commands`,
+      {
+        params: { grade: "allowed" },
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data.data.settings;
+  } catch (err) {
+    printMessage(
+      `getting additional command settings from backend failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const getTimerSettings = async (token) => {
+  try {
+    const res = await axios.get(
+      `${constants.BACKEND_API_URL}/chatbot/settings/timers`,
+      {
+        params: { grade: "allowed" },
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data.data.timers;
+  } catch (err) {
+    printMessage(
+      `getting timer settings from backend failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
 module.exports = {
   login,
   getCommandSettings,
@@ -275,4 +315,6 @@ module.exports = {
   addPointsByChatbot,
   delPointsByChatbot,
   createRaffle,
+  getAdditionalCommandSettings,
+  getTimerSettings,
 };

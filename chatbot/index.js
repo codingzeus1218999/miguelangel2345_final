@@ -21,6 +21,8 @@ const {
   addPointsByChatbot,
   delPointsByChatbot,
   createRaffle,
+  getAdditionalCommandSettings,
+  getTimerSettings,
 } = require("./apis");
 
 dotnet.config();
@@ -62,6 +64,9 @@ const init = async () => {
       email: botMail,
       password: botPwd,
     } = await getGeneralSettings(token);
+    const additionalCommands = await getAdditionalCommandSettings(token);
+    printMessage(additionalCommands);
+    const timerSettings = await getTimerSettings(token);
 
     // Open web browser
     browser.initBrowser(botMail, botPwd);
@@ -186,18 +191,9 @@ const init = async () => {
         }
       };
 
+      sendToServer("Bot is ready");
+
       if (autoRaffle) {
-        setTimeout(
-          () =>
-            makeRaffle({
-              name: randomstring.generate(),
-              points: autoRafflePoints,
-              time: autoRaffleTime,
-              winnerCount: autoRaffleWinnerCount,
-              mode: "auto",
-            }),
-          2000
-        );
         setInterval(() => {
           makeRaffle({
             name: randomstring.generate(),
@@ -206,8 +202,14 @@ const init = async () => {
             winnerCount: autoRaffleWinnerCount,
             mode: "auto",
           });
-        }, (autoRaffleTime + 1) * 1000);
+        }, autoRaffleTime * 1000);
       }
+
+      timerSettings.map((t) => {
+        setInterval(() => {
+          sendToServer(t.message);
+        }, t.duration * 1000);
+      });
 
       // Data for getting websocket
       const data1 = {
@@ -385,6 +387,12 @@ const init = async () => {
               sendToServer(msgToServer);
             }
           }
+
+          additionalCommands.map((c) => {
+            if (c.command === content) {
+              sendToServer(c.reply);
+            }
+          });
         }
 
         // If user subscribes
