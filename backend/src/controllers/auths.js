@@ -44,52 +44,51 @@ export const signUp = async (req, res) => {
     const email = get(req.body, "email").toString();
     const password = get(req.body, "password").toString();
     const verificationToken = crypto.randomBytes(32).toString("hex");
-    const account = await getAllowedUserByEmail(email);
-    if (account) {
-      return res.status(400).json({
-        success: false,
-        message: "User with this email already exists.",
-        data: {},
-      });
+    const accountWithThisEmail = await UserModel.findOne({ email });
+    let user;
+
+    if (accountWithThisEmail) {
+      if (accountWithThisEmail.allowed) {
+        return res.status(400).json({
+          success: false,
+          message: "User with this email already exists.",
+          data: {},
+        });
+      } else {
+        accountWithThisEmail.verification_token = verificationToken;
+        accountWithThisEmail.password = bcrypt.hashSync(password, 10);
+        user = await accountWithThisEmail.save();
+      }
     }
     let newUser = new UserModel({
       email,
       verification_token: verificationToken,
       password: bcrypt.hashSync(password, 10),
     });
-    newUser
-      .save()
-      .then((user) => {
-        if (
-          sendEmail(
-            email,
-            "registerVerification",
-            {
-              link_url: `${constants.FRONTEND_URL}/verify/${verificationToken}`,
-            },
-            "Email verification"
-          )
-        ) {
-          printMessage(`${user.email} wants to register`, "info");
-          return res.status(200).json({
-            success: true,
-            message: "Email sent. Please check your mailbox",
-            data: {},
-          });
-        } else {
-          return res.status(500).json({
-            success: false,
-            message: "Email sending failed",
-            data: {},
-          });
-        }
-      })
-      .catch((err) => {
-        printMessage(err, "error");
-        return res
-          .status(400)
-          .json({ success: false, message: "Registeration faild", data: {} });
+    user = await newUser.save();
+    if (
+      sendEmail(
+        email,
+        "registerVerification",
+        {
+          link_url: `${constants.FRONTEND_URL}/verify/${verificationToken}`,
+        },
+        "Email verification"
+      )
+    ) {
+      printMessage(`${user.email} wants to register`, "info");
+      return res.status(200).json({
+        success: true,
+        message: "Email sent. Please check your mailbox",
+        data: {},
       });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "Email sending failed",
+        data: {},
+      });
+    }
   } catch (err) {
     printMessage(err, "error");
     return res
