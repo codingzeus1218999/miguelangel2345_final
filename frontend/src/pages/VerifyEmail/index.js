@@ -56,36 +56,40 @@ export default function VerifyEmail() {
               onSubmit={async (values, actions) => {
                 try {
                   let userName = values.name;
-                  if (userName.includes("_")) {
-                    const tempUser = await getKickInfoByName(userName);
-                    if (tempUser?.user?.username !== userName) {
-                      userName = userName.replace(/_/g, "-");
-                    }
-                  }
                   const kickUser = await getKickInfoByName(userName);
-                  if (kickUser?.user?.username === userName) {
-                    if (kickUser?.user?.bio.includes(verificationRandomCode)) {
-                      try {
-                        const res = await verifiedTwoStep({
-                          name: userName,
-                          token,
-                        });
-                        if (res.success) {
-                          localStorage.setItem("token", res.data.token);
-                          NotificationManager.success(res.message);
-                          navigate("/");
-                        } else {
-                          NotificationManager.error(res.message);
+                  if (kickUser) {
+                    if (kickUser?.user?.username !== userName)
+                      userName = userName.replace(/-/g, "_");
+                    if (kickUser?.user?.username === userName) {
+                      if (
+                        kickUser?.user?.bio.includes(verificationRandomCode)
+                      ) {
+                        try {
+                          const res = await verifiedTwoStep({
+                            name: userName,
+                            token,
+                          });
+                          if (res.success) {
+                            localStorage.setItem("token", res.data.token);
+                            NotificationManager.success(res.message);
+                            navigate("/");
+                          } else {
+                            NotificationManager.error(res.message);
+                          }
+                        } catch (err) {
+                          console.log(err);
+                          NotificationManager.error(
+                            "Two step verification failed"
+                          );
                         }
-                      } catch (err) {
-                        console.log(err);
+                      } else {
                         NotificationManager.error(
-                          "Two step verification failed"
+                          "Verification of your kick name is failed"
                         );
                       }
                     } else {
                       NotificationManager.error(
-                        "Verification of your kick name is failed"
+                        "There is no user with this kick name"
                       );
                     }
                   } else {
