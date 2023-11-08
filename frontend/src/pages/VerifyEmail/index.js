@@ -56,11 +56,17 @@ export default function VerifyEmail() {
               onSubmit={async (values, actions) => {
                 try {
                   let userName = values.name;
-                  const kickUser = await getKickInfoByName(userName);
+                  let kickUser = await getKickInfoByName(userName);
+                  if (!kickUser) {
+                    userName = userName.replace(/-/g, "_");
+                    kickUser = await getKickInfoByName(userName);
+                    if (!kickUser) {
+                      userName = userName.replace(/_/g, "-");
+                      kickUser = await getKickInfoByName(userName);
+                    }
+                  }
                   if (kickUser) {
-                    if (kickUser?.user?.username !== userName)
-                      userName = userName.replace(/-/g, "_");
-                    if (kickUser?.user?.username === userName) {
+                    userName = kickUser?.user?.username;
                       if (
                         kickUser?.user?.bio.includes(verificationRandomCode)
                       ) {
