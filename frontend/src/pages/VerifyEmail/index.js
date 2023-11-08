@@ -67,30 +67,23 @@ export default function VerifyEmail() {
                   }
                   if (kickUser) {
                     userName = kickUser?.user?.username;
-                      if (
-                        kickUser?.user?.bio.includes(verificationRandomCode)
-                      ) {
-                        try {
-                          const res = await verifiedTwoStep({
-                            name: userName,
-                            token,
-                          });
-                          if (res.success) {
-                            localStorage.setItem("token", res.data.token);
-                            NotificationManager.success(res.message);
-                            navigate("/");
-                          } else {
-                            NotificationManager.error(res.message);
-                          }
-                        } catch (err) {
-                          console.log(err);
-                          NotificationManager.error(
-                            "Two step verification failed"
-                          );
+                    if (kickUser?.user?.bio.includes(verificationRandomCode)) {
+                      try {
+                        const res = await verifiedTwoStep({
+                          name: userName,
+                          token,
+                        });
+                        if (res.success) {
+                          localStorage.setItem("token", res.data.token);
+                          NotificationManager.success(res.message);
+                          navigate("/");
+                        } else {
+                          NotificationManager.error(res.message);
                         }
-                      } else {
+                      } catch (err) {
+                        console.log(err);
                         NotificationManager.error(
-                          "Verification of your kick name is failed"
+                          "Two step verification failed"
                         );
                       }
                     } else {
@@ -98,10 +91,6 @@ export default function VerifyEmail() {
                         "There is no user with this kick name"
                       );
                     }
-                  } else {
-                    NotificationManager.error(
-                      "There is no user with this kick name"
-                    );
                   }
                 } catch (err) {
                   console.log(err);
