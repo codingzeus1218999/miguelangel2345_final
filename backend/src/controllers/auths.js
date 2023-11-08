@@ -11,9 +11,9 @@ const { get } = pkg;
 
 export const signIn = async (req, res) => {
   try {
-    const email = get(req.body, "email").toString();
+    const email = get(req.body, "email").toString().toLowerCase();
     const password = get(req.body, "password").toString();
-    const account = await getAllowedUserByEmail(email);
+    const account = await UserModel.findOne({email, allowed: true});
     if (!account || !bcrypt.compareSync(password, account.password)) {
       return res.status(400).json({
         success: false,
@@ -41,7 +41,7 @@ export const signIn = async (req, res) => {
 
 export const signUp = async (req, res) => {
   try {
-    const email = get(req.body, "email").toString();
+    const email = get(req.body, "email").toString().toLowerCase();
     const password = get(req.body, "password").toString();
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const accountWithThisEmail = await UserModel.findOne({ email });
@@ -60,12 +60,14 @@ export const signUp = async (req, res) => {
         user = await accountWithThisEmail.save();
       }
     }
-    let newUser = new UserModel({
-      email,
-      verification_token: verificationToken,
-      password: bcrypt.hashSync(password, 10),
-    });
-    user = await newUser.save();
+    else {
+      newUser = new UserModel({
+        email,
+        verification_token: verificationToken,
+        password: bcrypt.hashSync(password, 10),
+      });
+      user = await newUser.save();
+    }
     if (
       sendEmail(
         email,
