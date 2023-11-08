@@ -66,7 +66,6 @@ const init = async () => {
       password: botPwd,
     } = await getGeneralSettings(token);
     const additionalCommands = await getAdditionalCommandSettings(token);
-    printMessage(additionalCommands);
     const timerSettings = await getTimerSettings(token);
 
     // Open web browser
