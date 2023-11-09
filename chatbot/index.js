@@ -98,7 +98,9 @@ const init = async () => {
       const intervalAddPoints = setInterval(async () => {
         for (var i = 0; i < activeList.length; i++) {
           const al = activeList[i];
-          const p = al.isSubscriber ? points_unit * 2 : points_unit;
+          const p = al.isSubscriber
+            ? points_unit * subscriber_multiple
+            : points_unit;
           const resAddPointsToUser = await addPointsToUser(token, {
             name: al.name,
             points: p,
