@@ -35,7 +35,7 @@ export const forgotPassword = async (req, res) => {
               email,
               "resetPassword",
               {
-                link_url: `${constants.FRONTEND_URL}/forgot-password/${verificationToken}`,
+                link_url: `${constants.FRONTEND_URL}/forgot-password/${forgotPasswordToken}`,
               },
               "Did you forgot your password?"
             )
