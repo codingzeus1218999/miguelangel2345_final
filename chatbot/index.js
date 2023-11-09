@@ -79,7 +79,6 @@ const init = async () => {
       const aWebSocket = new WebSocket(ws_end_point);
       const cServer = new WebSocket.Server({ server });
       let activeList = [];
-      let lastActiveList = [];
 
       // Send messages to admin site
       const sendToAdmin = (d) => {
@@ -93,22 +92,13 @@ const init = async () => {
       // Add active user to list
       const addUserToActiveList = (u) => {
         if (activeList.some((el) => el.name === u.name)) return;
-        const lsU = lastActiveList.find((el) => el.name === u.name);
-        if (lsU) {
-          activeList.push({ ...u, lastAddedPoints: lsU.addedPoints });
-        } else activeList.push({ ...u, lastAddedPoints: 0 });
       };
 
       // Check and add points to active users
       const intervalAddPoints = setInterval(async () => {
-        let tempActiveList = [];
         for (var i = 0; i < activeList.length; i++) {
           const al = activeList[i];
-          const p = al.isSubscriber
-            ? al.lastAddedPoints === 0
-              ? points_unit
-              : al.lastAddedPoints * subscriber_multiple
-            : points_unit;
+          const p = al.isSubscriber ? points_unit * 2 : points_unit;
           const resAddPointsToUser = await addPointsToUser(token, {
             name: al.name,
             points: p,
@@ -120,9 +110,7 @@ const init = async () => {
             });
             sendToAdmin({ type: "event", data: resAddEvent.event });
           }
-          tempActiveList.push({ ...al, addedPoints: p });
         }
-        lastActiveList = [...tempActiveList];
         activeList = [];
       }, time_duration * 1000);
 
@@ -130,7 +118,8 @@ const init = async () => {
       const sendToServer = async (msg) => {
         const resAddMessage = await addServerMessage(token, { message: msg });
         if (resAddMessage.success) {
-          browser.sendMessage(msg);
+          // browser.sendMessage(msg);
+          console.log(msg);
         }
       };
 
