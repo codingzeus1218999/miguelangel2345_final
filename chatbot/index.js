@@ -120,8 +120,7 @@ const init = async () => {
       const sendToServer = async (msg) => {
         const resAddMessage = await addServerMessage(token, { message: msg });
         if (resAddMessage.success) {
-          // browser.sendMessage(msg);
-          console.log(msg);
+          browser.sendMessage(msg);
         }
       };
 
