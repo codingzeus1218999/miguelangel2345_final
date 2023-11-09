@@ -92,6 +92,7 @@ const init = async () => {
       // Add active user to list
       const addUserToActiveList = (u) => {
         if (activeList.some((el) => el.name === u.name)) return;
+        activeList.push(u);
       };
 
       // Check and add points to active users
