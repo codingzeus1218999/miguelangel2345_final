@@ -631,3 +631,56 @@ export const deleteChatbotSettingsTimer = async (id) => {
     return err.response.data;
   }
 };
+
+export const getChatbotSettingsBet = async () => {
+  try {
+    const res = await axios.get(
+      `${constants.ADMIN_API_URL}/chatbot/settings/bet`,
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const createChatbotSettingsBet = async (data) => {
+  try {
+    const res = await axios.post(
+      `${constants.ADMIN_API_URL}/chatbot/settings/bet`,
+      data,
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
+
+export const updateChatbotSettingsBet = async (data) => {
+  try {
+    const res = await axios.put(
+      `${constants.ADMIN_API_URL}/chatbot/settings/bet`,
+      data,
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};

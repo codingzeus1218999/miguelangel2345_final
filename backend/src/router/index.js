@@ -6,6 +6,7 @@ import raffles from "./raffles.js";
 import itemRaffles from "./itemRaffles.js";
 import chatbotSettingsGeneral from "./chatbotSettingsGeneral.js";
 import chatbotSettingsCommand from "./chatbotSettingsCommand.js";
+import chatbotSettingsBet from "./chatbotSettingsBet.js";
 import chatbotSettingsAdditionalCommand from "./chatbotSettingsAdditionalCommand.js";
 import chatbotSettingsTimer from "./chatbotSettingsTimer.js";
 import chatbotMessages from "./chatbotMessages.js";
@@ -24,6 +25,7 @@ export default () => {
   chatbotSettingsCommand(router);
   chatbotSettingsAdditionalCommand(router);
   chatbotSettingsTimer(router);
+  chatbotSettingsBet(router);
   chatbotMessages(router);
   chatbotEvents(router);
   serverMessages(router);

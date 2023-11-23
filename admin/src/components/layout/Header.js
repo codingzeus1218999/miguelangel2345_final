@@ -25,6 +25,11 @@ const menu = [
     title: "Chatbot Settings 2",
   },
   {
+    link: "chatbot-settings-3",
+    name: "chatbot-settings-3",
+    title: "Chatbot Settings 3",
+  },
+  {
     link: "chatbot-history",
     name: "chatbot-history",
     title: "Chatbot History",

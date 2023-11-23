@@ -9,6 +9,7 @@ import RedemptionHistory from "./pages/Redemptions/RedemptionHistory";
 import Raffle from "./pages/Raffle";
 import ChatbotSettings1 from "./pages/Chatbot/ChatbotSettings1";
 import ChatbotSettings2 from "./pages/Chatbot/ChatbotSettings2";
+import ChatbotSettings3 from "./pages/Chatbot/ChatbotSettings3";
 import ChatbotHistory from "./pages/Chatbot/ChatbotHistory";
 import ChatbotRealtime from "./pages/Chatbot/ChatbotRealtime";
 import NotFound from "./pages/NotFound";
@@ -46,6 +47,11 @@ function App() {
               exact
               path="/chatbot-settings-2"
               element={<ChatbotSettings2 />}
+            />
+            <Route
+              exact
+              path="/chatbot-settings-3"
+              element={<ChatbotSettings3 />}
             />
             <Route exact path="/chatbot-history" element={<ChatbotHistory />} />
             <Route

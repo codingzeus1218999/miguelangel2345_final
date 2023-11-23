@@ -143,24 +143,6 @@ export default function ChatbotSettings1() {
                       actions.setSubmitting(false);
                       if (res.success) {
                         setGeneralSettings(res.settings);
-                        actions.setValues({
-                          channel1: res.settings.channel1,
-                          channel2: res.settings.channel2,
-                          wsEndPoint: res.settings.ws_end_point,
-                          description: res.settings.description,
-                          timeDuration: res.settings.time_duration,
-                          pointsUnit: res.settings.points_unit,
-                          subscriberMultiple: res.settings.subscriber_multiple,
-                          subscriberPoints: res.settings.subscriber_points,
-                          autoRaffle: res.settings.autoRaffle,
-                          autoRafflePoints: res.settings.autoRafflePoints,
-                          autoRaffleTime: res.settings.autoRaffleTime,
-                          autoRaffleBetween: res.settings.autoRaffleBetween,
-                          autoRaffleWinnerCount:
-                            res.settings.autoRaffleWinnerCount,
-                          email: res.settings.email,
-                          password: res.settings.password,
-                        });
                         NotificationManager.success(
                           "Settings were created successfuly"
                         );
@@ -362,25 +344,6 @@ export default function ChatbotSettings1() {
                       actions.setSubmitting(false);
                       if (res.success) {
                         setCommandSettings(res.settings);
-                        actions.setValues({
-                          raffleStart: res.settings.raffleStart,
-                          raffleJoin: res.settings.raffleJoin,
-                          raffleEnd: res.settings.raffleEnd,
-                          raffleNotReady: res.settings.raffleNotReady,
-                          raffleCant: res.settings.raffleCant,
-                          pointsRemaining: res.settings.pointsRemaining,
-                          pointsRemainingMsg: res.settings.pointsRemainingMsg,
-                          pointsRemainingNotRegistered:
-                            res.settings.pointsRemainingNotRegistered,
-                          addPointsMsg: res.settings.addPointsMsg,
-                          addPointsMsgSuccess: res.settings.addPointsMsgSuccess,
-                          addPointsMsgNotPermission:
-                            res.settings.addPointsMsgNotPermission,
-                          delPointsMsg: res.settings.delPointsMsg,
-                          delPointsMsgSuccess: res.settings.delPointsMsgSuccess,
-                          delPointsMsgNotPermission:
-                            res.settings.delPointsMsgNotPermission,
-                        });
                         NotificationManager.success(
                           "Settings were created successfuly"
                         );
