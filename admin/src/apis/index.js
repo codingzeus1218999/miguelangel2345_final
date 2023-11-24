@@ -684,3 +684,16 @@ export const updateChatbotSettingsBet = async (data) => {
     return err.response.data;
   }
 };
+export const getBettingList = async (count) => {
+  try {
+    const res = await axios.get(`${constants.ADMIN_API_URL}/bettings`, {
+      params: { count },
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+};

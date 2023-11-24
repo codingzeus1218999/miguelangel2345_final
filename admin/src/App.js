@@ -7,6 +7,7 @@ import Users from "./pages/Users";
 import Redemptions from "./pages/Redemptions";
 import RedemptionHistory from "./pages/Redemptions/RedemptionHistory";
 import Raffle from "./pages/Raffle";
+import Betting from "./pages/Betting";
 import ChatbotSettings1 from "./pages/Chatbot/ChatbotSettings1";
 import ChatbotSettings2 from "./pages/Chatbot/ChatbotSettings2";
 import ChatbotSettings3 from "./pages/Chatbot/ChatbotSettings3";
@@ -60,6 +61,7 @@ function App() {
               element={<ChatbotRealtime />}
             />
             <Route exact path="/raffle" element={<Raffle />} />
+            <Route exact path="/betting" element={<Betting />} />
             <Route exact path="*" element={<NotFound />} />
           </Routes>
           <NotificationContainer />

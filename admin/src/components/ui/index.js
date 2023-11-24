@@ -18,6 +18,7 @@ import AddMultiValues from "./AddMultiValues";
 import ElementLoadingSpinner from "./ElementLoadingSpinner";
 import RedemptionDetail from "./RedemptionDetail";
 import RedemptionCode from "./RedemptionCode";
+import BettingOptions from "./BettingOptions";
 
 export {
   TypeRadio,
@@ -40,4 +41,5 @@ export {
   ElementLoadingSpinner,
   RedemptionDetail,
   RedemptionCode,
+  BettingOptions,
 };

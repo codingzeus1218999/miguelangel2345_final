@@ -300,6 +300,39 @@ const getTimerSettings = async (token) => {
   }
 };
 
+const createBetting = async (token, data) => {
+  try {
+    const res = await axios.post(`${constants.BACKEND_API_URL}/betting`, data, {
+      headers: { Authorization: token },
+    });
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `creating betting failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const getBetSettings = async (token) => {
+  try {
+    const res = await axios.get(
+      `${constants.BACKEND_API_URL}/chatbot/settings/bet`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data.data.setting;
+  } catch (err) {
+    printMessage(
+      `getting bet settings from backend failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
 module.exports = {
   login,
   getCommandSettings,
@@ -317,4 +350,6 @@ module.exports = {
   createRaffle,
   getAdditionalCommandSettings,
   getTimerSettings,
+  createBetting,
+  getBetSettings,
 };

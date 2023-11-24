@@ -40,6 +40,7 @@ const menu = [
     title: "Chatbot Realtime",
   },
   { link: "raffle", name: "raffle", title: "Raffle" },
+  { link: "betting", name: "betting", title: "Betting" },
 ];
 
 export default function Header() {

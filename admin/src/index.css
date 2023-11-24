@@ -166,6 +166,9 @@
   .ws-event-event.raffle {
     @apply bg-yellow-400;
   }
+  .ws-event-event.betting {
+    @apply bg-sky-400;
+  }
   .raffle-state {
     @apply px-2 rounded-md cursor-pointer transition-all uppercase;
   }

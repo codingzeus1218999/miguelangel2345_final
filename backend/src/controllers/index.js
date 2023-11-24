@@ -3,6 +3,7 @@ export * from "./users.js";
 export * from "./items.js";
 export * from "./itemRaffles.js";
 export * from "./raffles.js";
+export * from "./bettings.js";
 export * from "./chatbotSettingsGeneral.js";
 export * from "./chatbotSettingsCommand.js";
 export * from "./chatbotSettingsBet.js";

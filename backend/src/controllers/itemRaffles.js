@@ -29,6 +29,7 @@ export const getItemRaffleByItem = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Getting item raffle by item failed",
+      data: {},
     });
   }
 };
@@ -59,6 +60,7 @@ export const createItemRaffle = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Creating item raffle failed",
+      data: {},
     });
   }
 };
@@ -99,6 +101,7 @@ export const chooseWinners = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Choosing winners in item raffle failed",
+      data: {},
     });
   }
 };

@@ -97,6 +97,7 @@ export default function ChatbotHistory() {
               <h1 className="mb-4 flex flex-row gap-4 justify-center flex-wrap">
                 <span className="ws-event-event point">Points</span>
                 <span className="ws-event-event raffle">Raffle</span>
+                <span className="ws-event-event betting">Betting</span>
               </h1>
               <div className="notice-panel-div">
                 {events.map((event, index) => (
@@ -104,7 +105,9 @@ export default function ChatbotHistory() {
                     <span
                       className={`ws-event-event ${
                         event.event.includes("Point") && "point"
-                      } ${event.event.includes("Raffle") && "raffle"}`}
+                      } ${event.event.includes("Raffle") && "raffle"} ${
+                        event.event.includes("Betting") && "betting"
+                      }`}
                     >
                       {event.event}:{" "}
                     </span>

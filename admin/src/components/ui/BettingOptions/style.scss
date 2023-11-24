@@ -1,0 +1,12 @@
+.pt-betting-options {
+  @apply rounded-md bg-pt-black-300 p-2 text-white border-pt-black-500 border transition-colors;
+  & .placeholder {
+    @apply font-bold uppercase text-sm;
+  }
+  & .input-field {
+    @apply w-full bg-pt-black-300 border-b border-pt-black-600;
+    &:focus-visible {
+      @apply outline-none;
+    }
+  }
+}
