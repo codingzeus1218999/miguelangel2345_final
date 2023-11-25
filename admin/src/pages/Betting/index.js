@@ -44,6 +44,42 @@ export default function Betting() {
       setVisible(false);
     }
   };
+  const onClickFinishManually = (betting) => {
+    try {
+      socket.send(
+        JSON.stringify({
+          type: "betting-finish-manually",
+          data: { ...betting },
+        })
+      );
+    } catch (err) {
+      NotificationManager.error("Something is wrong, please try again");
+    }
+  };
+  const onClickCalculate = (betting, winOptionId) => {
+    try {
+      socket.send(
+        JSON.stringify({
+          type: "betting-calculate",
+          data: { betting, winOptionId },
+        })
+      );
+    } catch (err) {
+      NotificationManager.error("Something is wrong, please try again");
+    }
+  };
+  const onClickRefund = (betting) => {
+    try {
+      socket.send(
+        JSON.stringify({
+          type: "betting-refund",
+          data: { ...betting },
+        })
+      );
+    } catch (err) {
+      NotificationManager.error("Something is wrong, please try again");
+    }
+  };
 
   useEffect(() => {
     setNav("betting");
@@ -58,12 +94,16 @@ export default function Betting() {
         setBettings((prevState) => [data, ...prevState]);
         NotificationManager.success("Successfully created new betting");
       }
-      if (type === "betting-finished") {
+      if (
+        ["betting-finished", "betting-refunded", "betting-calculated"].includes(
+          type
+        )
+      ) {
         setBettings((prevState) =>
           prevState.map((s) => (s._id === data._id ? data : s))
         );
         setSelectedBetting({ ...data });
-        NotificationManager.info(`Finished ${data.title} betting`);
+        NotificationManager.info(`${type} ${data.title} betting`);
       }
     };
     newSocket.onclose = () => {
@@ -87,18 +127,6 @@ export default function Betting() {
   useEffect(() => {
     setOnPending(bettings.some((r) => r.state === "pending"));
   }, [bettings]);
-  const onClickFinishManually = (betting) => {
-    try {
-      socket.send(
-        JSON.stringify({
-          type: "betting-finish-manually",
-          data: { ...betting },
-        })
-      );
-    } catch (err) {
-      NotificationManager.error("Something is wrong, please try again");
-    }
-  };
 
   return (
     <Layout>
@@ -130,7 +158,10 @@ export default function Betting() {
                       onClick={() => setSelectedBetting({ ...b })}
                       className="cursor-pointer"
                     >
-                      <h1 className={`betting-label ${b.state}`}>{b.title}</h1>
+                      <h1 className={`betting-label ${b.state}`}>
+                        {b.title}
+                        {b._id === selectedBetting?._id && " =========>"}
+                      </h1>
                     </div>
                   ))}
                 </div>
@@ -251,7 +282,7 @@ export default function Betting() {
                 )}
                 {selectedBetting && (
                   <div className="flex flex-col gap-3">
-                    <div>
+                    <div className="flex gap-3">
                       {selectedBetting.state === "pending" && (
                         <Button
                           onClick={() =>
@@ -260,6 +291,27 @@ export default function Betting() {
                         >
                           Finish
                         </Button>
+                      )}
+                      {selectedBetting.state === "calculating" && (
+                        <div className="flex gap-3">
+                          {selectedBetting.options.map((o, idx) => (
+                            <Button
+                              key={idx}
+                              onClick={() =>
+                                onClickCalculate({ ...selectedBetting }, o._id)
+                              }
+                            >
+                              {o.case}
+                            </Button>
+                          ))}
+                          <Button
+                            onClick={() =>
+                              onClickRefund({ ...selectedBetting })
+                            }
+                          >
+                            Refund
+                          </Button>
+                        </div>
                       )}
                     </div>
                     <div className="flex gap-4">

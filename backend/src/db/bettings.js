@@ -4,7 +4,6 @@ const StateEnum = [
   "pending",
   "doneontime",
   "doneintime",
-  "doneunexpect",
   "refunded",
   "calculating",
 ];

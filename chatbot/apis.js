@@ -372,6 +372,44 @@ const finishBetting = async (token, data) => {
     );
   }
 };
+const EndBettingRefund = async (token, data) => {
+  try {
+    const res = await axios.put(
+      `${constants.BACKEND_API_URL}/betting/refund`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `refunding raffle failed: ${err.response?.data?.message}`,
+      "error"
+    );
+  }
+};
+const EndBettingCalculate = async (token, data) => {
+  try {
+    const res = await axios.put(
+      `${constants.BACKEND_API_URL}/betting/calculate`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `refunding raffle failed: ${err.response?.data?.message}`,
+      "error"
+    );
+  }
+};
 
 module.exports = {
   login,
@@ -394,4 +432,6 @@ module.exports = {
   getBetSettings,
   joinToBetting,
   finishBetting,
+  EndBettingRefund,
+  EndBettingCalculate,
 };

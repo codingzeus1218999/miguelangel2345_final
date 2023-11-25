@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { BettingModel } from "../db/bettings.js";
 import { UserModel } from "../db/users.js";
 import { printMessage } from "../utils/index.js";
@@ -155,6 +156,88 @@ export const finishBetting = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to finishing betting",
+      data: {},
+    });
+  }
+};
+export const refundBetting = async (req, res) => {
+  try {
+    const betting = await BettingModel.findById(req.body.betting._id);
+    if (!betting) {
+      return res.status(200).json({
+        success: false,
+        message: "There is no betting with this id",
+        data: {},
+      });
+    }
+    if (betting.state !== "calculating") {
+      return res.status(200).json({
+        success: false,
+        message: "This betting is already done",
+        data: {},
+      });
+    }
+    // refund points
+    betting.options.map((o) => {
+      o.participants.map(async (p) => {
+        let user = await UserModel.findById(p.user);
+        user.points = user.points + p.amount;
+        await user.save();
+      });
+    });
+    betting.state = "refunded";
+    await betting.save();
+    const resultBetting = await BettingModel.findById(
+      req.body.betting._id
+    ).populate("options.participants.user", "name");
+    return res.status(200).json({
+      success: true,
+      message: "Refunded a betting",
+      data: { betting: resultBetting },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Failed to refunding betting",
+      data: {},
+    });
+  }
+};
+export const calculateBetting = async (req, res) => {
+  try {
+    const betting = await BettingModel.findById(req.body.bettingId);
+    if (!betting) {
+      return res.status(200).json({
+        success: false,
+        message: "There is no betting with this id",
+        data: {},
+      });
+    }
+    if (betting.state !== "pending") {
+      return res.status(200).json({
+        success: false,
+        message: "This betting is already done",
+        data: {},
+      });
+    }
+    betting.state = "calculating";
+    betting.middleState = req.body.doneMode;
+    betting.doneAt = Date.now();
+    await betting.save();
+    const resultBetting = await BettingModel.findById(
+      req.body.bettingId
+    ).populate("options.participants.user", "name");
+    return res.status(200).json({
+      success: true,
+      message: "Done a betting",
+      data: { betting: resultBetting },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Failed to calculating betting",
       data: {},
     });
   }

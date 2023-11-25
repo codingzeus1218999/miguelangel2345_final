@@ -27,6 +27,8 @@ const {
   getBetSettings,
   joinToBetting,
   finishBetting,
+  EndBettingRefund,
+  EndBettingCalculate,
 } = require("./apis");
 
 dotnet.config();
@@ -202,6 +204,22 @@ const init = async () => {
           msgToServer = betDoneInTime.replace("%TITLE%", betting.title);
           sendToServer(msgToServer);
         }
+      }
+    };
+    const refundBetting = async (betting) => {
+      const resEndBetting = await EndBettingRefund(token, { betting });
+      if (resEndBetting.success) {
+        const resAddEventBetting = await addEvent(token, {
+          event: "RefundBetting",
+          content: `Refunded ${betting.title} betting`,
+        });
+        sendToAdmin({ type: "event", data: resAddEventBetting.event });
+        sendToAdmin({
+          type: "betting-refunded",
+          data: resEndBetting.data.betting,
+        });
+        msgToServer = betRefundNotice.replace("%TITLE%", betting.title);
+        sendToServer(msgToServer);
       }
     };
 
@@ -566,6 +584,11 @@ const init = async () => {
         // If finish betting manually
         if (type === "betting-finish-manually") {
           await doneBetting(data, "doneintime");
+        }
+
+        // If refund the betting
+        if (type === "betting-refund") {
+          await refundBetting(data);
         }
       });
       cSocket.on("close", () => {
