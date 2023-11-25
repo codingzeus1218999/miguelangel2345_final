@@ -31,6 +31,7 @@ const BettingSchema = new mongoose.Schema({
   minAmount: { type: Number, required: true },
   maxAmount: { type: Number, required: true },
   state: { type: String, enum: StateEnum },
+  middleState: { type: String, enum: StateEnum },
   createdAt: { type: Date, required: true, default: Date.now },
   doneAt: { type: Date },
 });

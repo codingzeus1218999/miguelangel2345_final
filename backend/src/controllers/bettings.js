@@ -28,10 +28,6 @@ export const getBettingList = async (req, res) => {
 
 export const createBetting = async (req, res) => {
   try {
-    await BettingModel.updateMany(
-      { state: "pending" },
-      { state: "doneunexpect" }
-    );
     const newBetting = new BettingModel({ ...req.body, state: "pending" });
     newBetting
       .save()
@@ -128,53 +124,37 @@ export const joinToBetting = async (req, res) => {
   }
 };
 
-// export const doneRaffle = async (req, res) => {
-//   try {
-//     const raffle = get(req.body, "raffle");
-//     const rf = await RaffleModel.findById(raffle._id);
-//     if (rf.state === "done") {
-//       return res.status(200).json({
-//         success: false,
-//         status: "done",
-//       });
-//     }
-//     if (rf.state === "pending") {
-//       if (rf.winnerCount >= rf.participants.length) {
-//         rf.winners = [...rf.participants];
-//       } else {
-//         async function selectRandomUsers() {
-//           const selected = [];
-//           while (selected.length < rf.winnerCount) {
-//             const randomIndex = Math.floor(
-//               Math.random() * rf.participants.length
-//             );
-//             const randomUser = rf.participants[randomIndex];
-//             if (!selected.includes(randomUser)) {
-//               selected.push(randomUser);
-//             }
-//           }
-//           return selected;
-//         }
-//         (async function () {
-//           const selectedUsers = await selectRandomUsers();
-//           rf.winners = [...selectedUsers];
-//         })();
-//       }
-//       rf.state = "done";
-//       rf.save()
-//         .then((r) =>
-//           res.status(200).json({
-//             success: true,
-//             raffle: r,
-//           })
-//         )
-//         .catch((err) => {
-//           console.log(err);
-//           return res.sendStatus(400);
-//         });
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     return res.sendStatus(400);
-//   }
-// };
+export const finishBetting = async (req, res) => {
+  try {
+    const betting = await BettingModel.findById(req.body.bettingId);
+    if (!betting) {
+      return res.status(200).json({
+        success: false,
+        message: "There is no betting with this id",
+        data: {},
+      });
+    }
+    if (betting.state !== "pending") {
+      return res.status(200).json({
+        success: false,
+        message: "This betting is already done",
+        data: {},
+      });
+    }
+    betting.state = "calculating";
+    betting.middleState = req.body.doneMode;
+    const resultBetting = await betting.save();
+    return res.status(200).json({
+      success: true,
+      message: "Done a betting",
+      data: { betting: resultBetting },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Failed to finishing betting",
+      data: {},
+    });
+  }
+};

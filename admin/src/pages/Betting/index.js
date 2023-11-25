@@ -56,13 +56,14 @@ export default function Betting() {
       const { type, data } = JSON.parse(e.data);
       if (type === "betting-created")
         setBettings((prevState) => [data, ...prevState]);
-      // if (type === "raffle-done") {
-      //   setRaffles((prevState) => {
-      //     const temp = [...prevState];
-      //     temp[0] = data;
-      //     return temp;
-      //   });
-      // }
+      if (type === "betting-finished") {
+        setBettings((prevState) =>
+          prevState.map((s) => (s._id === data._id ? data : s))
+        );
+        if (selectedBetting?._id === data._id) {
+          setSelectedBetting(data);
+        }
+      }
     };
     newSocket.onclose = () => {
       NotificationManager.info("Websocket disconnected from the chatbot");
@@ -83,7 +84,6 @@ export default function Betting() {
     fetchBettings();
   }, [count]);
   useEffect(() => {
-    console.log(bettings);
     setOnPending(bettings.some((r) => r.state === "pending"));
   }, [bettings]);
 

@@ -13,7 +13,7 @@ const login = async () => {
     return res.data;
   } catch (err) {
     printMessage(
-      `login to backend failed: ${err.response.data?.message}`,
+      `login to backend failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -32,7 +32,7 @@ const getCommandSettings = async (token) => {
     return res.data.settings;
   } catch (err) {
     printMessage(
-      `getting command settings from backend failed: ${err.response.data?.message}`,
+      `getting command settings from backend failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -51,7 +51,7 @@ const getGeneralSettings = async (token) => {
     return res.data.settings;
   } catch (err) {
     printMessage(
-      `getting general settings from backend failed: ${err.response.data?.message}`,
+      `getting general settings from backend failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -67,7 +67,7 @@ const addPointsToUser = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `adding points to user failed: ${err.response.data?.message}`,
+      `adding points to user failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -83,7 +83,7 @@ const addEvent = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `adding event to backend failed: ${err.response.data?.message}`,
+      `adding event to backend failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -103,7 +103,7 @@ const addServerMessage = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `adding server message to backend failed: ${err.response.data?.message}`,
+      `adding server message to backend failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -123,7 +123,7 @@ const raffleDone = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `finishing raffle failed: ${err.response.data?.message}`,
+      `finishing raffle failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -143,7 +143,7 @@ const addPointsToWinners = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `adding points to winners failed: ${err.response.data?.message}`,
+      `adding points to winners failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -163,7 +163,7 @@ const addChannelMessage = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `adding channel message to backend failed: ${err.response.data?.message}`,
+      `adding channel message to backend failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -183,7 +183,7 @@ const addUserToRaffle = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `adding user to raffle failed: ${err.response.data?.message}`,
+      `adding user to raffle failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -200,7 +200,7 @@ const getPoints = async (token, params) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `getting points failed: ${err.response.data?.message}`,
+      `getting points failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -220,7 +220,7 @@ const addPointsByChatbot = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `adding points by chatbot failed: ${err.response.data?.message}`,
+      `adding points by chatbot failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -240,7 +240,7 @@ const delPointsByChatbot = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `deleting by chatbot failed: ${err.response.data?.message}`,
+      `deleting by chatbot failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -254,7 +254,7 @@ const createRaffle = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `creating raffle failed: ${err.response.data?.message}`,
+      `creating raffle failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -274,7 +274,7 @@ const getAdditionalCommandSettings = async (token) => {
     return res.data.data.settings;
   } catch (err) {
     printMessage(
-      `getting additional command settings from backend failed: ${err.response.data?.message}`,
+      `getting additional command settings from backend failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -294,7 +294,7 @@ const getTimerSettings = async (token) => {
     return res.data.data.timers;
   } catch (err) {
     printMessage(
-      `getting timer settings from backend failed: ${err.response.data?.message}`,
+      `getting timer settings from backend failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -308,7 +308,7 @@ const createBetting = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `creating betting failed: ${err.response.data?.message}`,
+      `creating betting failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -327,7 +327,7 @@ const getBetSettings = async (token) => {
     return res.data.data.setting;
   } catch (err) {
     printMessage(
-      `getting bet settings from backend failed: ${err.response.data?.message}`,
+      `getting bet settings from backend failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -347,7 +347,27 @@ const joinToBetting = async (token, data) => {
     return res.data;
   } catch (err) {
     printMessage(
-      `joining to the betting failed: ${err.response.data?.message}`,
+      `joining to the betting failed: ${err.response?.data?.message}`,
+      "error"
+    );
+  }
+};
+
+const finishBetting = async (token, data) => {
+  try {
+    const res = await axios.put(
+      `${constants.BACKEND_API_URL}/betting/finish`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `finishing raffle failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -373,4 +393,5 @@ module.exports = {
   createBetting,
   getBetSettings,
   joinToBetting,
+  finishBetting,
 };

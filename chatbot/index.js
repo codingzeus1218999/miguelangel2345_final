@@ -26,6 +26,7 @@ const {
   createBetting,
   getBetSettings,
   joinToBetting,
+  finishBetting,
 } = require("./apis");
 
 dotnet.config();
@@ -177,37 +178,31 @@ const init = async () => {
       }
     };
 
-    const doneBet = async (bettingId, doneMode) => {
-      console.log(bettingId);
-      console.log(doneMode);
-      // const resRaffleDone = await raffleDone(token, { raffle });
-      // if (resRaffleDone.success) {
-      //   const resAddPointsToWinners = await addPointsToWinners(token, {
-      //     users: resRaffleDone.raffle.winners,
-      //     points: raffle.points,
-      //   });
-      //   const resAddEventRaffle = await addEvent(token, {
-      //     event: "DoneRaffle",
-      //     content: `Ended ${raffle.name} raffle in ${raffle.time} seconds`,
-      //   });
-      //   sendToAdmin({ type: "event", data: resAddEventRaffle.event });
-      //   const resAddEventUser = await addEvent(token, {
-      //     event: "AddPoint_Winners",
-      //     content: `Added ${raffle.points} points to ${resAddPointsToWinners.count} users`,
-      //   });
-      //   sendToAdmin({ type: "event", data: resAddEventUser.event });
-      //   sendToAdmin({
-      //     type: "raffle-done",
-      //     data: resRaffleDone.raffle,
-      //   });
-      //   if (resAddPointsToWinners.usernames !== "") {
-      //     const msgToServer = raffleEnd
-      //       .replace("%USERS%", resAddPointsToWinners.usernames)
-      //       .replace("%POINTS%", raffle.points)
-      //       .replace("%NAME%", raffle.name);
-      //     sendToServer(msgToServer);
-      //   }
-      // }
+    const doneBetting = async (betting, doneMode) => {
+      const resFinishBetting = await finishBetting(token, {
+        bettingId: betting._id,
+        doneMode,
+      });
+      if (resFinishBetting.success) {
+        ongoingBetting = null;
+        const resAddEventBetting = await addEvent(token, {
+          event: "FinishBetting",
+          content: `Finished ${betting.title} betting ${doneMode}`,
+        });
+        sendToAdmin({ type: "event", data: resAddEventBetting.event });
+        sendToAdmin({
+          type: "betting-finished",
+          data: resFinishBetting.data.betting,
+        });
+        let msgToServer = "";
+        if (doneMode === "doneontime") {
+          msgToServer = betDoneOnTime.replace("%TITLE%", betting.title);
+          sendToServer(msgToServer);
+        } else if (doneMode === "doneintime") {
+          msgToServer = betDoneInTime.replace("%TITLE%", betting.title);
+          sendToServer(msgToServer);
+        }
+      }
     };
 
     const makeRaffle = async (data) => {
@@ -257,7 +252,7 @@ const init = async () => {
         sendToServer(msgToServer);
         ongoingBetting = { ...resCreateBetting.data.betting };
         setTimeout(() => {
-          doneBet(resCreateBetting.data.betting._id, "dateontime");
+          doneBetting(resCreateBetting.data.betting, "doneontime");
         }, Number(data.duration) * 1000 * 60);
       } else {
         printMessage(resCreateBetting.message, "error");
@@ -458,7 +453,7 @@ const init = async () => {
           }
         }
 
-        // betting case
+        // If user wants to join to the betting
         if (ongoingBetting) {
           ongoingBetting.options.map(async (option) => {
             if (content.match(makeRegexBettingOptions(option.command))) {
@@ -476,6 +471,7 @@ const init = async () => {
               let msgToServer = "";
               if (resJoinBetting.success) {
                 msgToServer = betJoinSuccess.replace("%USER%", username);
+                sendToServer(msgToServer);
               } else {
                 switch (resJoinBetting.data.status) {
                   case "not-registered":
@@ -483,22 +479,27 @@ const init = async () => {
                       "%USER%",
                       username
                     );
+                    sendToServer(msgToServer);
                     break;
                   case "already-joined":
                     msgToServer = betAlreadyJoined.replace("%USER%", username);
+                    sendToServer(msgToServer);
                     break;
                   case "invalid-points":
                     msgToServer = betPointsAmount
                       .replace("%USER%", username)
                       .replace("%MINAMOUNT%", ongoingBetting.minAmount)
                       .replace("%MAXAMOUNT%", ongoingBetting.maxAmount);
+                    sendToServer(msgToServer);
+                    break;
+                  case "not-enough-points":
+                    msgToServer = betNotEnough.replace("%USER%", username);
+                    sendToServer(msgToServer);
                     break;
                   default:
-                    msgToServer = betNotEnough.replace("%USER%", username);
                     break;
                 }
               }
-              sendToServer(msgToServer);
             }
           });
         }
