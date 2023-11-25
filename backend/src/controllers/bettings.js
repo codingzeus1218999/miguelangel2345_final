@@ -143,6 +143,7 @@ export const finishBetting = async (req, res) => {
     }
     betting.state = "calculating";
     betting.middleState = req.body.doneMode;
+    betting.doneAt = Date.now();
     const resultBetting = await betting.save();
     return res.status(200).json({
       success: true,

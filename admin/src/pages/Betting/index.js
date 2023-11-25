@@ -28,9 +28,9 @@ export default function Betting() {
   const [bettings, setBettings] = useState([]);
   const [onPending, setOnPending] = useState(true);
   const [visible, setVisible] = useState(false);
-  const fetchBettings = async () => {
+  const fetchBettings = async (loadMore = false) => {
     try {
-      setVisible(false);
+      if (!loadMore) setVisible(false);
       const res = await getBettingList(count);
       if (res.success) {
         setBettings([...res.data.bettings]);
@@ -47,7 +47,7 @@ export default function Betting() {
 
   useEffect(() => {
     setNav("betting");
-    fetchBettings();
+    fetchBettings(false);
     const newSocket = new WebSocket(constants.CHATBOT_WS_URL);
     newSocket.onopen = () => {
       NotificationManager.success("Websocket connected with the chatbot");
@@ -81,7 +81,7 @@ export default function Betting() {
     };
   }, [setNav]);
   useEffect(() => {
-    fetchBettings();
+    fetchBettings(true);
   }, [count]);
   useEffect(() => {
     setOnPending(bettings.some((r) => r.state === "pending"));
@@ -94,6 +94,13 @@ export default function Betting() {
           <div className="mt-6 grid grid-cols-1 md:grid-cols-12 gap-6">
             <div className="notice-panel md:col-span-3">
               <h1 className="notice-panel-title">Bettings</h1>
+              <div className="mb-3 flex gap-1 flex-wrap">
+                <h1 className="betting-label pending">Pending</h1>
+                <h1 className="betting-label calculating">Calculating</h1>
+                <h1 className="betting-label doneontime">Done automatically</h1>
+                <h1 className="betting-label doneintime">Done manually</h1>
+                <h1 className="betting-label refunded">Refunded</h1>
+              </div>
               <div className="notice-panel-div">
                 <div className="text-center">
                   <Button
@@ -107,10 +114,10 @@ export default function Betting() {
                   {bettings.map((b, idx) => (
                     <div
                       key={idx}
-                      className="font-semibold cursor-pointer pl-4 text-pt-black-100"
                       onClick={() => setSelectedBetting(b)}
+                      className="cursor-pointer"
                     >
-                      {b.title}
+                      <h1 className={`betting-label ${b.state}`}>{b.title}</h1>
                     </div>
                   ))}
                 </div>
@@ -238,6 +245,49 @@ export default function Betting() {
                     <div className="flex gap-4">
                       <h1 className="pt-label">Description: </h1>
                       <h1>{selectedBetting.description}</h1>
+                    </div>
+                    <div className="flex gap-4">
+                      <h1 className="pt-label">Opitons: </h1>
+                      <div className="flex flex-col gap-2">
+                        {selectedBetting.options.map((o, idx) => (
+                          <div key={idx} className="flex gap-4">
+                            <h1>case: {o.case}</h1>
+                            <h1>command: {o.command}</h1>
+                            <h1>selected: {o.winState ? "yes" : "no"}</h1>
+                            <h1>
+                              count of participants: {o.participants.length}
+                            </h1>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex gap-4">
+                      <h1 className="pt-label">Duration: </h1>
+                      <h1>{selectedBetting.duration} min</h1>
+                    </div>
+                    <div className="flex gap-4">
+                      <h1 className="pt-label">Min amount to bet: </h1>
+                      <h1>{selectedBetting.minAmount} points</h1>
+                    </div>
+                    <div className="flex gap-4">
+                      <h1 className="pt-label">Duration: </h1>
+                      <h1>{selectedBetting.maxAmount} points</h1>
+                    </div>
+                    <div className="flex gap-4">
+                      <h1 className="pt-label">Created at: </h1>
+                      <h1>
+                        {moment(selectedBetting.createdAt).format(
+                          "hh:mm:ss MM/DD"
+                        )}
+                      </h1>
+                    </div>
+                    <div className="flex gap-4">
+                      <h1 className="pt-label">Finished at: </h1>
+                      <h1>
+                        {moment(selectedBetting.doneAt).format(
+                          "hh:mm:ss MM/DD"
+                        )}
+                      </h1>
                     </div>
                   </div>
                 )}

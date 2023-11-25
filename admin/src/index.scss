@@ -96,7 +96,7 @@
     @apply bg-pt-black-300 rounded-md p-2 border-pt-black-500 text-white border transition-colors;
   }
   .input-container.has-error {
-    @apply !border-red-400;
+    @apply border-red-400 #{!important};
   }
   .input-container:hover {
     @apply bg-pt-black-100;
@@ -141,44 +141,62 @@
   }
   .ws-msg-user {
     @apply bg-red-400 rounded-md px-2 cursor-pointer transition-all;
-  }
-  .ws-msg-user:hover {
-    @apply shadow-lg;
-  }
-  .ws-msg-user.registered {
-    @apply bg-green-400;
-  }
-  .ws-msg-user.subscriber {
-    @apply text-blue-700 font-bold;
-  }
-  .ws-msg-user.moderator {
-    @apply italic;
+    &:hover {
+      @apply shadow-lg;
+    }
+    &.registered {
+      @apply bg-green-400;
+    }
+    &.subscriber {
+      @apply text-blue-700 font-bold;
+    }
+    &.moderator {
+      @apply italic;
+    }
   }
   .ws-event-event {
     @apply px-2 rounded-md cursor-pointer transition-all;
-  }
-  .ws-event-event:hover {
-    @apply shadow-lg;
-  }
-  .ws-event-event.point {
-    @apply bg-green-400;
-  }
-  .ws-event-event.raffle {
-    @apply bg-yellow-400;
-  }
-  .ws-event-event.betting {
-    @apply bg-sky-400;
+    &:hover {
+      @apply shadow-lg;
+    }
+    &.point {
+      @apply bg-green-400;
+    }
+    &.raffle {
+      @apply bg-yellow-400;
+    }
+    &.betting {
+      @apply bg-sky-400;
+    }
   }
   .raffle-state {
     @apply px-2 rounded-md cursor-pointer transition-all uppercase;
-  }
-  .raffle-state.done {
-    @apply bg-green-400;
-  }
-  .raffle-state.pending {
-    @apply bg-yellow-400;
+    &.done {
+      @apply bg-green-400;
+    }
+    &.pending {
+      @apply bg-yellow-400;
+    }
   }
   .pt-label {
     @apply font-bold;
+  }
+  .betting-label {
+    @apply p-1 rounded-sm text-xs font-semibold;
+    &.pending {
+      @apply bg-slate-400;
+    }
+    &.calculating {
+      @apply bg-red-400;
+    }
+    &.doneintime {
+      @apply bg-lime-400;
+    }
+    &.doneontime {
+      @apply bg-pink-400;
+    }
+    &.refunded {
+      @apply bg-violet-400;
+    }
   }
 }

@@ -159,7 +159,6 @@ export default function PurchasedItems() {
         });
         if (res.success) {
           setRedemptions(res.data.redemptions);
-          console.log(res.data.redemptions);
           setTotalRows(res.data.count);
           setLoading(false);
         } else {
