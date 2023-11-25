@@ -33,25 +33,8 @@ export const createChatbotSettingsBet = async (req, res) => {
         data: { setting: st },
       });
     }
-    const created = get(req.body, "created").toString();
-    const joinSuccess = get(req.body, "joinSuccess").toString();
-    const alreadyJoined = get(req.body, "alreadyJoined").toString();
-    const notRegisteredUser = get(req.body, "notRegisteredUser").toString();
-    const doneInTime = get(req.body, "doneInTime").toString();
-    const doneOnTime = get(req.body, "doneOnTime").toString();
-    const resultNotice = get(req.body, "resultNotice").toString();
-    const distributedPoints = get(req.body, "distributedPoints").toString();
-    const refundNotice = get(req.body, "refundNotice").toString();
     const betSettings = new ChatbotBetSettingModel({
-      created,
-      joinSuccess,
-      alreadyJoined,
-      notRegisteredUser,
-      doneInTime,
-      doneOnTime,
-      resultNotice,
-      distributedPoints,
-      refundNotice,
+      ...req.body,
     });
     betSettings
       .save()
@@ -91,6 +74,8 @@ export const updateChatbotSettingsBet = async (req, res) => {
       const doneInTime = get(req.body, "doneInTime").toString();
       const doneOnTime = get(req.body, "doneOnTime").toString();
       const resultNotice = get(req.body, "resultNotice").toString();
+      const pointsAmount = get(req.body, "pointsAmount").toString();
+      const notEnough = get(req.body, "notEnough").toString();
       const distributedPoints = get(req.body, "distributedPoints").toString();
       const refundNotice = get(req.body, "refundNotice").toString();
       betSettings.created = created;
@@ -100,6 +85,8 @@ export const updateChatbotSettingsBet = async (req, res) => {
       betSettings.doneInTime = doneInTime;
       betSettings.doneOnTime = doneOnTime;
       betSettings.resultNotice = resultNotice;
+      betSettings.pointsAmount = pointsAmount;
+      betSettings.notEnough = notEnough;
       betSettings.distributedPoints = distributedPoints;
       betSettings.refundNotice = refundNotice;
       betSettings

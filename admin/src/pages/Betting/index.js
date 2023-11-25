@@ -103,6 +103,17 @@ export default function Betting() {
                     Create new betting
                   </Button>
                 </div>
+                <div className="flex flex-col gap-1 mt-3">
+                  {bettings.map((b, idx) => (
+                    <div
+                      key={idx}
+                      className="font-semibold cursor-pointer pl-4 text-pt-black-100"
+                      onClick={() => setSelectedBetting(b)}
+                    >
+                      {b.title}
+                    </div>
+                  ))}
+                </div>
                 <div className="mt-3 text-center">
                   <Button onClick={() => setCount(count + 20)}>
                     Load more
@@ -218,7 +229,18 @@ export default function Betting() {
                     </Formik>
                   </div>
                 )}
-                {selectedBetting && <div>here</div>}
+                {selectedBetting && (
+                  <div className="flex flex-col gap-3">
+                    <div className="flex gap-4">
+                      <h1 className="pt-label">Title: </h1>
+                      <h1>{selectedBetting.title}</h1>
+                    </div>
+                    <div className="flex gap-4">
+                      <h1 className="pt-label">Description: </h1>
+                      <h1>{selectedBetting.description}</h1>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -57,6 +57,8 @@ export default function ChatbotSettings3() {
                   doneInTime: betSettings?.doneInTime,
                   doneOnTime: betSettings?.doneOnTime,
                   resultNotice: betSettings?.resultNotice,
+                  pointsAmount: betSettings?.pointsAmount,
+                  notEnough: betSettings?.notEnough,
                   distributedPoints: betSettings?.distributedPoints,
                   refundNotice: betSettings?.refundNotice,
                 }}
@@ -72,6 +74,8 @@ export default function ChatbotSettings3() {
                   doneInTime: Yup.string().required("This field is required"),
                   doneOnTime: Yup.string().required("This field is required"),
                   resultNotice: Yup.string().required("This field is required"),
+                  pointsAmount: Yup.string().required("This field is required"),
+                  notEnough: Yup.string().required("This field is required"),
                   distributedPoints: Yup.string().required(
                     "This field is required"
                   ),
@@ -155,6 +159,18 @@ export default function ChatbotSettings3() {
                       name="resultNotice"
                       component={TextInput}
                       placeholder="notice the bet result"
+                      className="mt-6"
+                    />
+                    <Field
+                      name="pointsAmount"
+                      component={TextArea}
+                      placeholder="points amount error message"
+                      className="mt-6"
+                    />
+                    <Field
+                      name="notEnough"
+                      component={TextArea}
+                      placeholder="when user have not enough points amount"
                       className="mt-6"
                     />
                     <Field

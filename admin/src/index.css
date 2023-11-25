@@ -178,4 +178,7 @@
   .raffle-state.pending {
     @apply bg-yellow-400;
   }
+  .pt-label {
+    @apply font-bold;
+  }
 }

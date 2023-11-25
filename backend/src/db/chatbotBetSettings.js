@@ -8,6 +8,8 @@ const ChatbotBetSettingSchema = new mongoose.Schema({
   doneInTime: { type: String, required: true },
   doneOnTime: { type: String, required: true },
   resultNotice: { type: String, required: true },
+  pointsAmount: { type: String, required: true },
+  notEnough: { type: String, required: true },
   distributedPoints: { type: String, required: true },
   refundNotice: { type: String, required: true },
   created_at: { type: Date, required: true, default: Date.now },

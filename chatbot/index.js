@@ -5,7 +5,7 @@ const dotnet = require("dotenv");
 const randomstring = require("randomstring");
 
 const browser = require("./browser");
-const { printMessage, makeRegex } = require("./utils");
+const { printMessage, makeRegex, makeRegexBettingOptions } = require("./utils");
 const {
   login,
   getCommandSettings,
@@ -25,6 +25,7 @@ const {
   getTimerSettings,
   createBetting,
   getBetSettings,
+  joinToBetting,
 } = require("./apis");
 
 dotnet.config();
@@ -75,6 +76,8 @@ const init = async () => {
       alreadyJoined: betAlreadyJoined,
       notRegisteredUser: betNotRegisteredUser,
       doneInTime: betDoneInTime,
+      pointsAmount: betPointsAmount,
+      notEnough: betNotEnough,
       doneOnTime: betDoneOnTime,
       resultNotice: betResultNotice,
       distributedPoints: betDistributedPoints,
@@ -94,6 +97,7 @@ const init = async () => {
     const aWebSocket = new WebSocket(ws_end_point);
     const cServer = new WebSocket.Server({ server });
     let activeList = [];
+    let ongoingBetting = null;
 
     // Send messages to admin site
     const sendToAdmin = (d) => {
@@ -173,8 +177,8 @@ const init = async () => {
       }
     };
 
-    const doneBet = async (betting, doneMode) => {
-      console.log(betting);
+    const doneBet = async (bettingId, doneMode) => {
+      console.log(bettingId);
       console.log(doneMode);
       // const resRaffleDone = await raffleDone(token, { raffle });
       // if (resRaffleDone.success) {
@@ -249,10 +253,11 @@ const init = async () => {
           .replace("%DURATION%", Number(data.duration) * 60)
           .replace("%MINAMOUNT%", data.minAmount)
           .replace("%MAXAMOUNT%", data.maxAmount)
-          .replace("%COMMAND%", JSON.stringify(data.options));
+          .replace("%COMMANDS%", JSON.stringify(data.options));
         sendToServer(msgToServer);
+        ongoingBetting = { ...resCreateBetting.data.betting };
         setTimeout(() => {
-          doneBet(resCreateBetting.data.betting, "dateontime");
+          doneBet(resCreateBetting.data.betting._id, "dateontime");
         }, Number(data.duration) * 1000 * 60);
       } else {
         printMessage(resCreateBetting.message, "error");
@@ -451,6 +456,51 @@ const init = async () => {
               .replace("%USERS%", "");
             sendToServer(msgToServer);
           }
+        }
+
+        // betting case
+        if (ongoingBetting) {
+          ongoingBetting.options.map(async (option) => {
+            if (content.match(makeRegexBettingOptions(option.command))) {
+              const match = content.match(
+                makeRegexBettingOptions(option.command)
+              );
+              const points = match[1];
+              const caseBetting = option.case;
+              const resJoinBetting = await joinToBetting(token, {
+                id: ongoingBetting._id,
+                username,
+                caseBetting,
+                points,
+              });
+              let msgToServer = "";
+              if (resJoinBetting.success) {
+                msgToServer = betJoinSuccess.replace("%USER%", username);
+              } else {
+                switch (resJoinBetting.data.status) {
+                  case "not-registered":
+                    msgToServer = betNotRegisteredUser.replace(
+                      "%USER%",
+                      username
+                    );
+                    break;
+                  case "already-joined":
+                    msgToServer = betAlreadyJoined.replace("%USER%", username);
+                    break;
+                  case "invalid-points":
+                    msgToServer = betPointsAmount
+                      .replace("%USER%", username)
+                      .replace("%MINAMOUNT%", ongoingBetting.minAmount)
+                      .replace("%MAXAMOUNT%", ongoingBetting.maxAmount);
+                    break;
+                  default:
+                    msgToServer = betNotEnough.replace("%USER%", username);
+                    break;
+                }
+              }
+              sendToServer(msgToServer);
+            }
+          });
         }
 
         additionalCommands.map((c) => {

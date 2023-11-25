@@ -333,6 +333,26 @@ const getBetSettings = async (token) => {
   }
 };
 
+const joinToBetting = async (token, data) => {
+  try {
+    const res = await axios.put(
+      `${constants.BACKEND_API_URL}/betting/join`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `joining to the betting failed: ${err.response.data?.message}`,
+      "error"
+    );
+  }
+};
+
 module.exports = {
   login,
   getCommandSettings,
@@ -352,4 +372,5 @@ module.exports = {
   getTimerSettings,
   createBetting,
   getBetSettings,
+  joinToBetting,
 };
