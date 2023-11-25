@@ -178,13 +178,16 @@ export const refundBetting = async (req, res) => {
       });
     }
     // refund points
-    betting.options.map((o) => {
-      o.participants.map(async (p) => {
-        let user = await UserModel.findById(p.user);
-        user.points = user.points + p.amount;
+    for (let i = 0; i < betting.options.length; i++) {
+      for (let j = 0; j < betting.options[i].participants.length; j++) {
+        let user = await UserModel.findById(
+          betting.options[i].participants[j].user
+        );
+        user.points = user.points + betting.options[i].participants[j].amount;
         await user.save();
-      });
-    });
+      }
+    }
+
     betting.state = "refunded";
     await betting.save();
     const resultBetting = await BettingModel.findById(
@@ -206,7 +209,7 @@ export const refundBetting = async (req, res) => {
 };
 export const calculateBetting = async (req, res) => {
   try {
-    const betting = await BettingModel.findById(req.body.bettingId);
+    const betting = await BettingModel.findById(req.body.betting._id);
     if (!betting) {
       return res.status(200).json({
         success: false,
@@ -214,24 +217,54 @@ export const calculateBetting = async (req, res) => {
         data: {},
       });
     }
-    if (betting.state !== "pending") {
+    if (betting.state !== "calculating") {
       return res.status(200).json({
         success: false,
         message: "This betting is already done",
         data: {},
       });
     }
-    betting.state = "calculating";
-    betting.middleState = req.body.doneMode;
-    betting.doneAt = Date.now();
-    await betting.save();
+    // distribute the points to winners
+    let allPoints = 0;
+    let winnersPoints = 0;
+    let winnerCount = 0;
+    let winOption = "";
+    for (let i = 0; i < betting.options.length; i++) {
+      for (let j = 0; j < betting.options[i].participants.length; j++) {
+        allPoints += betting.options[i].participants[j].amount;
+        if (betting.options[i]._id.toString() === req.body.winOptionId) {
+          winnersPoints += betting.options[i].participants[j].amount;
+        }
+      }
+    }
+    for (let i = 0; i < betting.options.length; i++) {
+      if (betting.options[i]._id.toString() === req.body.winOptionId) {
+        winnerCount = betting.options[i].participants.length;
+        winOption = betting.options[i].case;
+        if (winnerCount !== 0)
+          for (let j = 0; j < betting.options[i].participants.length; j++) {
+            let user = await UserModel.findById(
+              betting.options[i].participants[j].user
+            );
+            user.points =
+              user.points +
+              (allPoints * betting.options[i].participants[j].amount) /
+                winnersPoints;
+            await user.save();
+          }
+      }
+    }
+    await BettingModel.updateOne(
+      { _id: req.body.betting._id, "options._id": req.body.winOptionId },
+      { $set: { "options.$.winState": true, state: betting.middleState } }
+    );
     const resultBetting = await BettingModel.findById(
-      req.body.bettingId
+      req.body.betting._id
     ).populate("options.participants.user", "name");
     return res.status(200).json({
       success: true,
       message: "Done a betting",
-      data: { betting: resultBetting },
+      data: { betting: resultBetting, winOption, winnerCount, allPoints },
     });
   } catch (err) {
     printMessage(err, "error");
