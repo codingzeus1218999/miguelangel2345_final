@@ -38,7 +38,7 @@ const makeRegex = (str) => {
 
 const makeRegexBettingOptions = (str) => {
   const regexStr = str.replace("%POINTS%", "(\\d+)");
-  return new RegExp(regexStr);
+  return new RegExp(`^${regexStr}$`);
 };
 
 module.exports = {
