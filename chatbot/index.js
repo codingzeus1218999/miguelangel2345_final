@@ -562,6 +562,11 @@ const init = async () => {
         if (type === "betting-create") {
           await makeBetting(data);
         }
+
+        // If finish betting manually
+        if (type === "betting-finish-manually") {
+          await doneBetting(data, "doneintime");
+        }
       });
       cSocket.on("close", () => {
         printMessage("Admin disconnected from the chatbot", "error");

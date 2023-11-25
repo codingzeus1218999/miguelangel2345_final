@@ -1,16 +1,13 @@
-import pkg from "lodash";
-
 import { BettingModel } from "../db/bettings.js";
 import { UserModel } from "../db/users.js";
 import { printMessage } from "../utils/index.js";
-
-const { get } = pkg;
 
 export const getBettingList = async (req, res) => {
   try {
     const bettings = await BettingModel.find({})
       .sort({ createdAt: "desc" })
-      .limit(req.query.count);
+      .limit(req.query.count)
+      .populate("options.participants.user", "name");
     return res.status(200).json({
       success: true,
       data: { bettings },
@@ -144,7 +141,10 @@ export const finishBetting = async (req, res) => {
     betting.state = "calculating";
     betting.middleState = req.body.doneMode;
     betting.doneAt = Date.now();
-    const resultBetting = await betting.save();
+    await betting.save();
+    const resultBetting = await BettingModel.findById(
+      req.body.bettingId
+    ).populate("options.participants.user", "name");
     return res.status(200).json({
       success: true,
       message: "Done a betting",

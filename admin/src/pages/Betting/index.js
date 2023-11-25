@@ -54,15 +54,16 @@ export default function Betting() {
     };
     newSocket.onmessage = (e) => {
       const { type, data } = JSON.parse(e.data);
-      if (type === "betting-created")
+      if (type === "betting-created") {
         setBettings((prevState) => [data, ...prevState]);
+        NotificationManager.success("Successfully created new betting");
+      }
       if (type === "betting-finished") {
         setBettings((prevState) =>
           prevState.map((s) => (s._id === data._id ? data : s))
         );
-        if (selectedBetting?._id === data._id) {
-          setSelectedBetting(data);
-        }
+        setSelectedBetting({ ...data });
+        NotificationManager.info(`Finished ${data.title} betting`);
       }
     };
     newSocket.onclose = () => {
@@ -86,6 +87,18 @@ export default function Betting() {
   useEffect(() => {
     setOnPending(bettings.some((r) => r.state === "pending"));
   }, [bettings]);
+  const onClickFinishManually = (betting) => {
+    try {
+      socket.send(
+        JSON.stringify({
+          type: "betting-finish-manually",
+          data: { ...betting },
+        })
+      );
+    } catch (err) {
+      NotificationManager.error("Something is wrong, please try again");
+    }
+  };
 
   return (
     <Layout>
@@ -114,7 +127,7 @@ export default function Betting() {
                   {bettings.map((b, idx) => (
                     <div
                       key={idx}
-                      onClick={() => setSelectedBetting(b)}
+                      onClick={() => setSelectedBetting({ ...b })}
                       className="cursor-pointer"
                     >
                       <h1 className={`betting-label ${b.state}`}>{b.title}</h1>
@@ -238,6 +251,17 @@ export default function Betting() {
                 )}
                 {selectedBetting && (
                   <div className="flex flex-col gap-3">
+                    <div>
+                      {selectedBetting.state === "pending" && (
+                        <Button
+                          onClick={() =>
+                            onClickFinishManually({ ...selectedBetting })
+                          }
+                        >
+                          Finish
+                        </Button>
+                      )}
+                    </div>
                     <div className="flex gap-4">
                       <h1 className="pt-label">Title: </h1>
                       <h1>{selectedBetting.title}</h1>
@@ -281,14 +305,31 @@ export default function Betting() {
                         )}
                       </h1>
                     </div>
-                    <div className="flex gap-4">
-                      <h1 className="pt-label">Finished at: </h1>
-                      <h1>
-                        {moment(selectedBetting.doneAt).format(
-                          "hh:mm:ss MM/DD"
-                        )}
-                      </h1>
-                    </div>
+                    {selectedBetting.state !== "pending" && (
+                      <>
+                        <div className="flex gap-4">
+                          <h1 className="pt-label">Finished at: </h1>
+                          <h1>
+                            {moment(selectedBetting.doneAt).format(
+                              "hh:mm:ss MM/DD"
+                            )}
+                          </h1>
+                        </div>
+                        <div className="flex gap-4">
+                          <h1 className="pt-label">Participants: </h1>
+                          {selectedBetting.options.map((o, idx) => (
+                            <div key={idx} className="flex flex-col gap-3">
+                              <h1 className="pt-label">{o.case}</h1>
+                              {o.participants.map((p, idx1) => (
+                                <h3 key={idx1}>
+                                  {p.user.name} // {p.amount} points
+                                </h3>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
