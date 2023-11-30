@@ -1,9 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { NotificationManager } from "react-notifications";
 import moment from "moment";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { MetroSpinner } from "react-spinners-kit";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCopy, faPaste } from "@fortawesome/free-solid-svg-icons";
 
 import Layout from "../../components/layout";
 import {
@@ -14,9 +16,7 @@ import {
   BettingOptions,
 } from "../../components/ui";
 import { PageSpinner } from "../../components/form";
-
 import { NavContext } from "../../context/NavContext";
-
 import { getBettingList } from "../../apis";
 import constants from "../../constants";
 
@@ -28,6 +28,8 @@ export default function Betting() {
   const [bettings, setBettings] = useState([]);
   const [onPending, setOnPending] = useState(true);
   const [visible, setVisible] = useState(false);
+  const formikRef = useRef(null);
+
   const fetchBettings = async (loadMore = false) => {
     try {
       if (!loadMore) setVisible(false);
@@ -78,6 +80,29 @@ export default function Betting() {
       );
     } catch (err) {
       NotificationManager.error("Something is wrong, please try again");
+    }
+  };
+  const onClickCopyDetails = () => {
+    localStorage.setItem("bettingOption", JSON.stringify(selectedBetting));
+    NotificationManager.info(
+      `${selectedBetting.title} betting's options has been copied`
+    );
+  };
+  const onClickPasteDetails = () => {
+    if (localStorage.getItem("bettingOption")) {
+      const bettingOption = JSON.parse(localStorage.getItem("bettingOption"));
+      formikRef.current.setValues({
+        title: bettingOption.title,
+        description: bettingOption.description,
+        options: bettingOption.options.map((o) => ({
+          case: o.case,
+          command: o.command,
+        })),
+        duration: bettingOption.duration,
+        minAmount: bettingOption.minAmount,
+        maxAmount: bettingOption.maxAmount,
+      });
+      console.log(bettingOption);
     }
   };
 
@@ -173,11 +198,23 @@ export default function Betting() {
               </div>
             </div>
             <div className="notice-panel md:col-span-9">
-              <h1 className="notice-panel-title">Details</h1>
+              <h1 className="notice-panel-title">
+                Details &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{" "}
+                {
+                  <FontAwesomeIcon
+                    icon={selectedBetting ? faCopy : faPaste}
+                    className="cursor-pointer"
+                    onClick={
+                      selectedBetting ? onClickCopyDetails : onClickPasteDetails
+                    }
+                  />
+                }
+              </h1>
               <div className="notice-panel-div !max-h-none">
                 {selectedBetting === null && (
                   <div>
                     <Formik
+                      innerRef={formikRef}
                       initialValues={{
                         title: "",
                         description: "",
