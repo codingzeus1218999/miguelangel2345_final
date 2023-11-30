@@ -410,6 +410,22 @@ const EndBettingCalculate = async (token, data) => {
     );
   }
 };
+const getBetting = async (token, params) => {
+  try {
+    const res = await axios.get(`${constants.BACKEND_API_URL}/betting`, {
+      params,
+      headers: {
+        Authorization: token,
+      },
+    });
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `getting betting failed: ${err.response?.data?.message}`,
+      "error"
+    );
+  }
+};
 
 module.exports = {
   login,
@@ -434,4 +450,5 @@ module.exports = {
   finishBetting,
   EndBettingRefund,
   EndBettingCalculate,
+  getBetting,
 };

@@ -89,7 +89,7 @@ export default function Betting() {
     );
   };
   const onClickPasteDetails = () => {
-    if (localStorage.getItem("bettingOption")) {
+    if (localStorage.getItem("bettingOption") && !onPending) {
       const bettingOption = JSON.parse(localStorage.getItem("bettingOption"));
       formikRef.current.setValues({
         title: bettingOption.title,
@@ -102,7 +102,6 @@ export default function Betting() {
         minAmount: bettingOption.minAmount,
         maxAmount: bettingOption.maxAmount,
       });
-      console.log(bettingOption);
     }
   };
 
@@ -383,7 +382,7 @@ export default function Betting() {
                       <h1>{selectedBetting.minAmount} points</h1>
                     </div>
                     <div className="flex gap-4">
-                      <h1 className="pt-label">Duration: </h1>
+                      <h1 className="pt-label">Max amount to bet: </h1>
                       <h1>{selectedBetting.maxAmount} points</h1>
                     </div>
                     <div className="flex gap-4">

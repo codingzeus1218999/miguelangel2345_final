@@ -275,3 +275,31 @@ export const calculateBetting = async (req, res) => {
     });
   }
 };
+
+export const getBetting = async (req, res) => {
+  try {
+    const betting = await BettingModel.findById(req.query.id).populate(
+      "options.participants.user",
+      "name"
+    );
+    if (!betting) {
+      return res.status(200).json({
+        success: false,
+        message: "There is no betting with this id",
+        data: {},
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: `Got betting`,
+      data: { betting },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Getting betting failed",
+      data: {},
+    });
+  }
+};

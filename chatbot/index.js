@@ -29,6 +29,7 @@ const {
   finishBetting,
   EndBettingRefund,
   EndBettingCalculate,
+  getBetting,
 } = require("./apis");
 
 dotnet.config();
@@ -88,9 +89,11 @@ const init = async () => {
     } = await getBetSettings(token);
 
     // Open web browser
+    // TODO: for dev
     browser.initBrowser(botMail, botPwd);
 
     // If success in opening web browser
+    // TODO: for dev
     browser.emitter.on("ready", () => {
       printMessage("Browser ready", "success");
 
@@ -141,6 +144,8 @@ const init = async () => {
       const sendToServer = async (msg) => {
         const resAddMessage = await addServerMessage(token, { message: msg });
         if (resAddMessage.success) {
+          // TODO: for dev
+          // console.log(msg);
           browser.sendMessage(msg);
         }
       };
@@ -246,6 +251,27 @@ const init = async () => {
             .replace("%POINTS%", resEndBetting.data.allPoints)
             .replace("%COUNT%", resEndBetting.data.winnerCount);
           sendToServer(msgToServer);
+        }
+      };
+      const sendOngoingBetting = async () => {
+        if (ongoingBetting) {
+          const resGettingBetting = await getBetting(token, {
+            id: ongoingBetting._id,
+          });
+          sendToAdmin({
+            type: "betting-ongoing",
+            data: {
+              ...resGettingBetting.data.betting,
+              remainingSeconds:
+                ongoingBetting.duration * 60 -
+                parseInt(
+                  (Date.now() - new Date(ongoingBetting.createdAt).getTime()) /
+                    1000
+                ),
+            },
+          });
+        } else {
+          sendToAdmin({ type: "betting-ongoing", data: {} });
         }
       };
 
@@ -627,6 +653,11 @@ const init = async () => {
           if (type === "betting-calculate") {
             await calculateBetting(data);
           }
+
+          // If request ongoing betting
+          if (type === "betting-ongoing-request") {
+            await sendOngoingBetting();
+          }
         });
         cSocket.on("close", () => {
           printMessage("Admin disconnected from the chatbot", "error");
@@ -641,6 +672,7 @@ const init = async () => {
       cServer.on("error", () => {
         printMessage("There is bug in connection with admin site", "error");
       });
+      // TODO: for dev
     });
   } catch (err) {
     printMessage(err, "error");

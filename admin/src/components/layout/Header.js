@@ -41,6 +41,11 @@ const menu = [
   },
   { link: "raffle", name: "raffle", title: "Raffle" },
   { link: "betting", name: "betting", title: "Betting" },
+  {
+    link: "betting-ongoing",
+    name: "betting-ongoing",
+    title: "Betting Ongoing",
+  },
 ];
 
 export default function Header() {
