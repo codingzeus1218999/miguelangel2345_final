@@ -72,6 +72,7 @@ export default function ChatbotSettings1() {
                   channel2: generalSettings?.channel2,
                   wsEndPoint: generalSettings?.ws_end_point,
                   description: generalSettings?.description,
+                  activeDuration: generalSettings?.activeDuration,
                   timeDuration: generalSettings?.time_duration,
                   pointsUnit: generalSettings?.points_unit,
                   subscriberMultiple: generalSettings?.subscriber_multiple,
@@ -88,6 +89,10 @@ export default function ChatbotSettings1() {
                   channel1: Yup.string().required("This field is required"),
                   channel2: Yup.string().required("This field is required"),
                   wsEndPoint: Yup.string().required("This field is required"),
+                  activeDuration: Yup.number("This field should be number").min(
+                    1,
+                    "Minimum duration is 1s"
+                  ),
                   timeDuration: Yup.number("This field should be number").min(
                     1,
                     "Minimum duration is 1s"
@@ -184,9 +189,15 @@ export default function ChatbotSettings1() {
                       rows={4}
                     />
                     <Field
+                      name="activeDuration"
+                      component={NumberInput}
+                      placeholder="active duration (s)"
+                      className="mt-6"
+                    />
+                    <Field
                       name="timeDuration"
                       component={NumberInput}
-                      placeholder="watching time duration (s)"
+                      placeholder="duration to add points to active users (s)"
                       className="mt-6"
                     />
                     <Field
@@ -273,6 +284,7 @@ export default function ChatbotSettings1() {
               <Formik
                 initialValues={{
                   raffleStart: commandSettings?.raffleStart,
+                  useRaffleCommand: commandSettings?.useRaffleCommand,
                   raffleJoin: commandSettings?.raffleJoin,
                   raffleEnd: commandSettings?.raffleEnd,
                   raffleNotReady: commandSettings?.raffleNotReady,
@@ -363,6 +375,12 @@ export default function ChatbotSettings1() {
                       name="raffleStart"
                       component={TextInput}
                       placeholder="Raffle start message"
+                    />
+                    <Field
+                      name="useRaffleCommand"
+                      component={SwitchField}
+                      placeholder="Use or not raffle commands"
+                      className="mt-6"
                     />
                     <Field
                       name="raffleJoin"

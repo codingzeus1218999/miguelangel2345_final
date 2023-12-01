@@ -5,6 +5,7 @@ const ChatbotGeneralSettingSchema = new mongoose.Schema({
   channel2: { type: String, required: true },
   ws_end_point: { type: String, required: true },
   description: { type: String, default: "" },
+  activeDuration: { type: Number, default: 1800 },
   time_duration: { type: Number, default: 600 },
   points_unit: { type: Number, default: 10 },
   subscriber_multiple: { type: Number, default: 2 },

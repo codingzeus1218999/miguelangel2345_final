@@ -42,6 +42,7 @@ const init = async () => {
     const { token } = await login();
     const {
       raffleStart,
+      useRaffleCommand,
       raffleJoin,
       raffleEnd,
       raffleNotReady,
@@ -60,6 +61,7 @@ const init = async () => {
       channel1,
       channel2,
       ws_end_point,
+      activeDuration,
       time_duration,
       points_unit,
       subscriber_multiple,
@@ -137,8 +139,12 @@ const init = async () => {
             sendToAdmin({ type: "event", data: resAddEvent.event });
           }
         }
-        activeList = [];
       }, time_duration * 1000);
+
+      // Clear the active list every activeDuration
+      const intervalClearActiveList = setInterval(() => {
+        activeList = [];
+      }, activeDuration * 1000);
 
       // Send message to channel server
       const sendToServer = async (msg) => {
@@ -410,8 +416,11 @@ const init = async () => {
           sendToAdmin({ type: "message", data: resAddChannelMessage.msg });
           addUserToActiveList(resAddChannelMessage.msg);
 
+          // auto join to raffle
+          if (!useRaffleCommand) await addUserToRaffle(token, { username });
+
           // If user wants to join to raffle
-          if (content === raffleJoin) {
+          if (content === raffleJoin && useRaffleCommand) {
             const resAddUserToRaffle = await addUserToRaffle(token, {
               username,
             });

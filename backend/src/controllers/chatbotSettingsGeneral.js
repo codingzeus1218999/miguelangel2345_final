@@ -30,6 +30,7 @@ export const createChatbotSettingsGeneral = async (req, res) => {
     const channel2 = get(req.body, "channel2").toString();
     const ws_end_point = get(req.body, "wsEndPoint").toString();
     const description = get(req.body, "description")?.toString();
+    const activeDuration = get(req.body, "activeDuration");
     const time_duration = get(req.body, "timeDuration");
     const points_unit = get(req.body, "pointsUnit");
     const subscriber_multiple = get(req.body, "subscriberMultiple");
@@ -46,6 +47,7 @@ export const createChatbotSettingsGeneral = async (req, res) => {
       channel2,
       ws_end_point,
       description,
+      activeDuration,
       time_duration,
       points_unit,
       subscriber_multiple,
@@ -84,6 +86,7 @@ export const updateChatbotSettingsGeneral = async (req, res) => {
       const channel2 = get(req.body, "channel2").toString();
       const wsEndPoint = get(req.body, "wsEndPoint").toString();
       const description = get(req.body, "description")?.toString();
+      const activeDuration = get(req.body, "activeDuration");
       const timeDuration = get(req.body, "timeDuration");
       const pointsUnit = get(req.body, "pointsUnit");
       const subscriberMultiple = get(req.body, "subscriberMultiple");
@@ -99,6 +102,7 @@ export const updateChatbotSettingsGeneral = async (req, res) => {
       generalSettings.channel2 = channel2;
       generalSettings.ws_end_point = wsEndPoint;
       generalSettings.description = description;
+      generalSettings.activeDuration = activeDuration;
       generalSettings.time_duration = timeDuration;
       generalSettings.points_unit = pointsUnit;
       generalSettings.subscriber_multiple = subscriberMultiple;

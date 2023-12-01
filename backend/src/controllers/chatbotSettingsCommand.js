@@ -26,44 +26,8 @@ export const createChatbotSettingsCommand = async (req, res) => {
         message: "Already exists these settings",
       });
     }
-    const raffleStart = get(req.body, "raffleStart").toString();
-    const raffleJoin = get(req.body, "raffleJoin").toString();
-    const raffleEnd = get(req.body, "raffleEnd").toString();
-    const raffleNotReady = get(req.body, "raffleNotReady").toString();
-    const raffleCant = get(req.body, "raffleCant").toString();
-    const pointsRemaining = get(req.body, "pointsRemaining").toString();
-    const pointsRemainingMsg = get(req.body, "pointsRemainingMsg").toString();
-    const pointsRemainingNotRegistered = get(
-      req.body,
-      "pointsRemainingNotRegistered"
-    ).toString();
-    const addPointsMsg = get(req.body, "addPointsMsg").toString();
-    const addPointsMsgSuccess = get(req.body, "addPointsMsgSuccess").toString();
-    const addPointsMsgNotPermission = get(
-      req.body,
-      "addPointsMsgNotPermission"
-    ).toString();
-    const delPointsMsg = get(req.body, "delPointsMsg").toString();
-    const delPointsMsgSuccess = get(req.body, "delPointsMsgSuccess").toString();
-    const delPointsMsgNotPermission = get(
-      req.body,
-      "delPointsMsgNotPermission"
-    ).toString();
     const commandSettings = new ChatbotCommandSettingModel({
-      raffleStart,
-      raffleJoin,
-      raffleEnd,
-      raffleNotReady,
-      raffleCant,
-      pointsRemaining,
-      pointsRemainingMsg,
-      pointsRemainingNotRegistered,
-      addPointsMsg,
-      addPointsMsgSuccess,
-      addPointsMsgNotPermission,
-      delPointsMsg,
-      delPointsMsgSuccess,
-      delPointsMsgNotPermission,
+      ...req.body,
     });
     commandSettings
       .save()
@@ -88,6 +52,7 @@ export const updateChatbotSettingsCommand = async (req, res) => {
     const commandSettings = await ChatbotCommandSettingModel.findOne();
     if (commandSettings) {
       const raffleStart = get(req.body, "raffleStart").toString();
+      const useRaffleCommand = get(req.body, "useRaffleCommand").toString();
       const raffleJoin = get(req.body, "raffleJoin").toString();
       const raffleEnd = get(req.body, "raffleEnd").toString();
       const raffleNotReady = get(req.body, "raffleNotReady").toString();
@@ -117,6 +82,7 @@ export const updateChatbotSettingsCommand = async (req, res) => {
         "delPointsMsgNotPermission"
       ).toString();
       commandSettings.raffleStart = raffleStart;
+      commandSettings.useRaffleCommand = useRaffleCommand;
       commandSettings.raffleJoin = raffleJoin;
       commandSettings.raffleEnd = raffleEnd;
       commandSettings.raffleNotReady = raffleNotReady;

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const ChatbotCommandSettingSchema = new mongoose.Schema({
   raffleStart: { type: String, required: true },
+  useRaffleCommand: { type: Boolean, default: false },
   raffleJoin: { type: String, required: true },
   raffleEnd: { type: String, required: true },
   raffleNotReady: { type: String, required: true },
