@@ -41,8 +41,18 @@ const makeRegexBettingOptions = (str) => {
   return new RegExp(`^${regexStr}$`);
 };
 
+const validJsonString = (str) => {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 module.exports = {
   printMessage,
   makeRegex,
   makeRegexBettingOptions,
+  validJsonString,
 };

@@ -58,6 +58,8 @@ export default function BettingOngoing() {
     };
     newSocket.onclose = () => {
       NotificationManager.info("Websocket disconnected from the chatbot");
+      newSocket.close();
+      clearInterval(requestBettingOngoing);
       setVisible(false);
     };
     newSocket.onerror = () => {

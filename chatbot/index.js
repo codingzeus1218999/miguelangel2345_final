@@ -5,7 +5,12 @@ const dotnet = require("dotenv");
 const randomstring = require("randomstring");
 
 const browser = require("./browser");
-const { printMessage, makeRegex, makeRegexBettingOptions } = require("./utils");
+const {
+  printMessage,
+  makeRegex,
+  makeRegexBettingOptions,
+  validJsonString,
+} = require("./utils");
 const {
   login,
   getCommandSettings,
@@ -634,38 +639,41 @@ const init = async () => {
       cServer.on("connection", (cSocket) => {
         printMessage("Admin connected to the chatbot", "success");
         cSocket.on("message", async (message) => {
-          printMessage("Received message from an admin:", "info");
-          console.log(JSON.parse(message));
-          const { type, data } = JSON.parse(message);
+          if (validJsonString(message)) {
+            printMessage("Received message from an admin:", "info");
+            console.log(JSON.parse(message));
+            const { type, data } = JSON.parse(message);
+            if (type && data) {
+              // If created new raffle
+              if (type === "raffle-create") {
+                await makeRaffle({ ...data, mode: "manual" });
+              }
 
-          // If created new raffle
-          if (type === "raffle-create") {
-            await makeRaffle({ ...data, mode: "manual" });
-          }
+              // If created new betting
+              if (type === "betting-create") {
+                await makeBetting(data);
+              }
 
-          // If created new betting
-          if (type === "betting-create") {
-            await makeBetting(data);
-          }
+              // If finish betting manually
+              if (type === "betting-finish-manually") {
+                await doneBetting(data, "doneintime");
+              }
 
-          // If finish betting manually
-          if (type === "betting-finish-manually") {
-            await doneBetting(data, "doneintime");
-          }
+              // If refund the betting
+              if (type === "betting-refund") {
+                await refundBetting(data);
+              }
 
-          // If refund the betting
-          if (type === "betting-refund") {
-            await refundBetting(data);
-          }
+              // If select the winner of betting
+              if (type === "betting-calculate") {
+                await calculateBetting(data);
+              }
 
-          // If select the winner of betting
-          if (type === "betting-calculate") {
-            await calculateBetting(data);
-          }
-
-          // If request ongoing betting
-          if (type === "betting-ongoing-request") {
-            await sendOngoingBetting();
+              // If request ongoing betting
+              if (type === "betting-ongoing-request") {
+                await sendOngoingBetting();
+              }
+            }
           }
         });
         cSocket.on("close", () => {
