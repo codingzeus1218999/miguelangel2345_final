@@ -6,6 +6,7 @@ import formidable from "formidable";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import axios from "axios";
 
 import constants from "../constants/index.js";
 import {
@@ -736,10 +737,50 @@ export const getRedemptions = async (req, res) => {
     });
   }
 };
+
 export const getCurrentServerTime = async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Get current server time",
     data: { time: Date.now() },
   });
+};
+
+export const getTwitchInfo = async (req, res) => {
+  try {
+    const resToken = await axios.post(
+      constants.TWITCH_TOKEN_URL,
+      new URLSearchParams({
+        client_id: constants.TWITCH_CLIENT_ID,
+        client_secret: constants.TWITCH_CLIENT_SECRET,
+        code: req.query.code,
+        grant_type: "authorization_code",
+        redirect_uri: constants.TWITCH_REDIRECT_URI,
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    const accessToken = resToken.data.access_token;
+    const resUser = await axios.get(constants.TWITCH_USER_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Client-ID": constants.TWITCH_CLIENT_ID,
+      },
+    });
+    return res.status(200).json({
+      success: true,
+      message: "Success to connect with your twitch account",
+      data: { ...resUser.data },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get user's twitch details",
+      data: {},
+    });
+  }
 };

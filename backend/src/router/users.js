@@ -23,6 +23,7 @@ import {
   addPointsToUsersRaffle,
   getRedemptions,
   getCurrentServerTime,
+  getTwitchInfo,
 } from "../controllers/index.js";
 
 import { isAuthenticated, isAuthorized } from "../middlewares/index.js";
@@ -38,6 +39,7 @@ export default (router) => {
   router.put("/user/update-info", isAuthenticated, updateInfo);
   router.put("/user/change-password", isAuthenticated, changePassword);
   router.get("/user/redemptions", isAuthenticated, getRedemptions);
+  router.get("/user/twitch", isAuthenticated, getTwitchInfo);
 
   router.get("/admin/users", isAuthorized, getUserList);
   router.get("/admin/user", isAuthorized, getUserInfoById);

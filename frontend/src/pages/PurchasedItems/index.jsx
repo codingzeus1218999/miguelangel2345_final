@@ -171,8 +171,8 @@ export default function PurchasedItems() {
         );
       }
     };
-    fetchData();
-  }, [sortField, sortDir, currentPage, perPage, searchStr]);
+    if (Object.keys(account).length > 0) fetchData();
+  }, [sortField, sortDir, currentPage, perPage, searchStr, account]);
 
   return (
     <Layout>

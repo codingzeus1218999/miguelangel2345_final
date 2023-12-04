@@ -221,3 +221,18 @@ export const getItemRaffleByItem = async (itemId, state) => {
     return err.response.data;
   }
 };
+
+export const getUserTwitchInfo = async (code) => {
+  try {
+    const res = await axios.get(`${constants.API_URL}/user/twitch`, {
+      params: { code },
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};
