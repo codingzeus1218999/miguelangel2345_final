@@ -427,6 +427,22 @@ const getBetting = async (token, params) => {
   }
 };
 
+const getLatestBetting = async (token) => {
+  try {
+    const res = await axios.get(`${constants.BACKEND_API_URL}/betting/latest`, {
+      headers: {
+        Authorization: token,
+      },
+    });
+    return res.data;
+  } catch (err) {
+    printMessage(
+      `getting latest betting from backend failed: ${err.response?.data?.message}`,
+      "error"
+    );
+  }
+};
+
 module.exports = {
   login,
   getCommandSettings,
@@ -451,4 +467,5 @@ module.exports = {
   EndBettingRefund,
   EndBettingCalculate,
   getBetting,
+  getLatestBetting,
 };

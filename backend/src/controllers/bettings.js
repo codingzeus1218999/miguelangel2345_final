@@ -303,3 +303,31 @@ export const getBetting = async (req, res) => {
     });
   }
 };
+
+export const getLatestBetting = async (req, res) => {
+  try {
+    const betting = await BettingModel.find()
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .populate("options.participants.user", "name");
+    if (!betting || betting.length === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "There is no any betting",
+        data: {},
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: `Got latest betting`,
+      data: { betting: betting[0] },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Getting latest betting failed",
+      data: {},
+    });
+  }
+};

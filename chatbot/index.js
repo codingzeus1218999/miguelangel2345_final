@@ -35,6 +35,7 @@ const {
   EndBettingRefund,
   EndBettingCalculate,
   getBetting,
+  getLatestBetting,
 } = require("./apis");
 
 dotnet.config();
@@ -160,7 +161,6 @@ const init = async () => {
           browser.sendMessage(msg);
         }
       };
-
       const doneRaffle = async (raffle) => {
         const resRaffleDone = await raffleDone(token, { raffle });
         if (resRaffleDone.success) {
@@ -218,6 +218,7 @@ const init = async () => {
           }
         }
       };
+
       const refundBetting = async (betting) => {
         const resEndBetting = await EndBettingRefund(token, { betting });
         if (resEndBetting.success) {
@@ -234,6 +235,7 @@ const init = async () => {
           sendToServer(msgToServer);
         }
       };
+
       const calculateBetting = async ({ betting, winOptionId }) => {
         const resEndBetting = await EndBettingCalculate(token, {
           betting,
@@ -264,27 +266,33 @@ const init = async () => {
           sendToServer(msgToServer);
         }
       };
-      const sendOngoingBetting = async () => {
-        if (ongoingBetting) {
-          const resGettingBetting = await getBetting(token, {
-            id: ongoingBetting._id,
-          });
+
+      const sendLatestBetting = async () => {
+        const resGettingLastestBetting = await getLatestBetting(token);
+        if (resGettingLastestBetting.success) {
           sendToAdmin({
-            type: "betting-ongoing",
+            type: "betting-latest",
             data: {
-              ...resGettingBetting.data.betting,
+              ...resGettingLastestBetting.data.betting,
               remainingSeconds:
-                ongoingBetting.duration * 60 -
+                resGettingLastestBetting.data.betting.duration * 60 -
                 parseInt(
-                  (Date.now() - new Date(ongoingBetting.createdAt).getTime()) /
+                  (Date.now() -
+                    new Date(
+                      resGettingLastestBetting.data.betting.createdAt
+                    ).getTime()) /
                     1000
                 ),
             },
           });
         } else {
-          sendToAdmin({ type: "betting-ongoing", data: {} });
+          sendToAdmin({ type: "betting-latest", data: {} });
         }
       };
+
+      const intervalSendLatestBetting = setInterval(() => {
+        sendLatestBetting();
+      }, 1000);
 
       const makeRaffle = async (data) => {
         const resCreateRaffle = await createRaffle(token, data);
@@ -667,11 +675,6 @@ const init = async () => {
               // If select the winner of betting
               if (type === "betting-calculate") {
                 await calculateBetting(data);
-              }
-
-              // If request ongoing betting
-              if (type === "betting-ongoing-request") {
-                await sendOngoingBetting();
               }
             }
           }
