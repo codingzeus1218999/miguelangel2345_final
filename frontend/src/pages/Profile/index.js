@@ -26,6 +26,7 @@ export default function Profile() {
   const { account, setAccount } = useContext(UserContext);
   const [userInfo, setUserInfo] = useState(null);
   const [twitchPoints, setTwitchPoints] = useState(null);
+  const [twitchUserName, setTwitchUserName] = useState("");
   const formik1Ref = useRef(null);
 
   useEffect(() => {
@@ -41,6 +42,7 @@ export default function Profile() {
       if (res.success) {
         NotificationManager.success(res.message);
         setTwitchPoints(res.data.points);
+        setTwitchUserName(res.data.username);
         setModal("transfer");
       } else {
         NotificationManager.error(res.message);
@@ -256,6 +258,7 @@ export default function Profile() {
       <TransferModal
         username={account.name}
         points={twitchPoints}
+        twitchUserName={twitchUserName}
         rate={constants.TWTICH_TRANSFER_RATE}
         afterSuccess={(p) => formik1Ref.current.setValues({ points: p })}
       />

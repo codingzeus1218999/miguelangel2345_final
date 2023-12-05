@@ -773,6 +773,7 @@ export const getTwitchInfo = async (req, res) => {
     });
     const resStreamelements = await axios.get(
       `${constants.STREAMELEMENTS_GET_INFO_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/${resUser.data.login}`,
+      // `${constants.STREAMELEMENTS_GET_INFO_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/miguelangel2345`,
       {
         headers: {
           Authorization: `Bearer ${constants.STREAMELEMENTS_TOKEN}`,
@@ -796,10 +797,21 @@ export const getTwitchInfo = async (req, res) => {
 
 export const transferPointsFromTwitch = async (req, res) => {
   try {
+    const log = await TransferModel.findOne({
+      twitchUserName: req.body.twitchUserName,
+    });
+    if (log) {
+      return res.status(500).json({
+        success: false,
+        message: "You have already transfered the points from twitch",
+        data: {},
+      });
+    }
     await new TransferModel({
       user: req.body.userId,
       amount: req.body.points,
       rate: req.body.rate,
+      twitchUserName: req.body.twitchUserName,
     }).save();
     const user = await UserModel.findById(req.body.userId);
     user.points = user.points + Number(req.body.points) * Number(req.body.rate);

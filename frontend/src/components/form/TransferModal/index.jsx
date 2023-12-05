@@ -14,6 +14,7 @@ ReactModal.setAppElement("#root");
 export default function TransferModal({
   username,
   points,
+  twitchUserName,
   rate,
   afterSuccess,
 }) {
@@ -44,6 +45,7 @@ export default function TransferModal({
         userId: account._id,
         points: points,
         rate: rate,
+        twitchUserName: twitchUserName,
       });
       if (res.success) {
         setAccount(res.data.newUser);
