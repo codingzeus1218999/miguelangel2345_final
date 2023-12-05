@@ -1,5 +1,4 @@
 let websocket = new WebSocket(wsUri);
-let requestBettingOngoing;
 
 const init = () => {
   webSocket();
@@ -20,26 +19,16 @@ const webSocket = () => {
   };
 };
 
-const onOpen = (evt) => {
-  requestBettingOngoing = setInterval(() => {
-    websocket.send(
-      JSON.stringify({
-        type: "betting-ongoing-request",
-        data: {},
-      })
-    );
-  }, 1000);
-};
+const onOpen = (evt) => {};
 
 const onMessage = (evt) => {
   const { type, data } = JSON.parse(evt.data);
-  if (type === "betting-ongoing") {
-    if (Object.keys(data).length === 0) {
+  if (type === "betting-latest") {
+    if (Object.keys(data).length === 0 || data.isOngoing === false) {
       $("#status-notice").text("There is no ongoing betting");
       $("#status-notice").removeClass("text-red-400");
       $("#betting-ongoing").addClass("hidden");
     } else {
-      console.log(data);
       $("#status-notice").html(`<i>${data.title}</i> betting is ongoing`);
       $("#status-notice").removeClass("text-red-400");
       $("#betting-description").text(data.description);
@@ -111,7 +100,6 @@ const onClose = (evt) => {
   $("#status-notice").addClass("text-red-400");
   $("#betting-ongoing").addClass("hidden");
   websocket.close();
-  clearInterval(requestBettingOngoing);
 };
 
 window.addEventListener("load", init, false);

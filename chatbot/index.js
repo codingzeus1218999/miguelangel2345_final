@@ -283,6 +283,7 @@ const init = async () => {
                     ).getTime()) /
                     1000
                 ),
+              isOngoing: ongoingBetting ? true : false,
             },
           });
         } else {
