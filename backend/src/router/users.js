@@ -24,6 +24,7 @@ import {
   getRedemptions,
   getCurrentServerTime,
   getTwitchInfo,
+  transferPointsFromTwitch,
 } from "../controllers/index.js";
 
 import { isAuthenticated, isAuthorized } from "../middlewares/index.js";
@@ -40,6 +41,7 @@ export default (router) => {
   router.put("/user/change-password", isAuthenticated, changePassword);
   router.get("/user/redemptions", isAuthenticated, getRedemptions);
   router.get("/user/twitch", isAuthenticated, getTwitchInfo);
+  router.put("/user/transfer", isAuthenticated, transferPointsFromTwitch);
 
   router.get("/admin/users", isAuthorized, getUserList);
   router.get("/admin/user", isAuthorized, getUserInfoById);

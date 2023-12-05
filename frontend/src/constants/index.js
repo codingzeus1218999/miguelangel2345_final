@@ -6,6 +6,7 @@ const ITEM_DIR = `${BACKEND_URL}/items`;
 const KICK_API_URL = "https://kick.com/api/v2/channels";
 const TWITCH_CLIENT_ID = "rxxe7g6k46ychf0q9oinm19f7a0paj";
 const TWITCH_REDIRECT_URL = `${FRONTEND_URL}/profile`;
+const TWTICH_TRANSFER_RATE = 1.45;
 
 export default {
   BACKEND_URL,
@@ -15,4 +16,5 @@ export default {
   ITEM_DIR,
   TWITCH_CLIENT_ID,
   TWITCH_REDIRECT_URL,
+  TWTICH_TRANSFER_RATE,
 };

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Field, Formik, Form } from "formik";
 import * as Yup from "yup";
 import { NotificationManager } from "react-notifications";
@@ -14,14 +14,19 @@ import {
 
 import { NavContext } from "../../context/NavContext";
 import { UserContext } from "../../context/UserContext";
+import { ModalContext } from "../../context/ModalContext";
 import { commafy } from "../../utils";
+import { TransferModal } from "../../components/form";
 import { changePassword, getUserTwitchInfo, updateInfo } from "../../apis";
 import constants from "../../constants";
 
 export default function Profile() {
   const { setNav } = useContext(NavContext);
+  const { setModal } = useContext(ModalContext);
   const { account, setAccount } = useContext(UserContext);
   const [userInfo, setUserInfo] = useState(null);
+  const [twitchPoints, setTwitchPoints] = useState(null);
+  const formik1Ref = useRef(null);
 
   useEffect(() => {
     setNav("profile");
@@ -35,7 +40,8 @@ export default function Profile() {
       const res = await getUserTwitchInfo(code);
       if (res.success) {
         NotificationManager.success(res.message);
-        console.log(res.data.data[0]);
+        setTwitchPoints(res.data.points);
+        setModal("transfer");
       } else {
         NotificationManager.error(res.message);
       }
@@ -71,6 +77,7 @@ export default function Profile() {
             </div>
             <div className="mt-6">
               <Formik
+                innerRef={formik1Ref}
                 initialValues={{
                   email: account.email,
                   points: commafy(account.points),
@@ -246,6 +253,12 @@ export default function Profile() {
           </div>
         </div>
       )}
+      <TransferModal
+        username={account.name}
+        points={twitchPoints}
+        rate={constants.TWTICH_TRANSFER_RATE}
+        afterSuccess={(p) => formik1Ref.current.setValues({ points: p })}
+      />
     </Layout>
   );
 }

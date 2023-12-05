@@ -236,3 +236,15 @@ export const getUserTwitchInfo = async (code) => {
     return err.response.data;
   }
 };
+
+export const transferPointsFromTwitch = async (data) => {
+  try {
+    const res = await axios.put(`${constants.API_URL}/user/transfer`, data, {
+      headers: { Authorization: localStorage.getItem("token") },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response.data;
+  }
+};

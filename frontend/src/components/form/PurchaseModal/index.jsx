@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import ReactModal from "react-modal";
+import { NotificationManager } from "react-notifications";
 
 import { ModalContext } from "../../../context/ModalContext";
 import { ProductDefault } from "../../../assets/images";
@@ -7,7 +8,6 @@ import constants from "../../../constants";
 import { Button, Point } from "../../ui";
 import { UserContext } from "../../../context/UserContext";
 import "./style.scss";
-import { NotificationManager } from "react-notifications";
 import { purchaseItem } from "../../../apis";
 
 ReactModal.setAppElement("#root");

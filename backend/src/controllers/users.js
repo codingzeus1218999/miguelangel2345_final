@@ -18,6 +18,7 @@ import {
 } from "../db/users.js";
 import { printMessage, sendEmail } from "../utils/index.js";
 import mongoose from "mongoose";
+import { TransferModel } from "../db/transfers.js";
 
 const { get } = pkg;
 
@@ -770,16 +771,49 @@ export const getTwitchInfo = async (req, res) => {
         "Client-ID": constants.TWITCH_CLIENT_ID,
       },
     });
+    const resStreamelements = await axios.get(
+      `${constants.STREAMELEMENTS_GET_INFO_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/${resUser.data.login}`,
+      {
+        headers: {
+          Authorization: `Bearer ${constants.STREAMELEMENTS_TOKEN}`,
+        },
+      }
+    );
     return res.status(200).json({
       success: true,
       message: "Success to connect with your twitch account",
-      data: { ...resUser.data },
+      data: { ...resStreamelements.data },
     });
   } catch (err) {
     printMessage(err, "error");
     return res.status(500).json({
       success: false,
       message: "Failed to get user's twitch details",
+      data: {},
+    });
+  }
+};
+
+export const transferPointsFromTwitch = async (req, res) => {
+  try {
+    await new TransferModel({
+      user: req.body.userId,
+      amount: req.body.points,
+      rate: req.body.rate,
+    }).save();
+    const user = await UserModel.findById(req.body.userId);
+    user.points = user.points + Number(req.body.points) * Number(req.body.rate);
+    const newUser = await user.save();
+    return res.status(200).json({
+      success: true,
+      message: "Successfully transfered the points from your twitch account",
+      data: { newUser },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Failed to transfer user's twitch points",
       data: {},
     });
   }
