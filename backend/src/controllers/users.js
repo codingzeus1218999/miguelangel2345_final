@@ -772,8 +772,8 @@ export const getTwitchInfo = async (req, res) => {
       },
     });
     const resStreamelements = await axios.get(
-      `${constants.STREAMELEMENTS_GET_INFO_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/${resUser.data.login}`,
-      // `${constants.STREAMELEMENTS_GET_INFO_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/miguelangel2345`,
+      // `${constants.STREAMELEMENTS_GET_INFO_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/${resUser.data.login}`,
+      `${constants.STREAMELEMENTS_GET_INFO_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/miguelangel2345`,
       {
         headers: {
           Authorization: `Bearer ${constants.STREAMELEMENTS_TOKEN}`,
@@ -783,7 +783,10 @@ export const getTwitchInfo = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Success to connect with your twitch account",
-      data: { ...resStreamelements.data },
+      data: {
+        streamData: { ...resStreamelements.data },
+        twitchData: { ...resUser.data.data[0] },
+      },
     });
   } catch (err) {
     printMessage(err, "error");
@@ -798,7 +801,7 @@ export const getTwitchInfo = async (req, res) => {
 export const transferPointsFromTwitch = async (req, res) => {
   try {
     const log = await TransferModel.findOne({
-      twitchUserName: req.body.twitchUserName,
+      twitchLogin: req.body.twitchInfo.login,
     });
     if (log) {
       return res.status(500).json({
@@ -809,12 +812,28 @@ export const transferPointsFromTwitch = async (req, res) => {
     }
     await new TransferModel({
       user: req.body.userId,
-      amount: req.body.points,
+      twitchLogin: req.body.twitchInfo.login,
+      twtichBroadcasterType: req.body.twitchInfo.broadcaster_type,
+      twitchCreatedAt: req.body.twitchInfo.created_at,
+      twitchDescription: req.body.twitchInfo.description,
+      twitchDisplayName: req.body.twitchInfo.display_name,
+      twitchEmail: req.body.twitchInfo.email,
+      twitchId: req.body.twitchInfo.id,
+      twitchOfflineImageUrl: req.body.twitchInfo.offline_image_url,
+      twitchProfileImageUrl: req.body.twitchInfo.profile_image_url,
+      twitchType: req.body.twitchInfo.type,
+      twitchViewCount: req.body.twitchInfo.view_count,
+      streamChannel: req.body.streamInfo.channel,
+      streamPoints: req.body.streamInfo.points,
+      streamPointsAlltime: req.body.streamInfo.pointsAlltime,
+      streamRank: req.body.streamInfo.rank,
+      streamUsername: req.body.streamInfo.username,
+      streamWhatchtime: req.body.streamInfo.whatchtime,
       rate: req.body.rate,
-      twitchUserName: req.body.twitchUserName,
     }).save();
     const user = await UserModel.findById(req.body.userId);
-    user.points = user.points + Number(req.body.points) * Number(req.body.rate);
+    user.points =
+      user.points + Number(req.body.streamInfo.points) * Number(req.body.rate);
     const newUser = await user.save();
     return res.status(200).json({
       success: true,

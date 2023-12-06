@@ -25,8 +25,8 @@ export default function Profile() {
   const { setModal } = useContext(ModalContext);
   const { account, setAccount } = useContext(UserContext);
   const [userInfo, setUserInfo] = useState(null);
-  const [twitchPoints, setTwitchPoints] = useState(null);
-  const [twitchUserName, setTwitchUserName] = useState("");
+  const [twitchInfo, setTwitchInfo] = useState(null);
+  const [streamInfo, setStreamInfo] = useState(null);
   const formik1Ref = useRef(null);
 
   useEffect(() => {
@@ -41,8 +41,8 @@ export default function Profile() {
       const res = await getUserTwitchInfo(code);
       if (res.success) {
         NotificationManager.success(res.message);
-        setTwitchPoints(res.data.points);
-        setTwitchUserName(res.data.username);
+        setStreamInfo(res.data.streamData);
+        setTwitchInfo(res.data.twitchData);
         setModal("transfer");
       } else {
         NotificationManager.error(res.message);
@@ -256,10 +256,8 @@ export default function Profile() {
         </div>
       )}
       <TransferModal
-        username={account.name}
-        points={twitchPoints}
-        twitchUserName={twitchUserName}
-        rate={constants.TWTICH_TRANSFER_RATE}
+        streamInfo={streamInfo}
+        twitchInfo={twitchInfo}
         afterSuccess={(p) => formik1Ref.current.setValues({ points: p })}
       />
     </Layout>

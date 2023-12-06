@@ -8,14 +8,13 @@ import { UserContext } from "../../../context/UserContext";
 import "./style.scss";
 import { transferPointsFromTwitch } from "../../../apis";
 import { commafy } from "../../../utils";
+import constants from "../../../constants";
 
 ReactModal.setAppElement("#root");
 
 export default function TransferModal({
-  username,
-  points,
-  twitchUserName,
-  rate,
+  twitchInfo,
+  streamInfo,
   afterSuccess,
 }) {
   const { modal, setModal } = useContext(ModalContext);
@@ -43,9 +42,9 @@ export default function TransferModal({
     try {
       const res = await transferPointsFromTwitch({
         userId: account._id,
-        points: points,
-        rate: rate,
-        twitchUserName: twitchUserName,
+        streamInfo,
+        twitchInfo,
+        rate: constants.TWTICH_TRANSFER_RATE,
       });
       if (res.success) {
         setAccount(res.data.newUser);
@@ -63,24 +62,25 @@ export default function TransferModal({
     }
   };
 
-  return (
+  return twitchInfo && streamInfo ? (
     <ReactModal
       isOpen={modal === "transfer"}
       style={customStyles}
       onRequestClose={() => setModal("")}
     >
-      <p className="text-center font-bold text-2xl">Hi, {username}</p>
+      <p className="text-center font-bold text-2xl">Hi, {twitchInfo.login}</p>
       <p className="mt-6 text-center">
-        You have {commafy(points)} points to your twitch account
+        You have {commafy(streamInfo.points)} points to your twitch account
       </p>
-      {points > 0 && (
+      {streamInfo.points > 0 && (
         <>
           <p className="mt-3 text-center">
             Are you sure that transfer these points to our store?
           </p>
           <p className="mt-3 text-center">
-            You will get {commafy(points)} * {rate} = {commafy(points * rate)}{" "}
-            points
+            You will get {commafy(streamInfo.points)} *{" "}
+            {constants.TWTICH_TRANSFER_RATE} ={" "}
+            {commafy(streamInfo.points * constants.TWTICH_TRANSFER_RATE)} points
           </p>
           <div className="flex justify-center">
             <Button className="text-black mt-6" onClick={onClickTransfer}>
@@ -90,5 +90,7 @@ export default function TransferModal({
         </>
       )}
     </ReactModal>
+  ) : (
+    <></>
   );
 }
