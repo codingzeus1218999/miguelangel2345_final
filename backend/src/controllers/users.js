@@ -772,8 +772,8 @@ export const getTwitchInfo = async (req, res) => {
       },
     });
     const resStreamelements = await axios.get(
-      // `${constants.STREAMELEMENTS_GET_INFO_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/${resUser.data.login}`,
-      `${constants.STREAMELEMENTS_GET_INFO_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/miguelangel2345`,
+      `${constants.STREAMELEMENTS_GET_INFO_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/${resUser.data.login}`,
+      // `${constants.STREAMELEMENTS_GET_INFO_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/miguelangel2345`,
       {
         headers: {
           Authorization: `Bearer ${constants.STREAMELEMENTS_TOKEN}`,
@@ -800,16 +800,31 @@ export const getTwitchInfo = async (req, res) => {
 
 export const transferPointsFromTwitch = async (req, res) => {
   try {
-    const log = await TransferModel.findOne({
+    const logUser = await TransferModel.findOne({
+      user: req.body.userId,
+    });
+    const logTwitch = await TransferModel.findOne({
       twitchLogin: req.body.twitchInfo.login,
     });
-    if (log) {
+    if (logUser) {
       return res.status(500).json({
         success: false,
         message: "You have already transfered the points from twitch",
         data: {},
       });
     }
+    if (logTwitch) {
+      return res.status(500).json({
+        success: false,
+        message: "This twitch's account was used already",
+        data: {},
+      });
+    }
+    await axios.put(
+      `${constants.STREAMELEMENTS_REMOVE_POINTS_URL}/${constants.STREAMELEMENTS_CHANNEL_ID}/${req.body.streamInfo.username}/-${req.body.streamInfo.points}`,
+      {},
+      { headers: { Authorization: `Bearer ${constants.STREAMELEMENTS_TOKEN}` } }
+    );
     await new TransferModel({
       user: req.body.userId,
       twitchLogin: req.body.twitchInfo.login,
