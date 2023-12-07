@@ -1,8 +1,0 @@
-main {
-  min-height: 100vh;
-  background-color: var(--primary-bg);
-  color: var(--primary-text);
-}
-.pt-label {
-  font-weight: bold !important;
-}

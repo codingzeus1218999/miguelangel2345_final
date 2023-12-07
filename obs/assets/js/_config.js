@@ -1,5 +1,9 @@
 let wsUri = "ws://localhost:5001";
 let colors = [
+  "#7CFC00",
+  "#FFC0CB",
+  "#FFD700",
+  "#FF8C00",
   "#FF00FF",
   "#00FFFF",
   "#FFA500",
@@ -10,10 +14,6 @@ let colors = [
   "#00CED1",
   "#FFFFE0",
   "#ADFF2F",
-  "#FF8C00",
-  "#FFD700",
   "#00FA9A",
   "#FF00FF",
-  "#7CFC00",
-  "#FFC0CB",
 ];

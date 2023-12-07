@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Apuestas Andypsx</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/fonts/material_fonts.css" />
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <link
+      href="assets/fonts/font-awesome.min.css"
+      rel="stylesheet"
+      media="all"
+    />
+    <style>
+      @font-face {
+        font-family: "Roboto";
+        src: url("assets/fonts/roboto-v20-latin-700.woff");
+      }
+      b,
+      strong {
+        font-weight: bolder;
+        color: #fff;
+      }
+      body {
+        background-color: #161f60;
+        margin: 0px auto;
+        overflow: hidden;
+        font-size: 1em;
+        padding-top: 1em;
+        color: #fff;
+        font-family: "Roboto";
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p id="nombre"></p>
+      <section class="prod-sidebar-wrapper mb-4">
+        <div class="container">
+          <div class="row" style="width: 30em; margin: 0 auto">
+            <div class="col-lg-12 scroll-detail sidebar-scroll">
+              <div
+                id="review"
+                style="
+                  background: #161f44;
+                  padding: 10px;
+                  border-radius: 0.75em !important;
+                "
+                class="mb-3 sidebar-scroll"
+              >
+                <div class="row" style="font-size: 1.4em">
+                  <div class="col-lg-12" style="text-align: center">
+                    <p style="color: white" id="titulo"></p>
+                  </div>
+                </div>
+                <div class="row" style="font-size: 1.2em">
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text">MIN BET</p>
+                  </div>
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text-big">TIEMPO</p>
+                  </div>
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text">PERSONAS</p>
+                  </div>
+                </div>
+                <div class="row" style="font-size: 1.2em">
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text"><b id="minbet"></b></p>
+                  </div>
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text-big"><b id="time"></b></p>
+                  </div>
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text"><b id="totalbets"></b></p>
+                  </div>
+                </div>
+                <div class="row" style="font-size: 1.2em">
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text">MAX BET</p>
+                  </div>
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text-big">COMANDO</p>
+                  </div>
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text">MOCHUELOS</p>
+                  </div>
+                </div>
+                <div class="row" style="font-size: 1.2em">
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text"><b id="maxbet"></b></p>
+                  </div>
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text-big" id="betcommands"></p>
+                  </div>
+                  <div class="col-lg-4" style="text-align: center">
+                    <p class="grey-text"><b id="totalamount"></b></p>
+                  </div>
+                </div>
+                <!-- OPCIONES APUESTAS -->
+                <div
+                  class="d-flex flex-column"
+                  style="gap: 10px"
+                  id="opciones"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/moment.js"></script>
+    <script src="assets/js/_config.js"></script>
+    <script src="assets/js/_utils.js"></script>
+    <script src="assets/js/index.js"></script>
+  </body>
+</html>
