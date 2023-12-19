@@ -131,7 +131,7 @@ const init = async () => {
         for (var i = 0; i < activeList.length; i++) {
           const al = activeList[i];
           const p = al.isSubscriber
-            ? points_unit * subscriber_multiple
+            ? parseInt(Number(points_unit) * Number(subscriber_multiple))
             : points_unit;
           const resAddPointsToUser = await addPointsToUser(token, {
             name: al.name,
