@@ -38,9 +38,9 @@ export const addItem = async (req, res) => {
         ...JSON.parse(fields.info),
         image: Object.keys(file).length > 0 ? file.image[0].newFilename : "",
         quantity:
-          fields.info.type === "key"
-            ? fields.info.codes.length
-            : fields.info.quantity,
+          JSON.parse(fields.info).type === "key"
+            ? JSON.parse(fields.info).codes.length
+            : JSON.parse(fields.info).quantity,
       });
       newItem
         .save()
