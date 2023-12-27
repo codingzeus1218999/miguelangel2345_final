@@ -137,12 +137,12 @@ const init = async () => {
             name: al.name,
             points: p,
           });
-          if (resAddPointsToUser.success) {
+          if (resAddPointsToUser?.success) {
             const resAddEvent = await addEvent(token, {
               event: "AddPoint_Watcher",
               content: `Added ${p} points to watcher, ${al.name}`,
             });
-            sendToAdmin({ type: "event", data: resAddEvent.event });
+            sendToAdmin({ type: "event", data: resAddEvent?.event });
           }
         }
       }, time_duration * 1000);
@@ -155,7 +155,7 @@ const init = async () => {
       // Send message to channel server
       const sendToServer = async (msg) => {
         const resAddMessage = await addServerMessage(token, { message: msg });
-        if (resAddMessage.success) {
+        if (resAddMessage?.success) {
           // TODO: for dev
           // console.log(msg);
           browser.sendMessage(msg);
@@ -163,28 +163,28 @@ const init = async () => {
       };
       const doneRaffle = async (raffle) => {
         const resRaffleDone = await raffleDone(token, { raffle });
-        if (resRaffleDone.success) {
+        if (resRaffleDone?.success) {
           const resAddPointsToWinners = await addPointsToWinners(token, {
-            users: resRaffleDone.raffle.winners,
+            users: resRaffleDone?.raffle?.winners,
             points: raffle.points,
           });
           const resAddEventRaffle = await addEvent(token, {
             event: "DoneRaffle",
             content: `Ended ${raffle.name} raffle in ${raffle.time} seconds`,
           });
-          sendToAdmin({ type: "event", data: resAddEventRaffle.event });
+          sendToAdmin({ type: "event", data: resAddEventRaffle?.event });
           const resAddEventUser = await addEvent(token, {
             event: "AddPoint_Winners",
-            content: `Added ${raffle.points} points to ${resAddPointsToWinners.count} users`,
+            content: `Added ${raffle.points} points to ${resAddPointsToWinners?.count} users`,
           });
-          sendToAdmin({ type: "event", data: resAddEventUser.event });
+          sendToAdmin({ type: "event", data: resAddEventUser?.event });
           sendToAdmin({
             type: "raffle-done",
-            data: resRaffleDone.raffle,
+            data: resRaffleDone?.raffle,
           });
-          if (resAddPointsToWinners.usernames !== "") {
+          if (resAddPointsToWinners?.usernames !== "") {
             const msgToServer = raffleEnd
-              .replace("%USERS%", resAddPointsToWinners.usernames)
+              .replace("%USERS%", resAddPointsToWinners?.usernames)
               .replace("%POINTS%", raffle.points)
               .replace("%NAME%", raffle.name);
             sendToServer(msgToServer);
@@ -197,16 +197,16 @@ const init = async () => {
           bettingId: betting._id,
           doneMode,
         });
-        if (resFinishBetting.success) {
+        if (resFinishBetting?.success) {
           ongoingBetting = null;
           const resAddEventBetting = await addEvent(token, {
             event: "FinishBetting",
             content: `Finished ${betting.title} betting ${doneMode}`,
           });
-          sendToAdmin({ type: "event", data: resAddEventBetting.event });
+          sendToAdmin({ type: "event", data: resAddEventBetting?.event });
           sendToAdmin({
             type: "betting-finished",
-            data: resFinishBetting.data.betting,
+            data: resFinishBetting?.data?.betting,
           });
           let msgToServer = "";
           if (doneMode === "doneontime") {
@@ -221,15 +221,15 @@ const init = async () => {
 
       const refundBetting = async (betting) => {
         const resEndBetting = await EndBettingRefund(token, { betting });
-        if (resEndBetting.success) {
+        if (resEndBetting?.success) {
           const resAddEventBetting = await addEvent(token, {
             event: "RefundBetting",
             content: `Refunded ${betting.title} betting`,
           });
-          sendToAdmin({ type: "event", data: resAddEventBetting.event });
+          sendToAdmin({ type: "event", data: resAddEventBetting?.event });
           sendToAdmin({
             type: "betting-refunded",
-            data: resEndBetting.data.betting,
+            data: resEndBetting?.data?.betting,
           });
           const msgToServer = betRefundNotice.replace("%TITLE%", betting.title);
           sendToServer(msgToServer);
@@ -241,45 +241,45 @@ const init = async () => {
           betting,
           winOptionId,
         });
-        if (resEndBetting.success) {
+        if (resEndBetting?.success) {
           let resAddEventBetting = await addEvent(token, {
             event: "Betting_winner_selected",
-            content: `${resEndBetting.data.winOption} options selected in ${betting.title} betting`,
+            content: `${resEndBetting?.data?.winOption} options selected in ${betting.title} betting`,
           });
-          sendToAdmin({ type: "event", data: resAddEventBetting.event });
+          sendToAdmin({ type: "event", data: resAddEventBetting?.event });
           resAddEventBetting = await addEvent(token, {
             event: "AddPoint_winners_betting",
-            content: `${resEndBetting.data.allPoints} points has been distributed to ${resEndBetting.data.winnerCount} users in ${betting.title} betting`,
+            content: `${resEndBetting?.data?.allPoints} points has been distributed to ${resEndBetting?.data?.winnerCount} users in ${betting.title} betting`,
           });
-          sendToAdmin({ type: "event", data: resAddEventBetting.event });
+          sendToAdmin({ type: "event", data: resAddEventBetting?.event });
           sendToAdmin({
             type: "betting-calculated",
-            data: resEndBetting.data.betting,
+            data: resEndBetting?.data?.betting,
           });
           let msgToServer = betResultNotice
             .replace("%TITLE%", betting.title)
-            .replace("%OPTION%", resEndBetting.data.winOption);
+            .replace("%OPTION%", resEndBetting?.data?.winOption);
           sendToServer(msgToServer);
           msgToServer = betDistributedPoints
-            .replace("%POINTS%", resEndBetting.data.allPoints)
-            .replace("%COUNT%", resEndBetting.data.winnerCount);
+            .replace("%POINTS%", resEndBetting?.data?.allPoints)
+            .replace("%COUNT%", resEndBetting?.data?.winnerCount);
           sendToServer(msgToServer);
         }
       };
 
       const sendLatestBetting = async () => {
         const resGettingLastestBetting = await getLatestBetting(token);
-        if (resGettingLastestBetting.success) {
+        if (resGettingLastestBetting?.success) {
           sendToAdmin({
             type: "betting-latest",
             data: {
-              ...resGettingLastestBetting.data.betting,
+              ...resGettingLastestBetting?.data?.betting,
               remainingSeconds:
-                resGettingLastestBetting.data.betting.duration * 60 -
+                resGettingLastestBetting?.data?.betting?.duration * 60 -
                 parseInt(
                   (Date.now() -
                     new Date(
-                      resGettingLastestBetting.data.betting.createdAt
+                      resGettingLastestBetting?.data?.betting?.createdAt
                     ).getTime()) /
                     1000
                 ),
@@ -297,16 +297,16 @@ const init = async () => {
 
       const makeRaffle = async (data) => {
         const resCreateRaffle = await createRaffle(token, data);
-        if (resCreateRaffle.success) {
+        if (resCreateRaffle?.success) {
           sendToAdmin({
             type: "raffle-created",
-            data: resCreateRaffle.raffle,
+            data: resCreateRaffle?.raffle,
           });
           const resAddEvent = await addEvent(token, {
             event: "Raffle_Created",
-            content: `Created ${resCreateRaffle.raffle.name} Raffle / ${resCreateRaffle.raffle.points} points`,
+            content: `Created ${resCreateRaffle?.raffle?.name} Raffle / ${resCreateRaffle?.raffle?.points} points`,
           });
-          sendToAdmin({ type: "event", data: resAddEvent.event });
+          sendToAdmin({ type: "event", data: resAddEvent?.event });
           const msgToServer = raffleStart
             .replace("%NAME%", data.name)
             .replace("%POINTS%", data.points)
@@ -314,25 +314,25 @@ const init = async () => {
             .replace("%COMMAND%", raffleJoin);
           sendToServer(msgToServer);
           setTimeout(() => {
-            doneRaffle(resCreateRaffle.raffle);
+            doneRaffle(resCreateRaffle?.raffle);
           }, Number(data.time) * 1000);
         } else {
-          printMessage(resCreateRaffle.message, "error");
+          printMessage(resCreateRaffle?.message, "error");
         }
       };
 
       const makeBetting = async (data) => {
         const resCreateBetting = await createBetting(token, data);
-        if (resCreateBetting.success) {
+        if (resCreateBetting?.success) {
           sendToAdmin({
             type: "betting-created",
-            data: resCreateBetting.data.betting,
+            data: resCreateBetting?.data?.betting,
           });
           const resAddEvent = await addEvent(token, {
             event: "Betting_Created",
-            content: `Created ${resCreateBetting.data.betting.title} Betting for ${resCreateBetting.data.betting.duration} minutes`,
+            content: `Created ${resCreateBetting?.data?.betting.title} Betting for ${resCreateBetting?.data?.betting?.duration} minutes`,
           });
-          sendToAdmin({ type: "event", data: resAddEvent.event });
+          sendToAdmin({ type: "event", data: resAddEvent?.event });
           const msgToServer = betCreated
             .replace("%TITLE%", data.title)
             .replace("%DURATION%", Number(data.duration) * 60)
@@ -340,12 +340,12 @@ const init = async () => {
             .replace("%MAXAMOUNT%", data.maxAmount)
             .replace("%COMMANDS%", JSON.stringify(data.options));
           sendToServer(msgToServer);
-          ongoingBetting = { ...resCreateBetting.data.betting };
+          ongoingBetting = { ...resCreateBetting?.data?.betting };
           setTimeout(() => {
-            doneBetting(resCreateBetting.data.betting, "doneontime");
+            doneBetting(resCreateBetting?.data?.betting, "doneontime");
           }, Number(data.duration) * 1000 * 60);
         } else {
-          printMessage(resCreateBetting.message, "error");
+          printMessage(resCreateBetting?.message, "error");
         }
       };
 
@@ -427,8 +427,8 @@ const init = async () => {
             created_at,
             badges,
           });
-          sendToAdmin({ type: "message", data: resAddChannelMessage.msg });
-          addUserToActiveList(resAddChannelMessage.msg);
+          sendToAdmin({ type: "message", data: resAddChannelMessage?.msg });
+          addUserToActiveList(resAddChannelMessage?.msg);
 
           // auto join to raffle
           if (!useRaffleCommand) await addUserToRaffle(token, { username });
@@ -439,8 +439,8 @@ const init = async () => {
               username,
             });
             if (
-              resAddUserToRaffle.success === false &&
-              resAddUserToRaffle.status === "not-ready"
+              resAddUserToRaffle?.success === false &&
+              resAddUserToRaffle?.status === "not-ready"
             ) {
               const msgToServer = raffleNotReady.replace(
                 "%USER%",
@@ -449,8 +449,8 @@ const init = async () => {
               sendToServer(msgToServer);
             }
             if (
-              resAddUserToRaffle.success === false &&
-              resAddUserToRaffle.status === "no-register"
+              resAddUserToRaffle?.success === false &&
+              resAddUserToRaffle?.status === "no-register"
             ) {
               const msgToServer = raffleCant.replace("%USER%", `@${username}`);
               sendToServer(msgToServer);
@@ -460,7 +460,7 @@ const init = async () => {
           // If user wants to know remaining points
           if (content === pointsRemaining) {
             const resGetPoints = await getPoints(token, { username });
-            if (!resGetPoints.success) {
+            if (!resGetPoints?.success) {
               const msgToServer = pointsRemainingNotRegistered.replace(
                 "%USER%",
                 `@${username}`
@@ -469,7 +469,7 @@ const init = async () => {
             } else {
               const msgToServer = pointsRemainingMsg
                 .replace("%USER%", `@${username}`)
-                .replace("%POINTS%", resGetPoints.points);
+                .replace("%POINTS%", resGetPoints?.points);
               sendToServer(msgToServer);
             }
           }
@@ -487,8 +487,8 @@ const init = async () => {
               activeUsers: activeList.map((a) => a.name),
             });
             if (
-              !resAddPointsByChatbot.success &&
-              resAddPointsByChatbot.status === "not-allowed"
+              !resAddPointsByChatbot?.success &&
+              resAddPointsByChatbot?.status === "not-allowed"
             ) {
               const msgToServer = addPointsMsgNotPermission.replace(
                 "%USER%",
@@ -496,15 +496,15 @@ const init = async () => {
               );
               sendToServer(msgToServer);
             }
-            if (resAddPointsByChatbot.success) {
+            if (resAddPointsByChatbot?.success) {
               const resAddEvent = await addEvent(token, {
                 event: "AddPoint_By_Moderator",
-                content: `Added ${points} points to ${resAddPointsByChatbot.count} users`,
+                content: `Added ${points} points to ${resAddPointsByChatbot?.count} users`,
               });
-              sendToAdmin({ type: "event", data: resAddEvent.event });
+              sendToAdmin({ type: "event", data: resAddEvent?.event });
               const msgToServer = addPointsMsgSuccess
                 .replace("%POINTS%", points)
-                .replace("%NUMBER%", resAddPointsByChatbot.count)
+                .replace("%NUMBER%", resAddPointsByChatbot?.count)
                 .replace("%COMMAND%", addPointsMsg)
                 .replace("%USERS%", "")
                 .replace("%POINTS%", "");
@@ -524,8 +524,8 @@ const init = async () => {
               badges,
             });
             if (
-              !resDelPointsByChatbot.success &&
-              resDelPointsByChatbot.status === "not-allowed"
+              !resDelPointsByChatbot?.success &&
+              resDelPointsByChatbot?.status === "not-allowed"
             ) {
               const msgToServer = delPointsMsgNotPermission.replace(
                 "%USER%",
@@ -533,15 +533,15 @@ const init = async () => {
               );
               sendToServer(msgToServer);
             }
-            if (resDelPointsByChatbot.success) {
+            if (resDelPointsByChatbot?.success) {
               const resAddEvent = await addEvent(token, {
                 event: "DelPoint_By_Moderator",
-                content: `Removed ${points} points from ${resDelPointsByChatbot.count} users`,
+                content: `Removed ${points} points from ${resDelPointsByChatbot?.count} users`,
               });
-              sendToAdmin({ type: "event", data: resAddEvent.event });
+              sendToAdmin({ type: "event", data: resAddEvent?.event });
               const msgToServer = delPointsMsgSuccess
                 .replace("%POINTS%", points)
-                .replace("%NUMBER%", resDelPointsByChatbot.count)
+                .replace("%NUMBER%", resDelPointsByChatbot?.count)
                 .replace("%COMMAND%", delPointsMsg)
                 .replace("%POINTS%", "")
                 .replace("%USERS%", "");
@@ -565,11 +565,11 @@ const init = async () => {
                   points,
                 });
                 let msgToServer = "";
-                if (resJoinBetting.success) {
+                if (resJoinBetting?.success) {
                   msgToServer = betJoinSuccess.replace("%USER%", username);
                   sendToServer(msgToServer);
                 } else {
-                  switch (resJoinBetting.data.status) {
+                  switch (resJoinBetting?.data?.status) {
                     case "not-registered":
                       msgToServer = betNotRegisteredUser.replace(
                         "%USER%",
@@ -619,17 +619,17 @@ const init = async () => {
             content: `Subscribe the channel for ${months} months`,
             badges: [],
           });
-          sendToAdmin({ type: "message", data: resAddChannelMessage.msg });
+          sendToAdmin({ type: "message", data: resAddChannelMessage?.msg });
           const resAddPointsToUser = await addPointsToUser(token, {
             name: username,
             points: subscriber_points,
           });
-          if (resAddPointsToUser.success) {
+          if (resAddPointsToUser?.success) {
             const resAddEvent = await addEvent(token, {
               event: "AddPoint_New_Subscriber",
               content: `Added ${subscriber_points} points to new subscriber, ${username}`,
             });
-            sendToAdmin({ type: "event", data: resAddEvent.event });
+            sendToAdmin({ type: "event", data: resAddEvent?.event });
           }
         }
       });
