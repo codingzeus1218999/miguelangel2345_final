@@ -108,6 +108,7 @@ export const resetPassword = async (req, res) => {
               expiresIn: constants.EXPIRESTIME,
             }
           ),
+          userId: user._id,
         })
       );
     } else {

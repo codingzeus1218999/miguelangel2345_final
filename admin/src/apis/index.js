@@ -439,10 +439,10 @@ export const processRedemption = async (id, state, query) => {
   }
 };
 
-export const getItemRaffleByItem = async (itemId, state) => {
+export const getItemRaffleByItem = async (itemId) => {
   try {
-    const res = await axios.get(`${constants.BASE_API_URL}/item-raffle`, {
-      params: { itemId, state },
+    const res = await axios.get(`${constants.ADMIN_API_URL}/item-raffle`, {
+      params: { itemId },
       headers: {
         Authorization: localStorage.getItem("token"),
       },

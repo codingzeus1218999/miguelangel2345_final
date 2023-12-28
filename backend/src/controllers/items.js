@@ -96,7 +96,47 @@ export const getItemList = async (req, res) => {
   }
 };
 
-export const getItemInfoById = async (req, res) => {
+export const getItemInfoByIdUser = async (req, res) => {
+  try {
+    const item = await ItemModel.findOne({
+      _id: req.query.itemId,
+      deleted: false,
+    });
+
+    if (item) {
+      const userLatestTime = item.users
+        .filter((u) => u.user.toString() === req.query.userId)
+        .map((u) => u.date)
+        .sort((a, b) => new Date(b) - new Date(a))?.[0];
+      const globalLatestTime = item.users
+        .map((u) => u.date)
+        .sort((a, b) => new Date(b) - new Date(a))?.[0];
+      const { users, codes, ...remainingObject } = item.toObject();
+      return res.status(200).json({
+        success: true,
+        message: "Get item info by id",
+        data: {
+          item: { ...remainingObject, userLatestTime, globalLatestTime },
+        },
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "There is no item with this id",
+        data: {},
+      });
+    }
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Getting item in backend failed",
+      data: {},
+    });
+  }
+};
+
+export const getItemInfoByIdAdmin = async (req, res) => {
   try {
     const item = await ItemModel.findOne({ _id: req.query.id, deleted: false });
     if (item) {
@@ -247,7 +287,10 @@ export const editItem = async (req, res) => {
 
 export const getItems = async (req, res) => {
   try {
-    const items = await ItemModel.find({ deleted: false });
+    const items = await ItemModel.find(
+      { deleted: false },
+      "_id name cost image"
+    );
     return res.status(200).json({
       success: true,
       message: "Get items for store front",
@@ -265,7 +308,10 @@ export const getItems = async (req, res) => {
 
 export const getLatestItems = async (req, res) => {
   try {
-    const items = await ItemModel.find({ deleted: false })
+    const items = await ItemModel.find(
+      { deleted: false },
+      "_id name cost image"
+    )
       .sort({ createdAt: "desc" })
       .limit(5);
     return res.status(200).json({
@@ -442,10 +488,21 @@ export const purchaseItem = async (req, res) => {
       },
       "Success in purchasing in Miguelangel2345"
     );
+    const userLatestTime = newItem.users
+      .filter((u) => u.user.toString() === userId)
+      .map((u) => u.date)
+      .sort((a, b) => new Date(b) - new Date(a))?.[0];
+    const globalLatestTime = newItem.users
+      .map((u) => u.date)
+      .sort((a, b) => new Date(b) - new Date(a))?.[0];
+    const { users, codes, ...remainingObject } = newItem.toObject();
     return res.status(200).json({
       success: true,
       message: `Successfully purchased ${newItem.name}`,
-      data: { newItem, newUser },
+      data: {
+        newItem: { ...remainingObject, userLatestTime, globalLatestTime },
+        newUser,
+      },
     });
   } catch (err) {
     printMessage(err, "error");

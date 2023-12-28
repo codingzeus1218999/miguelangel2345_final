@@ -13,7 +13,7 @@ export const signIn = async (req, res) => {
   try {
     const email = get(req.body, "email").toString().toLowerCase();
     const password = get(req.body, "password").toString();
-    const account = await UserModel.findOne({email, allowed: true});
+    const account = await UserModel.findOne({ email, allowed: true });
     if (!account || !bcrypt.compareSync(password, account.password)) {
       return res.status(400).json({
         success: false,
@@ -59,8 +59,7 @@ export const signUp = async (req, res) => {
         accountWithThisEmail.password = bcrypt.hashSync(password, 10);
         user = await accountWithThisEmail.save();
       }
-    }
-    else {
+    } else {
       newUser = new UserModel({
         email,
         verification_token: verificationToken,
@@ -200,6 +199,7 @@ export const verifiedTwoStep = async (req, res) => {
             token: jwt.sign({ email: account.email }, constants.SECRET, {
               expiresIn: constants.EXPIRESTIME,
             }),
+            userId: account._id,
           },
         });
       })

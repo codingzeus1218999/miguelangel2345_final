@@ -146,10 +146,10 @@ export const getItems = async () => {
   }
 };
 
-export const getItemInfoById = async (id) => {
+export const getItemInfoById = async (itemId, userId) => {
   try {
     const res = await axios.get(`${constants.API_URL}/item`, {
-      params: { id },
+      params: { itemId, userId },
     });
     return res.data;
   } catch (err) {
@@ -207,10 +207,10 @@ export const getCurrentServerTime = async (query) => {
   }
 };
 
-export const getItemRaffleByItem = async (itemId, state) => {
+export const getItemRaffleByItem = async (itemId, userId) => {
   try {
     const res = await axios.get(`${constants.API_URL}/item-raffle`, {
-      params: { itemId, state },
+      params: { itemId, userId },
       headers: {
         Authorization: localStorage.getItem("token"),
       },

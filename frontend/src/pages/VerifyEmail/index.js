@@ -75,6 +75,7 @@ export default function VerifyEmail() {
                         });
                         if (res.success) {
                           localStorage.setItem("token", res.data.token);
+                          localStorage.setItem("userId", res.data.userId);
                           NotificationManager.success(res.message);
                           navigate("/");
                         } else {

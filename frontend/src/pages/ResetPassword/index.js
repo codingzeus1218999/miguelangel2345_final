@@ -73,6 +73,7 @@ export default function ResetPassword() {
                         "The password has been reset"
                       );
                       localStorage.setItem("token", res.data.token);
+                      localStorage.setItem("userId", res.data.userId);
                       setTimeout(() => {
                         navigator("/");
                       }, 2000);

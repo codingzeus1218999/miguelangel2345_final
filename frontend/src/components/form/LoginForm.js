@@ -63,6 +63,7 @@ export default function LoginForm() {
                 actions.setSubmitting(false);
                 setModal("");
                 localStorage.setItem("token", res.data.token);
+                localStorage.setItem("userId", res.data.user._id);
                 setAccount(res.data.user);
                 setIsAuthenticated(true);
               },

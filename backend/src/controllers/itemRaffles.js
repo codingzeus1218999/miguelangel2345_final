@@ -4,16 +4,12 @@ import { printMessage } from "../utils/index.js";
 
 const { get } = pkg;
 
-export const getItemRaffleByItem = async (req, res) => {
+export const getItemRaffleByItemAdmin = async (req, res) => {
   try {
-    const raffles = await ItemRaffleModel.find(
-      req.query.state === "all"
-        ? { item: req.query.itemId }
-        : {
-            item: req.query.itemId,
-            state: req.query.state,
-          }
-    )
+    const raffles = await ItemRaffleModel.find({
+      item: req.query.itemId,
+      state: "pending",
+    })
       .populate({ path: "participants.user", model: "User" })
       .populate({ path: "winners", model: "User" })
       .sort({ end_at: 1 });
@@ -21,7 +17,56 @@ export const getItemRaffleByItem = async (req, res) => {
       success: true,
       message: "Got the item raffle",
       data: {
-        itemRaffle: req.query.state === "pending" ? raffles?.[0] : raffles,
+        itemRaffle: raffles?.[0],
+      },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Getting item raffle by item failed",
+      data: {},
+    });
+  }
+};
+
+export const getItemRaffleByItemUser = async (req, res) => {
+  try {
+    const raffles = await ItemRaffleModel.find({ item: req.query.itemId })
+      .populate({ path: "participants.user", model: "User" })
+      .populate({ path: "winners", model: "User", select: "name" })
+      .sort({ end_at: 1 });
+
+    let thisCount = 0;
+    let pastCount = 0;
+    let latestWinners = [];
+    let latestWinDate = null;
+
+    for (let i = 0; i < raffles.length; i++) {
+      const raffle = raffles[i];
+      if (raffle.state === "done") {
+        for (let j = 0; j < raffle.participants.length; j++) {
+          if (raffle.participants[j].user._id.toString() === req.query.userId)
+            pastCount += raffle.participants[j].count;
+        }
+        latestWinners = [];
+        for (let k = 0; k < raffle.winners.length; k++) {
+          latestWinners.push(raffle.winners[k].name);
+        }
+        latestWinDate = raffle.end_at;
+      } else {
+        for (let j = 0; j < raffle.participants.length; j++) {
+          if (raffle.participants[j].user._id.toString() === req.query.userId)
+            thisCount += raffle.participants[j].count;
+        }
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Got the item raffle",
+      data: {
+        itemRaffle: { thisCount, pastCount, latestWinners, latestWinDate },
       },
     });
   } catch (err) {

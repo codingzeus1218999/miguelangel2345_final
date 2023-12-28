@@ -36,8 +36,6 @@ export default function News() {
   const [itemRaffles, setItemRaffles] = useState([]);
   const [latestItems, setLatestItems] = useState([]);
   const [currentServerTime, setCurrentServerTime] = useState(0);
-  const [userLatestTime, setUserLatestTime] = useState(0);
-  const [globalLatestTime, setGlobalLatestTime] = useState(0);
 
   const navigate = useNavigate();
 
@@ -54,7 +52,7 @@ export default function News() {
   };
   const fetchItemRaffle = async () => {
     try {
-      const res = await getItemRaffleByItem(id, "all");
+      const res = await getItemRaffleByItem(id, localStorage.getItem("userId"));
       if (res.success) {
         setItemRaffles(res.data?.itemRaffle);
       } else {
@@ -70,7 +68,7 @@ export default function News() {
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const res = await getItemInfoById(id);
+        const res = await getItemInfoById(id, localStorage.getItem("userId"));
         if (res.success) {
           setItem(res.data.item);
         } else NotificationManager.error(res.message);
@@ -99,22 +97,6 @@ export default function News() {
       clearInterval(timeCheck);
     };
   }, [id, setNav]);
-
-  useEffect(() => {
-    if (Object.keys(item).length > 0) {
-      setUserLatestTime(
-        item.users
-          .filter((u) => u.user.toString() === account._id)
-          .map((u) => u.date)
-          .sort((a, b) => new Date(b) - new Date(a))?.[0]
-      );
-      setGlobalLatestTime(
-        item.users
-          .map((u) => u.date)
-          .sort((a, b) => new Date(b) - new Date(a))?.[0]
-      );
-    }
-  }, [item]);
   return (
     <Layout>
       <div className="sm:px-16">
@@ -156,10 +138,12 @@ export default function News() {
                     disabled={
                       item?.quantity < -1 ||
                       item?.quantity === 0 ||
-                      differenceTimes(currentServerTime, userLatestTime) <
+                      differenceTimes(currentServerTime, item?.userLatestTime) <
                         item.coolDownUser ||
-                      differenceTimes(currentServerTime, globalLatestTime) <
-                        item.coolDownGlobal
+                      differenceTimes(
+                        currentServerTime,
+                        item?.globalLatestTime
+                      ) < item.coolDownGlobal
                     }
                   >
                     {["redeem", "key"].includes(item.type)

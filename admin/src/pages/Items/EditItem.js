@@ -83,7 +83,7 @@ export default function EditItem() {
     fetchItemInfo();
     const fetchItemRaffleInfo = async () => {
       try {
-        const res = await getItemRaffleByItem(id, "pending");
+        const res = await getItemRaffleByItem(id);
         if (res.success) {
           setRaffleInfo(res.data?.itemRaffle);
         } else {
