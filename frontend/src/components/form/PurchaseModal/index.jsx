@@ -19,11 +19,13 @@ export default function PurchaseModal({ item, afterSuccess }) {
 
   const customStyles = {
     content: {
+      maxHeight: "100vh",
       maxWidth: "700px",
       width: "100%",
       height: "min-content",
       margin: "auto",
       padding: "18px",
+      paddingTop: "70px",
       backgroundColor: "#2e2d2e",
       border: "none",
       color: "#ffffff",
@@ -79,7 +81,7 @@ export default function PurchaseModal({ item, afterSuccess }) {
       onRequestClose={() => setModal("")}
     >
       <div className="flex flex-col gap-10 pt-purchase-modal">
-        <div className="flex flex-row gap-10 items-center">
+        <div className="hidden sm:flex flex-row gap-10 items-center">
           <div className="rounded-md bg-pt-black-300 p-1 w-[200px] min-w-[200px]">
             <img
               src={
