@@ -60,7 +60,7 @@ export const signUp = async (req, res) => {
         user = await accountWithThisEmail.save();
       }
     } else {
-      newUser = new UserModel({
+      const newUser = new UserModel({
         email,
         verification_token: verificationToken,
         password: bcrypt.hashSync(password, 10),
