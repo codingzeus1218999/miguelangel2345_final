@@ -248,8 +248,10 @@ export const calculateBetting = async (req, res) => {
             );
             user.points =
               user.points +
-              (allPoints * betting.options[i].participants[j].amount) /
-                winnersPoints;
+              Math.floor(
+                (allPoints * betting.options[i].participants[j].amount) /
+                  winnersPoints
+              );
             await user.save();
           }
       }
