@@ -119,7 +119,7 @@ export const getKickInfoByName = async (id) => {
     return res.data;
   } catch (err) {
     console.log(err);
-    return err.response.data;
+    return null;
   }
 };
 
