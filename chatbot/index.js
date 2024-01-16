@@ -36,6 +36,7 @@ const {
   EndBettingCalculate,
   getBetting,
   getLatestBetting,
+  getPendingBetting,
 } = require("./apis");
 
 dotnet.config();
@@ -102,14 +103,14 @@ const init = async () => {
 
     // If success in opening web browser
     // TODO: for dev
-    browser.emitter.on("ready", () => {
+    browser.emitter.on("ready", async () => {
       printMessage("Browser ready", "success");
 
       // Initialize
       const aWebSocket = new WebSocket(ws_end_point);
       const cServer = new WebSocket.Server({ server });
       let activeList = [];
-      let ongoingBetting = null;
+      let ongoingBetting = await getPendingBetting(token);
 
       // Send messages to admin site
       const sendToAdmin = (d) => {

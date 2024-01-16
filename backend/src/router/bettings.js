@@ -7,6 +7,7 @@ import {
   refundBetting,
   calculateBetting,
   getLatestBetting,
+  getPendingBetting,
 } from "../controllers/index.js";
 
 import { isAuthorized } from "../middlewares/index.js";
@@ -14,6 +15,7 @@ import { isAuthorized } from "../middlewares/index.js";
 export default (router) => {
   router.get("/admin/bettings", isAuthorized, getBettingList);
   router.get("/admin/betting/latest", isAuthorized, getLatestBetting);
+  router.get("/admin/betting/pending", isAuthorized, getPendingBetting);
   router.get("/admin/betting", isAuthorized, getBetting);
   router.post("/admin/betting", isAuthorized, createBetting);
   router.put("/admin/betting/join", isAuthorized, joinToBetting);

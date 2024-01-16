@@ -442,6 +442,24 @@ const getLatestBetting = async (token) => {
     );
   }
 };
+const getPendingBetting = async (token) => {
+  try {
+    const res = await axios.get(
+      `${constants.BACKEND_API_URL}/betting/pending`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return res.data.data.betting;
+  } catch (err) {
+    printMessage(
+      `getting pending betting from backend failed: ${err.response?.data?.message}`,
+      "error"
+    );
+  }
+};
 
 module.exports = {
   login,
@@ -468,4 +486,5 @@ module.exports = {
   EndBettingCalculate,
   getBetting,
   getLatestBetting,
+  getPendingBetting,
 };

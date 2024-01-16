@@ -331,3 +331,27 @@ export const getLatestBetting = async (req, res) => {
     });
   }
 };
+export const getPendingBetting = async (req, res) => {
+  try {
+    const betting = await BettingModel.findOne({ state: "pending" });
+    if (!betting) {
+      return res.status(200).json({
+        success: false,
+        message: "There is no pending betting",
+        data: { betting: null },
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: `Got pending betting`,
+      data: { betting },
+    });
+  } catch (err) {
+    printMessage(err, "error");
+    return res.status(500).json({
+      success: false,
+      message: "Getting pending betting failed",
+      data: {},
+    });
+  }
+};
