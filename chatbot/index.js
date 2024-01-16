@@ -36,7 +36,7 @@ const {
   EndBettingCalculate,
   getBetting,
   getLatestBetting,
-  getPendingBetting,
+  getChannelInfo,
 } = require("./apis");
 
 dotnet.config();
@@ -103,14 +103,14 @@ const init = async () => {
 
     // If success in opening web browser
     // TODO: for dev
-    browser.emitter.on("ready", async () => {
+    browser.emitter.on("ready", () => {
       printMessage("Browser ready", "success");
 
       // Initialize
       const aWebSocket = new WebSocket(ws_end_point);
       const cServer = new WebSocket.Server({ server });
       let activeList = [];
-      let ongoingBetting = await getPendingBetting(token);
+      let ongoingBetting = null;
 
       // Send messages to admin site
       const sendToAdmin = (d) => {
@@ -129,21 +129,24 @@ const init = async () => {
 
       // Check and add points to active users
       const intervalAddPoints = setInterval(async () => {
-        for (var i = 0; i < activeList.length; i++) {
-          const al = activeList[i];
-          const p = al.isSubscriber
-            ? parseInt(Number(points_unit) * Number(subscriber_multiple))
-            : points_unit;
-          const resAddPointsToUser = await addPointsToUser(token, {
-            name: al.name,
-            points: p,
-          });
-          if (resAddPointsToUser?.success) {
-            const resAddEvent = await addEvent(token, {
-              event: "AddPoint_Watcher",
-              content: `Added ${p} points to watcher, ${al.name}`,
+        const channelInfo = await getChannelInfo();
+        if (channelInfo?.livestream?.is_live) {
+          for (var i = 0; i < activeList.length; i++) {
+            const al = activeList[i];
+            const p = al.isSubscriber
+              ? parseInt(Number(points_unit) * Number(subscriber_multiple))
+              : points_unit;
+            const resAddPointsToUser = await addPointsToUser(token, {
+              name: al.name,
+              points: p,
             });
-            sendToAdmin({ type: "event", data: resAddEvent?.event });
+            if (resAddPointsToUser?.success) {
+              const resAddEvent = await addEvent(token, {
+                event: "AddPoint_Watcher",
+                content: `Added ${p} points to watcher, ${al.name}`,
+              });
+              sendToAdmin({ type: "event", data: resAddEvent?.event });
+            }
           }
         }
       }, time_duration * 1000);

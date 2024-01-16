@@ -442,20 +442,16 @@ const getLatestBetting = async (token) => {
     );
   }
 };
-const getPendingBetting = async (token) => {
+
+const getChannelInfo = async () => {
   try {
     const res = await axios.get(
-      `${constants.BACKEND_API_URL}/betting/pending`,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
+      `${constants.KICK_URL}/api/v2/channels/${constants.CHANNEL}`
     );
-    return res.data.data.betting;
+    return res;
   } catch (err) {
     printMessage(
-      `getting pending betting from backend failed: ${err.response?.data?.message}`,
+      `getting channel info failed: ${err.response?.data?.message}`,
       "error"
     );
   }
@@ -486,5 +482,5 @@ module.exports = {
   EndBettingCalculate,
   getBetting,
   getLatestBetting,
-  getPendingBetting,
+  getChannelInfo,
 };
