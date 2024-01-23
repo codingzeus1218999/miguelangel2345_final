@@ -7,6 +7,8 @@ const CHANNEL = "miguelangel2345";
 const ADMIN_EMAIL = "andrianlin9999@gmail.com";
 const ADMIN_PASSWORD = "hsg!19971218";
 
+const ZEN_ROWS_API_KEY = "959b40858b0fffba631140f29461d969c1711c51";
+
 module.exports = {
   BACKEND_URL,
   BACKEND_API_URL,
@@ -15,4 +17,5 @@ module.exports = {
   CHANNEL,
   ADMIN_EMAIL,
   ADMIN_PASSWORD,
+  ZEN_ROWS_API_KEY,
 };

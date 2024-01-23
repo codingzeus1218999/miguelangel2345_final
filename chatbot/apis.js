@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { ZenRows } = require("zenrows");
 
 const constants = require("./constants");
 const { printMessage } = require("./utils");
@@ -444,11 +445,11 @@ const getLatestBetting = async (token) => {
 };
 
 const getChannelInfo = async () => {
+  const client = new ZenRows(constants.ZEN_ROWS_API_KEY);
+  const url = `${constants.KICK_URL}/api/v2/channels/${constants.CHANNEL}`;
   try {
-    const res = await axios.get(
-      `${constants.KICK_URL}/api/v2/channels/${constants.CHANNEL}`
-    );
-    return res;
+    const { data } = await client.get(url, []);
+    return data;
   } catch (err) {
     printMessage(
       `getting channel info failed: ${err.response?.data?.message}`,
